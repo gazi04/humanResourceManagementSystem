@@ -25,11 +25,6 @@ return new class extends Migration
             $table->unsignedBigInteger('ContractID')->nullable();
             $table->enum('Status', ['Active', 'Inactive', 'On Leave'])->default('Active');
             $table->timestamps();
-
-            // Foreign keys
-            $table->foreign('DepartmentID')->references('DepartmentID')->on('departments')->onDelete('set null');
-            $table->foreign('SupervisorID')->references('EmployeeID')->on('employees')->onDelete('set null');
-            $table->foreign('ContractID')->references('ContractID')->on('contracts')->onDelete('set null');
         });
     }
 
