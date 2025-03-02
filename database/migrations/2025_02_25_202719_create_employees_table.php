@@ -17,14 +17,14 @@ return new class extends Migration
             $table->string('LastName', 50);
             $table->string('Email', 100)->unique();
             $table->string('Password');
-            $table->string('Phone', 15)->nullable();
-            $table->date('HireDate');
-            $table->string('JobTitle', 100);
+            $table->string('Phone', 15);
+            $table->date('HireDate')->nullable();
+            $table->string('JobTitle', 100)->nullable();
             $table->unsignedBigInteger('DepartmentID')->nullable();
             $table->unsignedBigInteger('SupervisorID')->nullable();
-            $table->decimal('Salary', 10, 2);
+            $table->decimal('Salary', 10, 2)->nullable();
             $table->unsignedBigInteger('ContractID')->nullable();
-            $table->enum('Status', ['Active', 'Inactive', 'On Leave'])->default('Active');
+            $table->enum('Status', ['Active', 'Inactive', 'On Leave'])->default('Inactive');
             $table->timestamps();
         });
     }
