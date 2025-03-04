@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('Salary', 10, 2)->nullable();
             $table->unsignedBigInteger('ContractID')->nullable();
             $table->enum('Status', ['Active', 'Inactive', 'On Leave'])->default('Inactive');
-            $table->string('remember_token');
+            $table->string('remember_token')->nullable();
             $table->timestamps();
         });
     }
