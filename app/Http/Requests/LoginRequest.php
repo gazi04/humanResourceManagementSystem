@@ -11,7 +11,7 @@ class LoginRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -36,8 +36,10 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phone.required' => 'Fusha e numrit te telefonit eshte e obligueshme qe te plotesohet.',
-            'password.required' => 'Fusha e fjalekalimit eshte e obligueshme qe te plotesohet.',
+            'phone.required' => 'Fusha e numrit të telefonit është e detyrueshme.',
+            'password.required' => 'Fusha e fjalëkalimit është e detyrueshme.',
+            'phone.integer' => 'Të dhënat në fushën e numrit të telefonit duhet të përmbajë vetëm numra të plotë.',
+            'password.string' => 'Të dhënat në fushën e fjalëkalimit duhet të jetë një varg karakteresh si shkronja, numra dhe simbole.'
         ];
     }
 }
