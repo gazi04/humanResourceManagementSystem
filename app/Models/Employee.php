@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Auth\Authenticatable;
 
-class Employee extends Model
+class Employee extends Model implements AuthenticatableContract
 {
+    use Authenticatable;
+
     protected $fillable = [
         'EmployeeID',
         'FirstName',
@@ -21,5 +25,10 @@ class Employee extends Model
         'DepartmentID',
         'SupervisorID',
         'ContractID',
+    ];
+
+    protected $hidden = [
+        'Password',
+        'remember_token',
     ];
 }
