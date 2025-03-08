@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Vacation extends Model
 {
     protected $fillable = [
-        'VacationID',
-        'EmployeeID',
-        'LeaveType',
-        'StartDate',
-        'EndDate',
-        'Status'
+        'vacationID',
+        'employeeID',
+        'leaveType',
+        'startDate',
+        'endDate',
+        'status'
     ];
 }

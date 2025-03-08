@@ -11,24 +11,24 @@ class Employee extends Model implements AuthenticatableContract
     use Authenticatable;
 
     protected $fillable = [
-        'EmployeeID',
-        'FirstName',
-        'LastName',
-        'Email',
-        'Password',
-        'Phone',
-        'HireDate',
-        'JobTitle',
-        'Salary',
-        'Status',
+        'employeeID',
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'phone',
+        'hireDate',
+        'jobTitle',
+        'salary',
+        'status',
 
-        'DepartmentID',
-        'SupervisorID',
-        'ContractID',
+        'departmentID',
+        'supervisorID',
+        'contractID',
     ];
 
     protected $hidden = [
-        'Password',
+        'password',
         'remember_token',
     ];
 }

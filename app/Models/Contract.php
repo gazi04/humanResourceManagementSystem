@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Contract extends Model
 {
     protected $fillable = [
-        'FilePath',
-        'UploadDate',
+        'filePath',
+        'uploadDate',
 
-        'ContractID',
-        'EmployeeID'
+        'contractID',
+        'employeeID'
     ];
 }

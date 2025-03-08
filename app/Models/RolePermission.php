@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class RolePermission extends Model
 {
     protected $fillable = [
-        'RolePermissionID',
-        'RoleID',
-        'PermissionID'
+        'rolePermissionID',
+        'roleID',
+        'permissionID'
     ];
 }

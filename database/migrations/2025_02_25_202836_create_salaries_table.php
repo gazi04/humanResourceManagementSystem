@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('salaries', function (Blueprint $table) {
-            $table->id('SalaryID');
-            $table->unsignedBigInteger('EmployeeID');
-            $table->date('PaymentDate');
-            $table->decimal('Amount', 10, 2);
+            $table->id('salaryID');
+            $table->unsignedBigInteger('employeeID');
+            $table->date('paymentDate');
+            $table->decimal('amount', 10, 2);
             $table->timestamps();
 
-            $table->foreign('EmployeeID')->references('EmployeeID')->on('employees')->onDelete('cascade');
+            $table->foreign('employeeID')->references('employeeID')->on('employees');
         });
     }
 

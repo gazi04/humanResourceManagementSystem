@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Salary extends Model
 {
     protected $fillable = [
-        'SalaryID',
-        'EmployeeID',
-        'PaymentDate',
-        'Amount'
+        'salaryID',
+        'employeeID',
+        'paymentDate',
+        'amount'
     ];
 }
