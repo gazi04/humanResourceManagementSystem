@@ -10,5 +10,3 @@ use Illuminate\Support\Facades\Hash;
 Route::get('/', function() {return Auth::guard('employee')->user();})->name('dashboard')->middleware(EnsureUserIsLoggedIn::class);
 Route::get('/login', [LoginController::class, 'showLoginPage'])->name('loginPage');
 Route::post('/authenticate', [LoginController::class, 'login'])->name('login');
-Route::get('/signup', [LoginController::class, 'showSignupPage'])->name('signupPage');
-Route::post('/register', [LoginController::class, 'register'])->name('register');
