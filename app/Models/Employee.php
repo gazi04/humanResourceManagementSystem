@@ -10,6 +10,8 @@ class Employee extends Model implements AuthenticatableContract
 {
     use Authenticatable;
 
+    protected $primaryKey = 'employeeID';
+
     protected $fillable = [
         'employeeID',
         'firstName',
