@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -27,8 +25,6 @@ class LoginController extends Controller
         ])->withInput($request->only('phone'));
     }
 
-    public function register(RegisterRequest $request)
     {
-        return 'register successfully';
     }
 }
