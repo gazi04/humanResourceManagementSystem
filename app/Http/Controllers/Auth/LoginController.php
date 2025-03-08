@@ -10,8 +10,16 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function showLoginPage() { return view('Auth.Login'); }
-    public function showSignupPage() { return view('Auth.SignUp'); }
+    public function showLoginPage()
+    {
+        /* TODO- NEED TO REDIRECT EACH USER BASED ON THEIR ROLE */
+        /* HINT- USE MIDDLWARE TO ACHIEVE THAT  */
+        if(!Auth::guard('employee')->user()){
+            return view('Auth.Login');
+        }
+
+        return back();
+    }
 
     public function login(LoginRequest $request): RedirectResponse
     {
@@ -29,10 +37,10 @@ class LoginController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
-        Auth::logout();
+        Auth::guard('employee')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'You have been logged out.');
+        return redirect()->route('loginPage')->with('success', 'You have been logged out.');
     }
 }

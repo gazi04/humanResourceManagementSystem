@@ -17,10 +17,10 @@ class EnsureUserIsLoggedIn
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::guard('employee')->user()){
-            return $next($request);
+        if(!Auth::guard('employee')->user()){
+            return redirect()->route('loginPage');
         }
 
-        return redirect()->route('loginPage');
+        return $next($request);
     }
 }
