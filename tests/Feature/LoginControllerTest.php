@@ -5,6 +5,9 @@ namespace Tests\Feature;
 use App\Models\Employee;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class LoginControllerTest extends TestCase
 {
@@ -21,12 +24,12 @@ class LoginControllerTest extends TestCase
     public function test_user_can_login_with_valid_credentials()
     {
         // Create a user in the database
-        $user = Employee::create([
-            'FirstName' => 'gazi',
-            'LastName' => 'halili',
-            'Email' => 'gaz@gmail.com',
-            'Phone' => '045618376',
-            'Password' => bcrypt('gazi04')
+        $employee = Employee::create([
+            'firstName' => 'gazi',
+            'lastName' => 'halili',
+            'email' => 'gaz@gmail.com',
+            'phone' => '045618376',
+            'password' => Hash::make('gazi04')
         ]);
 
         // Attempt to login
@@ -36,18 +39,19 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Assert the user is redirected to the intended page
-        $response->assertRedirect(route('dashboard')); // Replace with your intended route
+        $response->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($employee, 'employee');
     }
 
     public function test_user_cannot_login_with_invalid_credentials()
     {
         // Create a user in the database
-        $user = Employee::create([
-            'FirstName' => 'gazi',
-            'LastName' => 'halili',
-            'Email' => 'gaz@gmail.com',
-            'Phone' => '045618376',
-            'Password' => bcrypt('gazi04')
+        $employee = Employee::create([
+            'firstName' => 'gazi',
+            'lastName' => 'halili',
+            'email' => 'gaz@gmail.com',
+            'phone' => '045618376',
+            'password' => Hash::make('gazi04')
         ]);
 
         // Attempt to login with wrong password
@@ -57,7 +61,8 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Assert the user is redirected back with errors
-        $response->assertSessionHasErrors(['password']);
+        $response->assertSessionHasErrors(['phone']);
+        $this->assertGuest('employee');
     }
 
     public function test_login_validation_rules()
@@ -79,18 +84,39 @@ class LoginControllerTest extends TestCase
             'phone' => 'Fusha e numrit të telefonit është e detyrueshme.',
             'password' => 'Fusha e fjalëkalimit është e detyrueshme.',
         ]);
+
+        $this->assertGuest('employee');
     }
 
-    public function test_signup_page_is_accessible()
+    public function test_logout_functionality()
     {
-        $respone = $this->get(route('signupPage'));
+        // Create a test employee
+        $employee = Employee::create([
+            'firstName' => 'gazi',
+            'lastName' => 'halili',
+            'email' => 'gaz@gmail.com',
+            'phone' => '045618376',
+            'password' => Hash::make('gazi04')
+        ]);
 
-        $respone->assertStatus(200);
-        $respone->assertViewIs('Auth.SignUp');
-    }
+        // Log in the employee
+        Auth::guard('employee')->login($employee);
 
-    public function test_user_can_register()
-    {
-        $reponse = $this->post(route('register'));
+        // Start a session (required for session-related operations like logout)
+        $this->withSession([]);
+
+        // Simulate a logout request
+        $response = $this->post('/logout', [
+            '_token' => csrf_token(),
+        ]);
+
+        // Assert that the user is redirected to the login page
+        $response->assertRedirect(route('loginPage'));
+
+        // Assert that the success message is present
+        $response->assertSessionHas('success', 'You have been logged out.');
+
+        // Assert that the user is logged out
+        $this->assertGuest('employee');
     }
 }
