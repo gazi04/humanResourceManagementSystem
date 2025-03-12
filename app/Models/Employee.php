@@ -10,6 +10,7 @@ class Employee extends Model implements AuthenticatableContract
 {
     use Authenticatable;
 
+    protected $table = 'employees';
     protected $primaryKey = 'employeeID';
 
     protected $fillable = [
@@ -33,4 +34,14 @@ class Employee extends Model implements AuthenticatableContract
         'password',
         'remember_token',
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'employee_roles', 'employeeID', 'roleID');
+    }
+
+    public function getRoleName()
+    {
+        return $this->roles->pluck('roleName')->toArray();
+    }
 }
