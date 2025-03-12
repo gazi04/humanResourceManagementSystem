@@ -13,4 +13,14 @@ class EmployeeRole extends Model
         'employeeID',
         'roleID'
     ];
+
+    public function employee()
+    {
+        return $this->hasMany(Employee::class, 'employeeID', 'employeeID');
+    }
+
+    public function role()
+    {
+        return $this->hasMany(Role::class, 'roleID', 'roleID');
+    }
 }

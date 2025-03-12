@@ -13,8 +13,13 @@ class Role extends Model
         'roleName'
     ];
 
+    public function EmployeeRole()
+    {
+        return $this->belongsTo(EmployeeRole::class, 'roleID', 'roleID');
+    }
+
     public function employees()
     {
-        return $this->belongsToMany(Employee::class, 'employee_roles', 'roleID', 'employeeID');
+        return $this->hasMany(Employee::class, 'roleID', 'roleID');
     }
 }

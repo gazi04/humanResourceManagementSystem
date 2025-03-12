@@ -35,13 +35,18 @@ class Employee extends Model implements AuthenticatableContract
         'remember_token',
     ];
 
-    public function roles()
+    public function employeeRole()
     {
-        return $this->belongsToMany(Role::class, 'employee_roles', 'employeeID', 'roleID');
+        return $this->belongsTo(EmployeeRole::class, 'employeeID', 'employeeID');
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'roleID', 'roleID');
     }
 
     public function getRoleName()
     {
-        return $this->roles->pluck('roleName')->toArray();
+        return $this->employeeRole()->first()->role()->first()["roleName"];
     }
 }
