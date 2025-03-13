@@ -12,19 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id('EmployeeID');
-            $table->string('FirstName', 50);
-            $table->string('LastName', 50);
-            $table->string('Email', 100)->unique();
-            $table->string('Password');
-            $table->string('Phone', 15);
-            $table->date('HireDate')->nullable();
-            $table->string('JobTitle', 100)->nullable();
-            $table->unsignedBigInteger('DepartmentID')->nullable();
-            $table->unsignedBigInteger('SupervisorID')->nullable();
-            $table->decimal('Salary', 10, 2)->nullable();
-            $table->unsignedBigInteger('ContractID')->nullable();
-            $table->enum('Status', ['Active', 'Inactive', 'On Leave'])->default('Inactive');
+            $table->id('employeeID');
+            $table->string('firstName', 50);
+            $table->string('lastName', 50);
+            $table->string('email', 100)->unique();
+            $table->string('password');
+            $table->string('phone', 15);
+            $table->date('hireDate')->nullable();
+            $table->string('jobTitle', 100)->nullable();
+            $table->unsignedBigInteger('departmentID')->nullable();
+            $table->unsignedBigInteger('supervisorID')->nullable();
+            $table->decimal('salary', 10, 2)->nullable();
+            $table->unsignedBigInteger('contractID')->nullable();
+            $table->enum('status', ['Active', 'Inactive', 'On Leave'])->default('Inactive');
+            $table->string('remember_token')->nullable();
             $table->timestamps();
         });
     }

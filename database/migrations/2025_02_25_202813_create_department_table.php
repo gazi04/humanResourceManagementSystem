@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('departments', function (Blueprint $table) {
-            $table->id('DepartmentID');
-            $table->string('DepartmentName', 100);
-            $table->unsignedBigInteger('SupervisorID')->nullable();
-            $table->decimal('Budget', 15, 2)->nullable();
+            $table->id('departmentID');
+            $table->string('departmentName', 100);
+            $table->unsignedBigInteger('supervisorID')->nullable();
+            $table->decimal('budget', 15, 2)->nullable();
             $table->timestamps();
         });
     }

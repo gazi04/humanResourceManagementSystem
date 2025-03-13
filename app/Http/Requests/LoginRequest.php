@@ -11,7 +11,7 @@ class LoginRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,9 +22,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            /* TODO- ADD UNIQUE RULE */
-            'phone' => 'required|integer',
-            'password' => 'required|string'
+            /* TODO- ADD A UNIQUE RULE TO THE PASSWORD PROPERTY */
+            'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/'],
+            'password' => 'required|string|min:6'
         ];
     }
 
@@ -36,8 +36,11 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'phone.required' => 'Fusha e numrit te telefonit eshte e obligueshme qe te plotesohet.',
-            'password.required' => 'Fusha e fjalekalimit eshte e obligueshme qe te plotesohet.',
+            'phone.required' => 'Fusha e numrit të telefonit është e detyrueshme.',
+            'phone.regex' => 'Numri i telefonit nuk është i vlefshëm. Duhet të fillojë me +383 ose 0 dhe të përmbajë 7 shifra pas prefiksit.',
+            'password.required' => 'Fusha e fjalëkalimit është e detyrueshme.',
+            'password.string' => 'Fjalëkalimi duhet të jetë një varg karakteresh.',
+            'password.min' => 'Fjalëkalimi duhet të ketë të paktën 6 karaktere.',
         ];
     }
 }

@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reports', function (Blueprint $table) {
-            $table->id('ReportID');
-            $table->enum('ReportType', ['Employee Count', 'Department Budget', 'Total Salaries', 'Leave Summary']);
-            $table->unsignedBigInteger('GeneratedBy');
-            $table->timestamp('GeneratedOn')->useCurrent();
-            $table->json('ReportData');
+            $table->id('reportID');
+            $table->enum('reportType', ['Employee Count', 'Department Budget', 'Total Salaries', 'Leave Summary']);
+            $table->unsignedBigInteger('generatedBy');
+            $table->timestamp('generatedOn')->useCurrent();
+            $table->json('reportData');
             $table->timestamps();
 
-            $table->foreign('GeneratedBy')->references('EmployeeID')->on('employees')->onDelete('cascade');
+            $table->foreign('generatedBy')->references('employeeID')->on('employees');
         });
     }
 
