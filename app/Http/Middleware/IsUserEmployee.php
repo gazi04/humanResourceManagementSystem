@@ -4,10 +4,13 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use App\Traits\AuthHelper;
 
 class IsUserEmployee
 {
+    use AuthHelper;
     /**
      * Handle an incoming request.
      *
@@ -15,6 +18,12 @@ class IsUserEmployee
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $user = Auth::guard('employee')->user();
+        if($user->getRoleName() !== 'employee')
+        {
+            return $this->logoutUser($request);
+        }
+
         return $next($request);
     }
 }
