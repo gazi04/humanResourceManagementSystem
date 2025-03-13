@@ -15,8 +15,6 @@ class LoginController extends Controller
 
     public function showLoginPage()
     {
-        /* TODO- NEED TO REDIRECT EACH USER BASED ON THEIR ROLE */
-        /* HINT- USE MIDDLWARE TO ACHIEVE THAT  */
         if(!Auth::guard('employee')->user()){
             return view('Auth.Login');
         }
@@ -24,6 +22,8 @@ class LoginController extends Controller
         return back();
     }
 
+    /* TODO- NEED TO TAKE INTO CONSIDERATION THAT AN USER MIGHT NOT HAVE A ROLE YET, SO THE SYSTEM SHOULD WORK IN THIS CASE ALSO  */
+    /* HINT- AN SOLUTION TO THIS PROBLEM IS TO MAKE A DEFAULT ROLE LIKE `EMPLOYEE` FOR EACH USER THAT IS CREATED  */
     public function login(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->only('phone', 'password');
