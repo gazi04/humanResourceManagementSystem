@@ -141,6 +141,12 @@ Version      : 3.6
     url("../fonts/CircularStd-BlackItalic.woff") format("woff");
 }
 
+@font-face {
+  font-family: "Lexend";
+  src: url("../fonts/Lexend-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
 /*-----------------
 	1. General
 -----------------------*/
@@ -149,7 +155,7 @@ html {
   height: 100%;
 }
 body {
-  font-family: "CircularStd", sans-serif;
+  font-family: "Lexend", sans-serif;
   font-size: 0.9375rem;
   color: #1f1f1f;
   background-color: #f7f7f7;
@@ -1186,7 +1192,7 @@ table.dataTable thead > tr > td.sorting {
 -----------------------*/
 
 .header {
-  background: #667eea;
+  background: black;
   border-bottom: 1px solid transparent;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
   height: 60px;
@@ -1352,7 +1358,7 @@ table.dataTable thead > tr > td.sorting {
 -----------------------*/
 
 .sidebar {
-  background-color: #34444c;
+  background-color: #0c0d19;
   border-right: 1px solid transparent;
   bottom: 0;
   left: 0;
@@ -1848,9 +1854,7 @@ table.dataTable thead > tr > td.sorting {
   font-size: 30px;
   font-weight: 600;
 }
-.dash-widget-info > span {
-  font-size: 16px;
-}
+
 .dash-statistics .stats-info {
   margin-bottom: 5px;
 }
