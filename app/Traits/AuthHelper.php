@@ -10,9 +10,6 @@ trait AuthHelper
 {
     /**
      * Log out the user and invalidate the session.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function logoutUser(Request $request): RedirectResponse
     {

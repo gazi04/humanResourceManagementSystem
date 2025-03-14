@@ -8,18 +8,15 @@ use App\Traits\AuthHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
     use AuthHelper;
 
-    public function showLoginPage()
+    public function showLoginPage(): View
     {
-        if(!Auth::guard('employee')->user()){
-            return view('Auth.Login');
-        }
-
-        return back();
+        return view('Auth.Login');
     }
 
     /* TODO- NEED TO TAKE INTO CONSIDERATION THAT AN USER MIGHT NOT HAVE A ROLE YET, SO THE SYSTEM SHOULD WORK IN THIS CASE ALSO  */
