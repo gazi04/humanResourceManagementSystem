@@ -19,15 +19,22 @@ class LoginController extends Controller
         return view('Auth.Login');
     }
 
-    /* TODO- NEED TO TAKE INTO CONSIDERATION THAT AN USER MIGHT NOT HAVE A ROLE YET, SO THE SYSTEM SHOULD WORK IN THIS CASE ALSO  */
-    /* HINT- AN SOLUTION TO THIS PROBLEM IS TO MAKE A DEFAULT ROLE LIKE `EMPLOYEE` FOR EACH USER THAT IS CREATED  */
     public function login(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->only('phone', 'password');
 
         if(Auth::guard('employee')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('dashboard');
+
+            /** @var Employee $user */
+            $user = Auth::guard('employee')->user();
+            return match ($user->getRoleName()) {
+                'admin' => redirect()->route('admin-dashboard'),
+                'hr' => redirect()->route('hr-dashboard'),
+                'manager' => redirect()->route('manager-dashboard'),
+                'employee' => redirect()->route('employee-dashboard'),
+                default => abort(403),
+            };
         }
 
         return back()->withErrors([
