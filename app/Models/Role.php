@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
@@ -13,12 +15,18 @@ class Role extends Model
         'roleName'
     ];
 
-    public function EmployeeRole()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\EmployeeRole, $this>
+     */
+    public function EmployeeRole(): BelongsTo
     {
         return $this->belongsTo(EmployeeRole::class, 'roleID', 'roleID');
     }
 
-    public function employees()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Employee, $this>
+     */
+    public function employees(): HasMany
     {
         return $this->hasMany(Employee::class, 'roleID', 'roleID');
     }

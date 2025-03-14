@@ -6,11 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use App\Traits\AuthHelper;
+use App\Models\Employee;
 
 class IsUserHR
 {
-    use AuthHelper;
     /**
      * Handle an incoming request.
      *
@@ -18,10 +17,10 @@ class IsUserHR
      */
     public function handle(Request $request, Closure $next): Response
     {
+        /** @var Employee $user */
         $user = Auth::guard('employee')->user();
-        if($user->getRoleName() !== 'hr')
-        {
-            return $this->logoutUser($request);
+        if($user->getRoleName() !== 'hr'){
+            abort(403);
         }
 
         return $next($request);

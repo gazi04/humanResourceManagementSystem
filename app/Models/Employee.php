@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employee extends Model implements AuthenticatableContract
 {
@@ -35,17 +36,23 @@ class Employee extends Model implements AuthenticatableContract
         'remember_token',
     ];
 
-    public function employeeRole()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\EmployeeRole, $this>
+     */
+    public function employeeRole(): BelongsTo
     {
         return $this->belongsTo(EmployeeRole::class, 'employeeID', 'employeeID');
     }
 
-    public function role()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Role, $this>
+     */
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'roleID', 'roleID');
     }
 
-    public function getRoleName()
+    public function getRoleName(): string
     {
         return $this->employeeRole()->first()->role()->first()["roleName"];
     }

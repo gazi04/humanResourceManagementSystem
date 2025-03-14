@@ -8,7 +8,6 @@ use App\Http\Middleware\IsUserHR;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 Route::get('/', [EmployeeController::class, 'index'])->name('dashboard')->middleware([EnsureUserIsLoggedIn::class]);
