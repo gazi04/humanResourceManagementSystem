@@ -13,15 +13,15 @@ class LoginControllerTest extends TestCase
 {
     use RefreshDatabase; // Refresh the database after each test
 
-    public function test_login_page_is_accessible()
+    public function test_login_page_is_accessible(): void
     {
-        $response = $this->get(route('loginPage'));
+        $testResponse = $this->get(route('loginPage'));
 
-        $response->assertStatus(200);
-        $response->assertViewIs('Auth.Login');
+        $testResponse->assertOk();
+        $testResponse->assertViewIs('Auth.Login');
     }
 
-    public function test_user_can_login_with_valid_credentials()
+    public function test_user_can_login_with_valid_credentials(): void
     {
         // Create a user in the database
         $employee = Employee::create([
@@ -33,20 +33,20 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Attempt to login
-        $response = $this->post(route('login'), [
+        $testResponse = $this->post(route('login'), [
             'phone' => '045618376',
             'password' => 'gazi04',
         ]);
 
         // Assert the user is redirected to the intended page
-        $response->assertRedirect(route('dashboard'));
+        $testResponse->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($employee, 'employee');
     }
 
-    public function test_user_cannot_login_with_invalid_credentials()
+    public function test_user_cannot_login_with_invalid_credentials(): void
     {
         // Create a user in the database
-        $employee = Employee::create([
+        Employee::create([
             'firstName' => 'gazi',
             'lastName' => 'halili',
             'email' => 'gaz@gmail.com',
@@ -55,32 +55,32 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Attempt to login with wrong password
-        $response = $this->post(route('login'), [
+        $testResponse = $this->post(route('login'), [
             'phone' => '123456789',
             'password' => 'wrongpassword',
         ]);
 
         // Assert the user is redirected back with errors
-        $response->assertSessionHasErrors(['phone']);
+        $testResponse->assertSessionHasErrors(['phone']);
         $this->assertGuest('employee');
     }
 
-    public function test_login_validation_rules()
+    public function test_login_validation_rules(): void
     {
         // Attempt to login without providing phone and password
-        $response = $this->post(route('login'), []);
+        $testResponse = $this->post(route('login'), []);
 
         // Assert validation errors for phone and password
-        $response->assertSessionHasErrors(['phone', 'password']);
+        $testResponse->assertSessionHasErrors(['phone', 'password']);
     }
 
-    public function test_login_validation_messages()
+    public function test_login_validation_messages(): void
     {
         // Attempt to login without providing phone and password
-        $response = $this->post(route('login'), []);
+        $testResponse = $this->post(route('login'), []);
 
         // Assert custom validation messages
-        $response->assertSessionHasErrors([
+        $testResponse->assertSessionHasErrors([
             'phone' => 'Fusha e numrit të telefonit është e detyrueshme.',
             'password' => 'Fusha e fjalëkalimit është e detyrueshme.',
         ]);
@@ -88,7 +88,7 @@ class LoginControllerTest extends TestCase
         $this->assertGuest('employee');
     }
 
-    public function test_logout_functionality()
+    public function test_logout_functionality(): void
     {
         // Create a test employee
         $employee = Employee::create([
@@ -106,15 +106,15 @@ class LoginControllerTest extends TestCase
         $this->withSession([]);
 
         // Simulate a logout request
-        $response = $this->post('/logout', [
+        $testResponse = $this->post('/logout', [
             '_token' => csrf_token(),
         ]);
 
         // Assert that the user is redirected to the login page
-        $response->assertRedirect(route('loginPage'));
+        $testResponse->assertRedirect(route('loginPage'));
 
         // Assert that the success message is present
-        $response->assertSessionHas('success', 'You have been logged out.');
+        $testResponse->assertSessionHas('success', 'You have been logged out.');
 
         // Assert that the user is logged out
         $this->assertGuest('employee');
