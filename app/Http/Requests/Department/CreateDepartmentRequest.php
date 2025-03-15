@@ -4,7 +4,7 @@ namespace App\Http\Requests\Department;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRequest extends FormRequest
+class CreateDepartmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departamentID' => 'required|numeric|integer|exists:departaments, departamentID',
-            'newDepartamentName' => 'required|string|unique:departaments, departamentName'
+            'departmentName' => 'required|string|unique:departments,departmentName'
         ];
     }
 
@@ -38,14 +37,9 @@ class UpdateRequest extends FormRequest
             /* TODO- */
             /* DONAT- SHKRUAJ MESAZHET TE CILAT DO TI SHFAQEN PERDORUESIT NESE RREGULLAT PERMBUSHEN */
             /* MESAZHI TE JET NE SHQIP */
-            'departamentID.required' => '',
-            'departamentID.numeric' => '',
-            'departamentID.integer' => '',
-            'departamentID.exists' => '',
-
-            'newDepartamentName.required' => '',
-            'newDepartamentName.string' => '',
-            'newDepartamentName.unique' => '',
+            'departmentName.required' => '',
+            'departmentName.string' => '',
+            'departmentName.unique' => '',
         ];
     }
 }

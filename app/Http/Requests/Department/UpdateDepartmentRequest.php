@@ -4,7 +4,7 @@ namespace App\Http\Requests\Department;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteRequest extends FormRequest
+class UpdateDepartmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +23,7 @@ class DeleteRequest extends FormRequest
     {
         return [
             'departamentID' => 'required|numeric|integer|exists:departaments, departamentID',
+            'newDepartamentName' => 'required|string|unique:departaments, departamentName'
         ];
     }
 
@@ -41,7 +42,10 @@ class DeleteRequest extends FormRequest
             'departamentID.numeric' => '',
             'departamentID.integer' => '',
             'departamentID.exists' => '',
+
+            'newDepartamentName.required' => '',
+            'newDepartamentName.string' => '',
+            'newDepartamentName.unique' => '',
         ];
     }
-
 }
