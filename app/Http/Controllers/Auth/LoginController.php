@@ -8,7 +8,9 @@ use App\Traits\AuthHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
+use Illuminate\Auth\SessionGuard;
+use App\Models\Employee;
 
 class LoginController extends Controller
 {
@@ -23,7 +25,9 @@ class LoginController extends Controller
     {
         $credentials = $request->only('phone', 'password');
 
-        if(Auth::guard('employee')->attempt($credentials)) {
+        /** @var SessionGuard $guard */
+        $guard = Auth::guard('employee');
+        if($guard->attempt($credentials)) {
             $request->session()->regenerate();
 
             /** @var Employee $user */
