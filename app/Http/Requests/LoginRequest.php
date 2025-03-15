@@ -23,7 +23,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/', 'exists:employees,phone'],
-            'password' => 'required|string|min:6|exists:employees,password'
+            'password' => 'required|string|min:6'
         ];
     }
 
