@@ -22,9 +22,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            /* TODO- ADD A UNIQUE RULE TO THE PASSWORD PROPERTY */
-            'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/'],
-            'password' => 'required|string|min:6'
+            'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/', 'exists:employees,phone'],
+            'password' => 'required|string|min:6|exists:employees,password'
         ];
     }
 
