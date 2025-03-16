@@ -22,7 +22,7 @@ class DeleteDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departamentID' => 'required|integer|min:1|exists:departments, departamentID',
+            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
         ];
     }
 
@@ -34,10 +34,10 @@ class DeleteDepartmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'departamentID.required' => 'ID e departamentit është e detyrueshme.',
-            'departamentID.integer' => 'ID e departamentit duhet të jetë një numër i plotë.',
-            'departamentID.min' => 'ID e departamentit duhet të jetë më e madhe se 0.',
-            'departamentID.exists' => 'Departamenti me këtë ID nuk egziston.',
+            'departmentID.required' => 'ID e departamentit është e detyrueshme.',
+            'departmentID.integer' => 'ID e departamentit duhet të jetë një numër i plotë.',
+            'departmentID.min' => 'ID e departamentit duhet të jetë më e madhe se 0.',
+            'departmentID.exists' => 'Departamenti me këtë ID nuk egziston.',
         ];
     }
 }

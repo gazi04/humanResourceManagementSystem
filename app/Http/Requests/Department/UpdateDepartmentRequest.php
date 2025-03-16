@@ -22,8 +22,8 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departamentID' => 'required|integer|min:1|exists:departments, departamentID',
-            'newDepartamentName' => 'required|string|unique:departments, departamentName',
+            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
+            'newDepartmentName' => 'required|string|unique:departments,departmentName',
         ];
     }
 
@@ -35,14 +35,14 @@ class UpdateDepartmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'departamentID.required' => 'ID e departamentit është e detyrueshme.',
-            'departamentID.integer' => 'ID e departamentit duhet të jetë një numër i plotë.',
-            'departamentID.min' => 'ID e departamentit duhet të jetë më e madhe se 0.',
-            'departamentID.exists' => 'Departamenti me këtë ID nuk egziston.',
+            'departmentID.required' => 'ID e departamentit është e detyrueshme.',
+            'departmentID.integer' => 'ID e departamentit duhet të jetë një numër i plotë.',
+            'departmentID.min' => 'ID e departamentit duhet të jetë më e madhe se 0.',
+            'departmentID.exists' => 'Departamenti me këtë ID nuk egziston.',
 
-            'newDepartamentName.required' => 'Emri i ri i departamentit është i detyrueshëm.',
-            'newDepartamentName.string' => 'Emri i ri i departamentit duhet të jetë një varg tekstual.',
-            'newDepartamentName.unique' => 'Ekziston tashmë një departament me këtë emër.',
+            'newDepartmentName.required' => 'Emri i ri i departamentit është i detyrueshëm.',
+            'newDepartmentName.string' => 'Emri i ri i departamentit duhet të jetë një varg tekstual.',
+            'newDepartmentName.unique' => 'Ekziston tashmë një departament me këtë emër.',
         ];
     }
 }
