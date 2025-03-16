@@ -6,6 +6,7 @@ use App\Models\Employee;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsNotLoggedIn
@@ -17,26 +18,8 @@ class EnsureUserIsNotLoggedIn
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!Auth::guard('employee')->check()){
-            /** @var Employee $employee */
-            $employee = Auth::guard('employee')->user();
-            if($employee->getRoleName() == 'admin'){
-                /* TODO- REDIRECT THE USERS TO THE CORRESPONDING PAGE BASED ON THEIR ROLES */
-                dd('admin');
-            }
-
-            if($employee->getRoleName() == 'manager'){
-                dd('admin');
-            }
-
-            if($employee->getRoleName() == 'hr'){
-                dd('admin');
-            }
-
-            if($employee->getRoleName() == 'employee'){
-                dd('admin');
-            }
-
+        if(Auth::guard('employee')->check()){
+            return redirect()->route('dashboard');
         }
 
         return $next($request);
