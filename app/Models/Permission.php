@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Permission extends Model
 {
     protected $table = 'permissions';
+
     protected $primaryKey = 'permissionID';
 
     protected $fillable = [
         'permissionID',
         'permissionName',
-        'description'
+        'description',
     ];
 }

@@ -5,10 +5,10 @@ namespace Tests\Feature;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class LoginControllerTest extends TestCase
 {
@@ -34,9 +34,9 @@ class LoginControllerTest extends TestCase
 
         $role = Role::create(['roleName' => 'employee']);
 
-        $employeeRole = EmployeeRole::create([
+        EmployeeRole::create([
             'employeeID' => $employee['employeeID'],
-            'roleID' => $role['roleID']
+            'roleID' => $role['roleID'],
         ]);
 
         // Attempt to login
@@ -63,11 +63,10 @@ class LoginControllerTest extends TestCase
 
         $role = Role::create(['roleName' => 'admin']);
 
-        $employeeRole = EmployeeRole::create([
+        EmployeeRole::create([
             'employeeID' => $admin['employeeID'],
-            'roleID' => $role['roleID']
+            'roleID' => $role['roleID'],
         ]);
-
 
         // Attempt to login
         $testResponse = $this->post(route('login'), [
@@ -93,9 +92,9 @@ class LoginControllerTest extends TestCase
 
         $role = Role::create(['roleName' => 'hr']);
 
-        $employeeRole = EmployeeRole::create([
+        EmployeeRole::create([
             'employeeID' => $hr['employeeID'],
-            'roleID' => $role['roleID']
+            'roleID' => $role['roleID'],
         ]);
 
         // Attempt to login
@@ -122,9 +121,9 @@ class LoginControllerTest extends TestCase
 
         $role = Role::create(['roleName' => 'manager']);
 
-        $employeeRole = EmployeeRole::create([
+        EmployeeRole::create([
             'employeeID' => $manager['employeeID'],
-            'roleID' => $role['roleID']
+            'roleID' => $role['roleID'],
         ]);
 
         // Attempt to login
@@ -146,7 +145,7 @@ class LoginControllerTest extends TestCase
             'lastName' => 'halili',
             'email' => 'gaz@gmail.com',
             'phone' => '045618376',
-            'password' => Hash::make('gazi04')
+            'password' => Hash::make('gazi04'),
         ]);
 
         // Attempt to login with wrong password
@@ -191,7 +190,7 @@ class LoginControllerTest extends TestCase
             'lastName' => 'halili',
             'email' => 'gaz@gmail.com',
             'phone' => '045618376',
-            'password' => Hash::make('gazi04')
+            'password' => Hash::make('gazi04'),
         ]);
 
         // Log in the employee

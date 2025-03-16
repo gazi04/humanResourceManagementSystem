@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employee extends Model implements AuthenticatableContract
@@ -12,6 +12,7 @@ class Employee extends Model implements AuthenticatableContract
     use Authenticatable;
 
     protected $table = 'employees';
+
     protected $primaryKey = 'employeeID';
 
     protected $fillable = [
@@ -54,6 +55,6 @@ class Employee extends Model implements AuthenticatableContract
 
     public function getRoleName(): string
     {
-        return $this->employeeRole()->first()->role()->first()["roleName"];
+        return $this->employeeRole()->first()->role()->first()['roleName'];
     }
 }

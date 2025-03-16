@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Models\Employee;
 use App\Traits\AuthHelper;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\View\View;
-use Illuminate\Auth\SessionGuard;
-use App\Models\Employee;
 
 class LoginController extends Controller
 {
@@ -27,11 +27,12 @@ class LoginController extends Controller
 
         /** @var SessionGuard $guard */
         $guard = Auth::guard('employee');
-        if($guard->attempt($credentials)) {
+        if ($guard->attempt($credentials)) {
             $request->session()->regenerate();
 
             /** @var Employee $user */
             $user = Auth::guard('employee')->user();
+
             return match ($user->getRoleName()) {
                 'admin' => redirect()->route('admin-dashboard'),
                 'hr' => redirect()->route('hr-dashboard'),

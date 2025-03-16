@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Vacation extends Model
 {
     protected $table = 'vacations';
+
     protected $primaryKey = 'vacationID';
 
     protected $fillable = [
@@ -15,6 +16,6 @@ class Vacation extends Model
         'leaveType',
         'startDate',
         'endDate',
-        'status'
+        'status',
     ];
 }

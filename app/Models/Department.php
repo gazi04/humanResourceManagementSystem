@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Department extends Model
 {
     protected $table = 'departments';
+
     protected $primaryKey = 'departmentID';
 
     protected $fillable = [
         'departmentID',
         'departmentName',
         'supervisorID',
-        'budget'
+        'budget',
     ];
 }

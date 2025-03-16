@@ -2,11 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Employee;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsNotLoggedIn
@@ -18,7 +16,7 @@ class EnsureUserIsNotLoggedIn
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::guard('employee')->check()){
+        if (Auth::guard('employee')->check()) {
             return redirect()->route('dashboard');
         }
 
