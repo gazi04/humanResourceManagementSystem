@@ -6,10 +6,11 @@ use App\Http\Requests\Department\CreateDepartmentRequest;
 use App\Http\Requests\Department\DeleteDepartmentRequest;
 use App\Http\Requests\Department\UpdateDepartmentRequest;
 use App\Models\Department;
+use Illuminate\Http\RedirectResponse;
 
 class DepartmentController extends Controller
 {
-    public function create(CreateDepartmentRequest $request)
+    public function create(CreateDepartmentRequest $request): RedirectResponse
     {
         $validated = $request->only('departmentName', 'supervisorID');
         Department::create($validated);
@@ -17,7 +18,7 @@ class DepartmentController extends Controller
         return redirect()->route('admin-dashboard')->with('message', 'Departamenti është krijuar me sukses.');
     }
 
-    public function delete(DeleteDepartmentRequest $request)
+    public function delete(DeleteDepartmentRequest $request): RedirectResponse
     {
         $validated = $request->only('departmentID');
         Department::where('departmentID', $validated['departmentID'])->delete();
@@ -25,7 +26,7 @@ class DepartmentController extends Controller
         return redirect()->route('admin-dashboard')->with('message', 'Departamenti është fshirë me sukses.');
     }
 
-    public function update(UpdateDepartmentRequest $request)
+    public function update(UpdateDepartmentRequest $request): RedirectResponse
     {
         $validated = $request->only('departmentID', 'newDepartmentName');
         $department = Department::where('departmentID', $validated['departmentID'])->first();
