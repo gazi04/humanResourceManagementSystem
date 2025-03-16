@@ -22,7 +22,8 @@ class CreateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departmentName' => 'required|string|unique:departments,departmentName'
+            'departmentName' => 'required|string|unique:departments,departmentName',
+            'supervisorID' => 'required|integer|min:1|exists:employees,employeeID',
         ];
     }
 
@@ -34,12 +35,14 @@ class CreateDepartmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            /* TODO- */
-            /* DONAT- SHKRUAJ MESAZHET TE CILAT DO TI SHFAQEN PERDORUESIT NESE RREGULLAT PERMBUSHEN */
-            /* MESAZHI TE JET NE SHQIP */
-            'departmentName.required' => '',
-            'departmentName.string' => '',
-            'departmentName.unique' => '',
+            'departmentName.required' => 'Emri i departamentit është i detyrueshëm.',
+            'departmentName.string' => 'Emri i departamentit duhet të jetë një varg tekstual.',
+            'departmentName.unique' => 'Ekziston tashmë një departament me këtë emër.',
+
+            'supervisorID.required' => 'ID e mbikëqyrësit është e detyrueshme.',
+            'supervisorID.integer' => 'ID e mbikëqyrësit duhet të jetë një numër i plotë.',
+            'supervisorID.min' => 'ID e mbikëqyrësit duhet të jetë më e madhe se 0.',
+            'supervisorID.exists' => 'ID e mbikëqyrësit nuk egziston ne tabelen e punonjesve.',
         ];
     }
 }

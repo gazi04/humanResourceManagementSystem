@@ -22,8 +22,8 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departamentID' => 'required|numeric|integer|exists:departaments, departamentID',
-            'newDepartamentName' => 'required|string|unique:departaments, departamentName'
+            'departamentID' => 'required|integer|min:1|exists:departments, departamentID',
+            'newDepartamentName' => 'required|string|unique:departments, departamentName',
         ];
     }
 
@@ -35,17 +35,14 @@ class UpdateDepartmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            /* TODO- */
-            /* DONAT- SHKRUAJ MESAZHET TE CILAT DO TI SHFAQEN PERDORUESIT NESE RREGULLAT PERMBUSHEN */
-            /* MESAZHI TE JET NE SHQIP */
-            'departamentID.required' => '',
-            'departamentID.numeric' => '',
-            'departamentID.integer' => '',
-            'departamentID.exists' => '',
+            'departamentID.required' => 'ID e departamentit është e detyrueshme.',
+            'departamentID.integer' => 'ID e departamentit duhet të jetë një numër i plotë.',
+            'departamentID.min' => 'ID e departamentit duhet të jetë më e madhe se 0.',
+            'departamentID.exists' => 'Departamenti me këtë ID nuk egziston.',
 
-            'newDepartamentName.required' => '',
-            'newDepartamentName.string' => '',
-            'newDepartamentName.unique' => '',
+            'newDepartamentName.required' => 'Emri i ri i departamentit është i detyrueshëm.',
+            'newDepartamentName.string' => 'Emri i ri i departamentit duhet të jetë një varg tekstual.',
+            'newDepartamentName.unique' => 'Ekziston tashmë një departament me këtë emër.',
         ];
     }
 }
