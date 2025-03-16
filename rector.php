@@ -3,15 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeRector;
-use Rector\Naming\Rector\Assign\RenameVariableToMatchMethodCallReturnTypeRector;
-use Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeCallRector;
-use RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector;
-use RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector;
-use RectorLaravel\Rector\FuncCall\TypeHintTappableCallRector;
-use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector;
-use Rector\TypeDeclaration\Rector\FunctionLike\AddParamTypeSplFixedArrayRector;
-use Rector\TypeDeclaration\Rector\ClassMethod\AddParamTypeFromPropertyTypeRector;
+use RectorLaravel\Set\LaravelLevelSetList;
+use RectorLaravel\Set\LaravelSetList;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -20,6 +13,14 @@ return RectorConfig::configure()
     ])
     ->withPhpSets()
     ->withAttributesSets(symfony: true, doctrine: true)
+    ->withSets([
+        LaravelLevelSetList::UP_TO_LARAVEL_110,
+
+        LaravelSetList::LARAVEL_CODE_QUALITY,
+        LaravelSetList::LARAVEL_COLLECTION,
+        LaravelSetList::LARAVEL_STATIC_TO_INJECTION,
+        LaravelSetList::LARAVEL_COLLECTION,
+    ])
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
@@ -29,16 +30,14 @@ return RectorConfig::configure()
         strictBooleans: true,
     )
     ->withRules([
-        ClosureReturnTypeRector::class,
-        RenameVariableToMatchMethodCallReturnTypeRector::class,
-        ReturnTypeFromStrictNativeCallRector::class,
-        AddGenericReturnTypeToRelationsRector::class,
-        AssertStatusToAssertMethodRector::class,
-        TypeHintTappableCallRector::class,
-        TypedPropertyFromStrictConstructorRector::class,
-        AddParamTypeSplFixedArrayRector::class,
-        AddParamTypeFromPropertyTypeRector::class,
+        \RectorLaravel\Rector\If_\AbortIfRector::class,
+        \RectorLaravel\Rector\ClassMethod\AddGenericReturnTypeToRelationsRector::class,
+        \RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector::class,
+        \RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector::class,
+        \RectorLaravel\Rector\FuncCall\FactoryFuncCallToStaticCallRector::class,
+        \RectorLaravel\Rector\MethodCall\RedirectBackToBackHelperRector::class,
+        \RectorLaravel\Rector\If_\ThrowIfRector::class,
+        \RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector::class,
+        \RectorLaravel\Rector\PropertyFetch\ReplaceFakerInstanceWithHelperRector::class,
+        \RectorLaravel\Rector\StaticCall\RouteActionCallableRector::class,
     ]);
-    /* ->withTypeCoverageLevel(0) */
-    /* ->withDeadCodeLevel(0) */
-    /* ->withCodeQualityLevel(0); */

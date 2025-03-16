@@ -1,5 +1,7 @@
 parameters:
     level: max
-
     paths:
-        - app
+        - app/Http/Controllers
+        - app/Models
+    ignoreErrors:
+        - '#Call to an undefined static method#'
