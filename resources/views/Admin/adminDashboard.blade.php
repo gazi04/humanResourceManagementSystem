@@ -19,23 +19,23 @@
     <link
       rel="shortcut icon"
       type="image/x-icon"
-      href="assets/img/favicon.png"
+      href="{{ asset('assets/img/favicon.png') }}"
     />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
 
     <!-- Fontawesome CSS -->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/font-awesome.min.css') }}" />
 
     <!-- Lineawesome CSS -->
-    <link rel="stylesheet" href="assets/css/line-awesome.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/line-awesome.min.css') }}" />
 
     <!-- Chart CSS -->
-    <link rel="stylesheet" href="assets/plugins/morris/morris.css" />
+    <link rel="stylesheet" href="{{ asset('assets/plugins/morris/morris.css') }}" />
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -52,7 +52,7 @@
         <!-- Logo -->
         <div class="header-left">
           <a href="index.html" class="logo">
-            <img src="assets/img/logo.png" width="40" height="40" alt="" />
+            <img src="{{ asset('assets/img/logo.png') }}" width="40" height="40" alt="" />
           </a>
         </div>
         <!-- /Logo -->
@@ -114,7 +114,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-02.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-02.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -135,7 +135,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-03.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-03.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -156,7 +156,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-06.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-06.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -179,7 +179,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-17.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-17.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -200,7 +200,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-13.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-13.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -227,7 +227,7 @@
           <li class="nav-item dropdown has-arrow main-drop">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <span class="user-img"
-                ><img src="assets/img/profiles/avatar-21.jpg" alt="" />
+                ><img src="{{ asset('assets/img/profiles/avatar-21.jpg') }}" alt="" />
                 <span class="status online"></span
               ></span>
               <span>Admin</span>
@@ -702,7 +702,7 @@
                   <div class="leave-info-box">
                     <div class="media align-items-center">
                       <a href="profile.html" class="avatar"
-                        ><img alt="" src="assets/img/user.jpg"
+                        ><img src="{{ asset('assets/img/user.jpg') }}"
                       /></a>
                       <div class="media-body">
                         <div class="text-sm my-0">Martin Lewis</div>
@@ -721,7 +721,7 @@
                   <div class="leave-info-box">
                     <div class="media align-items-center">
                       <a href="profile.html" class="avatar"
-                        ><img alt="" src="assets/img/user.jpg"
+                        ><img src="{{ asset('assets/img/user.jpg') }}"
                       /></a>
                       <div class="media-body">
                         <div class="text-sm my-0">Martin Lewis</div>
@@ -891,7 +891,7 @@
                               <a href="#" class="avatar"
                                 ><img
                                   alt=""
-                                  src="assets/img/profiles/avatar-19.jpg"
+                                  src="{{ asset('assets/img/profiles/avatar-19.jpg') }}"
                               /></a>
                               <a href="client-profile.html"
                                 >Barry Cuda <span>CEO</span></a
@@ -956,7 +956,7 @@
                               <a href="#" class="avatar"
                                 ><img
                                   alt=""
-                                  src="assets/img/profiles/avatar-19.jpg"
+                                  src="{{ asset('assets/img/profiles/avatar-19.jpg') }}"
                               /></a>
                               <a href="client-profile.html"
                                 >Tressa Wexler <span>Manager</span></a
@@ -1021,7 +1021,7 @@
                               <a href="client-profile.html" class="avatar"
                                 ><img
                                   alt=""
-                                  src="assets/img/profiles/avatar-07.jpg"
+                                  src="{{ asset('assets/img/profiles/avatar-07.jpg') }}"
                               /></a>
                               <a href="client-profile.html"
                                 >Ruby Bartlett <span>CEO</span></a
@@ -1086,7 +1086,7 @@
                               <a href="client-profile.html" class="avatar"
                                 ><img
                                   alt=""
-                                  src="assets/img/profiles/avatar-06.jpg"
+                                  src="{{ asset('assets/img/profiles/avatar-06.jpg') }}"
                               /></a>
                               <a href="client-profile.html">
                                 Misty Tison <span>CEO</span></a
@@ -1151,7 +1151,7 @@
                               <a href="client-profile.html" class="avatar"
                                 ><img
                                   alt=""
-                                  src="assets/img/profiles/avatar-14.jpg"
+                                  src="{{ asset('assets/img/profiles/avatar-14.jpg') }}"
                               /></a>
                               <a href="client-profile.html">
                                 Daniel Deacon <span>CEO</span></a
@@ -1492,21 +1492,21 @@
     <!-- /Main Wrapper -->
 
     <!-- jQuery -->
-    <script src="assets/js/jquery-3.2.1.min.js"></script>
+    <script src="{{ asset('assets/js/jquery-3.2.1.min.js') }}"></script>
 
     <!-- Bootstrap Core JS -->
-    <script src="assets/js/popper.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
 
     <!-- Slimscroll JS -->
-    <script src="assets/js/jquery.slimscroll.min.js"></script>
+    <script src="{{ asset('assets/js/jquery.slimscroll.min.js') }}"></script>
 
     <!-- Chart JS -->
-    <script src="assets/plugins/morris/morris.min.js"></script>
-    <script src="assets/plugins/raphael/raphael.min.js"></script>
-    <script src="assets/js/chart.js"></script>
+    <script src="{{ asset('assets/plugins/morris/morris.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('assets/js/chart.js') }}"></script>
 
     <!-- Custom JS -->
-    <script src="assets/js/app.js"></script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
   </body>
 </html>

@@ -19,23 +19,23 @@
     <link
       rel="shortcut icon"
       type="image/x-icon"
-      href="assets/img/favicon.png"
+      href="{{ asset('assets/img/favicon.png') }}"
     />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
 
     <!-- Fontawesome CSS -->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/font-awesome.min.css') }}" />
 
     <!-- Lineawesome CSS -->
-    <link rel="stylesheet" href="assets/css/line-awesome.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/line-awesome.min.css') }}" />
 
     <!-- Datatable CSS -->
-    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/dataTables.bootstrap4.min.css') }}" />
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -50,13 +50,13 @@
       <div class="header">
         <!-- Logo -->
         <div class="header-left">
-          <a href="index.html" class="logo">
-            <img src="assets/img/logo.png" width="40" height="40" alt="" />
+          <a href="{{ asset('index.html') }}" class="logo">
+            <img src="{{ asset('assets/img/logo.png') }}" width="40" height="40" alt="" />
           </a>
         </div>
         <!-- /Logo -->
 
-        <a id="toggle_btn" href="javascript:void(0);">
+        <a id="toggle_btn" href="{{ asset('javascript:void(0);') }}">
           <span class="bar-icon">
             <span></span>
             <span></span>
@@ -70,7 +70,7 @@
         </div>
         <!-- /Header Title -->
 
-        <a id="mobile_btn" class="mobile_btn" href="#sidebar"
+        <a id="mobile_btn" class="mobile_btn" href="{{ asset('#sidebar') }}"
           ><i class="fa fa-bars"></i
         ></a>
 
@@ -79,7 +79,7 @@
           <!-- Search -->
           <li class="nav-item">
             <div class="top-nav-search">
-              <a href="javascript:void(0);" class="responsive-search">
+              <a href="{{ asset('javascript:void(0);') }}" class="responsive-search">
                 <i class="fa fa-search"></i>
               </a>
               <form action="search.html">
@@ -98,22 +98,22 @@
 
           <!-- Notifications -->
           <li class="nav-item dropdown">
-            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+            <a href="{{ asset('#') }}" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
               <span class="badge badge-pill">3</span>
             </a>
             <div class="dropdown-menu notifications">
               <div class="topnav-dropdown-header">
                 <span class="notification-title">Notifications</span>
-                <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+                <a href="{{ asset('javascript:void(0)') }}" class="clear-noti"> Clear All </a>
               </div>
               <div class="noti-content">
                 <ul class="notification-list">
                   <li class="notification-message">
-                    <a href="activities.html">
+                    <a href="{{ asset('activities.html') }}">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-02.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-02.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -131,10 +131,10 @@
                     </a>
                   </li>
                   <li class="notification-message">
-                    <a href="activities.html">
+                    <a href="{{ asset('activities.html') }}">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-03.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-03.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -152,10 +152,10 @@
                     </a>
                   </li>
                   <li class="notification-message">
-                    <a href="activities.html">
+                    <a href="{{ asset('activities.html') }}">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-06.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-06.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -175,10 +175,10 @@
                     </a>
                   </li>
                   <li class="notification-message">
-                    <a href="activities.html">
+                    <a href="{{ asset('activities.html') }}">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-17.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-17.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -196,10 +196,10 @@
                     </a>
                   </li>
                   <li class="notification-message">
-                    <a href="activities.html">
+                    <a href="{{ asset('activities.html') }}">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-13.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-13.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -217,24 +217,24 @@
                 </ul>
               </div>
               <div class="topnav-dropdown-footer">
-                <a href="activities.html">Shiko të gjitha njoftimet</a>
+                <a href="{{ asset('activities.html') }}">Shiko të gjitha njoftimet</a>
               </div>
             </div>
           </li>
           <!-- /Notifications -->
 
           <li class="nav-item dropdown has-arrow main-drop">
-            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+            <a href="{{ asset('#') }}" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <span class="user-img"
-                ><img src="assets/img/profiles/avatar-21.jpg" alt="" />
+                ><img src="{{ asset('assets/img/profiles/avatar-21.jpg') }}" alt="" />
                 <span class="status online"></span
               ></span>
               <span>Admin</span>
             </a>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="profile.html">Profili</a>
-              <a class="dropdown-item" href="settings.html">Settings</a>
-              <a class="dropdown-item" href="login.html">Çkyçu</a>
+              <a class="dropdown-item" href="{{ asset('profile.html') }}">Profili</a>
+              <a class="dropdown-item" href="{{ asset('settings.html') }}">Settings</a>
+              <a class="dropdown-item" href="{{ asset('login.html') }}">Çkyçu</a>
             </div>
           </li>
         </ul>
@@ -243,16 +243,16 @@
         <!-- Mobile Menu -->
         <div class="dropdown mobile-user-menu">
           <a
-            href="#"
+            href="{{ asset('#') }}"
             class="nav-link dropdown-toggle"
             data-toggle="dropdown"
             aria-expanded="false"
             ><i class="fa fa-ellipsis-v"></i
           ></a>
           <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="profile.html">Profili</a>
-            <a class="dropdown-item" href="settings.html">Settings</a>
-            <a class="dropdown-item" href="login.html">Çkyçu</a>
+            <a class="dropdown-item" href="{{ asset('profile.html') }}">Profili</a>
+            <a class="dropdown-item" href="{{ asset('settings.html') }}">Settings</a>
+            <a class="dropdown-item" href="{{ asset('login.html') }}">Çkyçu</a>
           </div>
         </div>
         <!-- /Mobile Menu -->
@@ -268,43 +268,43 @@
                 <span>Main</span>
               </li>
               <li class="submenu">
-                <a href="#">Paneli i Adminit</a>
+                <a href="{{ asset('#') }}">Paneli i Adminit</a>
               </li>
 
               <li class="submenu">
-                <a href="#"
+                <a href="{{ asset('#') }}"
                   ><i class="la la-user"></i> <span> Puntoret</span>
                   <span class="menu-arrow"></span
                 ></a>
                 <ul style="display: none">
-                  <li><a href="employee.html">Administratoret</a></li>
-                  <li><a href="holidays.html">Hr</a></li>
+                  <li><a href="{{ asset('employee.html') }}">Administratoret</a></li>
+                  <li><a href="{{ asset('holidays.html') }}">Hr</a></li>
                   <li>
-                    <a href="holidays.html">Menaxheri i Departamenteve</a>
+                    <a href="{{ asset('holidays.html') }}">Menaxheri i Departamenteve</a>
                   </li>
-                  <li><a href="employee.html">Puntoret</a></li>
+                  <li><a href="{{ asset('employee.html') }}">Puntoret</a></li>
                 </ul>
               </li>
               <li>
-                <a href="departments.html"
+                <a href="{{ asset('departments.html') }}"
                   ><i class="la la-users"></i> <span>Departamentet</span></a
                 >
               </li>
 
               <li>
-                <a href="tickets.html"
+                <a href="{{ asset('tickets.html') }}"
                   ><i class="la la-ticket"></i> <span>Tickets</span></a
                 >
               </li>
 
               <li class="submenu">
-                <a href="#"
+                <a href="{{ asset('#') }}"
                   ><i class="la la-pie-chart"></i> <span> Reports </span>
                   <span class="menu-arrow"></span
                 ></a>
                 <ul style="display: none">
-                  <li><a href="expense-reports.html"> Expense Report </a></li>
-                  <li><a href="invoice-reports.html"> Invoice Report </a></li>
+                  <li><a href="{{ asset('expense-reports.html') }}"> Expense Report </a></li>
+                  <li><a href="{{ asset('invoice-reports.html') }}"> Invoice Report </a></li>
                 </ul>
               </li>
             </ul>
@@ -323,14 +323,14 @@
                 <h3 class="page-title">Department</h3>
                 <ul class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="index.html">Dashboard</a>
+                    <a href="{{ asset('index.html') }}">Dashboard</a>
                   </li>
                   <li class="breadcrumb-item active">Department</li>
                 </ul>
               </div>
               <div class="col-auto float-right ml-auto">
                 <a
-                  href="#"
+                  href="{{ asset('#') }}"
                   class="btn add-btn"
                   data-toggle="modal"
                   data-target="#add_department"
@@ -359,7 +359,7 @@
                       <td class="text-right">
                         <div class="dropdown dropdown-action">
                           <a
-                            href="#"
+                            href="{{ asset('#') }}"
                             class="action-icon dropdown-toggle"
                             data-toggle="dropdown"
                             aria-expanded="false"
@@ -368,14 +368,14 @@
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#edit_department"
                               ><i class="fa fa-pencil m-r-5"></i> Edit</a
                             >
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#delete_department"
                               ><i class="fa fa-trash-o m-r-5"></i> Delete</a
@@ -390,7 +390,7 @@
                       <td class="text-right">
                         <div class="dropdown dropdown-action">
                           <a
-                            href="#"
+                            href="{{ asset('#') }}"
                             class="action-icon dropdown-toggle"
                             data-toggle="dropdown"
                             aria-expanded="false"
@@ -399,14 +399,14 @@
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#edit_department"
                               ><i class="fa fa-pencil m-r-5"></i> Edit</a
                             >
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#delete_department"
                               ><i class="fa fa-trash-o m-r-5"></i> Delete</a
@@ -421,7 +421,7 @@
                       <td class="text-right">
                         <div class="dropdown dropdown-action">
                           <a
-                            href="#"
+                            href="{{ asset('#') }}"
                             class="action-icon dropdown-toggle"
                             data-toggle="dropdown"
                             aria-expanded="false"
@@ -430,14 +430,14 @@
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#edit_department"
                               ><i class="fa fa-pencil m-r-5"></i> Edit</a
                             >
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#delete_department"
                               ><i class="fa fa-trash-o m-r-5"></i> Delete</a
@@ -452,7 +452,7 @@
                       <td class="text-right">
                         <div class="dropdown dropdown-action">
                           <a
-                            href="#"
+                            href="{{ asset('#') }}"
                             class="action-icon dropdown-toggle"
                             data-toggle="dropdown"
                             aria-expanded="false"
@@ -461,14 +461,14 @@
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#edit_department"
                               ><i class="fa fa-pencil m-r-5"></i> Edit</a
                             >
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#delete_department"
                               ><i class="fa fa-trash-o m-r-5"></i> Delete</a
@@ -483,7 +483,7 @@
                       <td class="text-right">
                         <div class="dropdown dropdown-action">
                           <a
-                            href="#"
+                            href="{{ asset('#') }}"
                             class="action-icon dropdown-toggle"
                             data-toggle="dropdown"
                             aria-expanded="false"
@@ -492,14 +492,14 @@
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#edit_department"
                               ><i class="fa fa-pencil m-r-5"></i> Edit</a
                             >
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#delete_department"
                               ><i class="fa fa-trash-o m-r-5"></i> Delete</a
@@ -514,7 +514,7 @@
                       <td class="text-right">
                         <div class="dropdown dropdown-action">
                           <a
-                            href="#"
+                            href="{{ asset('#') }}"
                             class="action-icon dropdown-toggle"
                             data-toggle="dropdown"
                             aria-expanded="false"
@@ -523,14 +523,14 @@
                           <div class="dropdown-menu dropdown-menu-right">
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#edit_department"
                               ><i class="fa fa-pencil m-r-5"></i> Edit</a
                             >
                             <a
                               class="dropdown-item"
-                              href="#"
+                              href="{{ asset('#') }}"
                               data-toggle="modal"
                               data-target="#delete_department"
                               ><i class="fa fa-trash-o m-r-5"></i> Delete</a
@@ -635,14 +635,14 @@
                   <div class="row">
                     <div class="col-6">
                       <a
-                        href="javascript:void(0);"
+                        href="{{ asset('javascript:void(0);') }}"
                         class="btn btn-primary continue-btn"
                         >Delete</a
                       >
                     </div>
                     <div class="col-6">
                       <a
-                        href="javascript:void(0);"
+                        href="{{ asset('javascript:void(0);') }}"
                         data-dismiss="modal"
                         class="btn btn-primary cancel-btn"
                         >Cancel</a
@@ -661,20 +661,20 @@
     <!-- /Main Wrapper -->
 
     <!-- jQuery -->
-    <script src="assets/js/jquery-3.2.1.min.js"></script>
+    <script src="{{ asset('assets/js/jquery-3.2.1.min.js') }}"></script>
 
     <!-- Bootstrap Core JS -->
-    <script src="assets/js/popper.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
 
     <!-- Slimscroll JS -->
-    <script src="assets/js/jquery.slimscroll.min.js"></script>
+    <script src="{{ asset('assets/js/jquery.slimscroll.min.js') }}"></script>
 
     <!-- Datatable JS -->
-    <script src="assets/js/jquery.dataTables.min.js"></script>
-    <script src="assets/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('assets/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/js/dataTables.bootstrap4.min.js') }}"></script>
 
     <!-- Custom JS -->
-    <script src="assets/js/app.js"></script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
   </body>
 </html>

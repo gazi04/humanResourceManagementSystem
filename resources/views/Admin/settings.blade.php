@@ -19,23 +19,23 @@
     <link
       rel="shortcut icon"
       type="image/x-icon"
-      href="assets/img/favicon.png"
+      href="{{ asset('assets/img/favicon.png') }}"
     />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
 
     <!-- Fontawesome CSS -->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/font-awesome.min.css') }}" />
 
     <!-- Lineawesome CSS -->
-    <link rel="stylesheet" href="assets/css/line-awesome.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/line-awesome.min.css') }}" />
 
     <!-- Select2 CSS -->
-    <link rel="stylesheet" href="assets/css/select2.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}" />
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -51,7 +51,7 @@
         <!-- Logo -->
         <div class="header-left">
           <a href="adminDashboard.html" class="logo">
-            <img src="assets/img/logo.png" width="40" height="40" alt="" />
+            <img src="{{ asset('assets/img/logo.png') }}" width="40" height="40" alt="" />
           </a>
         </div>
         <!-- /Logo -->
@@ -109,7 +109,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-02.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-02.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -130,7 +130,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-03.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-03.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -151,7 +151,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-06.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-06.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -174,7 +174,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-17.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-17.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -195,7 +195,7 @@
                     <a href="activities.html">
                       <div class="media">
                         <span class="avatar">
-                          <img alt="" src="assets/img/profiles/avatar-13.jpg" />
+                          <img src="{{ asset('assets/img/profiles/avatar-13.jpg') }}" />
                         </span>
                         <div class="media-body">
                           <p class="noti-details">
@@ -222,7 +222,7 @@
           <li class="nav-item dropdown has-arrow main-drop">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <span class="user-img"
-                ><img src="assets/img/profiles/avatar-21.jpg" alt="" />
+                ><img src="{{ asset('assets/img/profiles/avatar-21.jpg') }}" alt="" />
                 <span class="status online"></span
               ></span>
               <span>Admin</span>
@@ -482,19 +482,19 @@
     <!-- /Main Wrapper -->
 
     <!-- jQuery -->
-    <script src="assets/js/jquery-3.2.1.min.js"></script>
+    <script src="{{ asset('assets/js/jquery-3.2.1.min.js') }}"></script>
 
     <!-- Bootstrap Core JS -->
-    <script src="assets/js/popper.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
 
     <!-- Slimscroll JS -->
-    <script src="assets/js/jquery.slimscroll.min.js"></script>
+    <script src="{{ asset('assets/js/jquery.slimscroll.min.js') }}"></script>
 
     <!-- Select2 JS -->
-    <script src="assets/js/select2.min.js"></script>
+    <script src="{{ asset('assets/js/select2.min.js') }}"></script>
 
     <!-- Custom JS -->
-    <script src="assets/js/app.js"></script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
   </body>
 </html>
