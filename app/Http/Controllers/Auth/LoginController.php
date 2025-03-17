@@ -34,10 +34,10 @@ class LoginController extends Controller
             $user = Auth::guard('employee')->user();
 
             return match ($user->getRoleName()) {
-                'admin' => redirect()->route('admin-dashboard'),
-                'hr' => redirect()->route('hr-dashboard'),
-                'manager' => redirect()->route('manager-dashboard'),
-                'employee' => redirect()->route('employee-dashboard'),
+                'admin' => redirect()->route('admin.dashboard'),
+                'hr' => redirect()->route('hr.dashboard'),
+                'manager' => redirect()->route('manager.dashboard'),
+                'employee' => redirect()->route('employee.dashboard'),
                 default => abort(403),
             };
         }
