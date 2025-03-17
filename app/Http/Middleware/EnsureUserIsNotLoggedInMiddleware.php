@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsLoggedIn
+class EnsureUserIsNotLoggedInMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,8 +16,8 @@ class EnsureUserIsLoggedIn
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::guard('employee')->user()) {
-            return redirect()->route('loginPage');
+        if (Auth::guard('employee')->check()) {
+            return redirect()->route('dashboard');
         }
 
         return $next($request);

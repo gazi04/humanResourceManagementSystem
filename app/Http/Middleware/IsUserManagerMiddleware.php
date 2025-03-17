@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsUserHR
+class IsUserManagerMiddleware
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,7 @@ class IsUserHR
     {
         /** @var Employee $user */
         $user = Auth::guard('employee')->user();
-        if ($user->getRoleName() !== 'hr') {
+        if ($user->getRoleName() !== 'manager') {
             abort(403);
         }
 

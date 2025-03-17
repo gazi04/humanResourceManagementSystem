@@ -2,13 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Employee;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsUserManager
+class EnsureUserIsLoggedInMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,10 +16,8 @@ class IsUserManager
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /** @var Employee $user */
-        $user = Auth::guard('employee')->user();
-        if ($user->getRoleName() !== 'manager') {
-            abort(403);
+        if (! Auth::guard('employee')->user()) {
+            return redirect()->route('loginPage');
         }
 
         return $next($request);
