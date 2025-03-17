@@ -9,20 +9,26 @@ use App\Models\Department;
 use App\Services\DepartmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
+use Illuminate\View\View;
 
 class DepartmentController extends Controller
 {
     public function __construct(protected DepartmentService $departmentServices, private readonly Redirector $redirector) {}
 
-    public function create(CreateDepartmentRequest $request): RedirectResponse
+    public function index(): View
+    {
+        return view('Admin.departments');
+    }
+
+    public function store(CreateDepartmentRequest $request): RedirectResponse
     {
         $validated = $request->only('departmentName', 'supervisorID');
         $this->departmentServices->createDepartment($validated);
 
-        return $this->redirector->route('admin-dashboard')->with('message', 'Departamenti është krijuar me sukses.');
+        return $this->redirector->route('admin.dashboard')->with('message', 'Departamenti është krijuar me sukses.');
     }
 
-    public function delete(DeleteDepartmentRequest $request): RedirectResponse
+    public function destroy(DeleteDepartmentRequest $request): RedirectResponse
     {
         $validated = $request->only('departmentID');
         $department = Department::query()->where('departmentID', $validated['departmentID'])->first();
@@ -30,10 +36,10 @@ class DepartmentController extends Controller
         if ($department) {
             $this->departmentServices->deleteDepartment($department);
         } else {
-            return $this->redirector->route('admin-dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
+            return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
         }
 
-        return $this->redirector->route('admin-dashboard')->with('message', 'Departamenti është fshirë me sukses.');
+        return $this->redirector->route('admin.dashboard')->with('message', 'Departamenti është fshirë me sukses.');
     }
 
     public function update(UpdateDepartmentRequest $request): RedirectResponse
@@ -44,9 +50,9 @@ class DepartmentController extends Controller
         if ($department) {
             $this->departmentServices->updateDepartment($department, ['departmentName' => $validated['newDepartmentName']]);
         } else {
-            return $this->redirector->route('admin-dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
+            return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
         }
 
-        return $this->redirector->route('admin-dashboard');
+        return $this->redirector->route('admin.dashboard');
     }
 }

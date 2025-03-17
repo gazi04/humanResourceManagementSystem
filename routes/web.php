@@ -27,17 +27,17 @@ Route::middleware(EnsureUserIsNotLoggedInMiddleware::class)->group(function () {
     Route::post('/authenticate', [LoginController::class, 'login'])->name('login');
 });
 
-Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware::class])->prefix('admin')->name('admin.')->group(function() {
+Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
-    Route::prefix('departaments')->name('department.')->group(function() {
+    Route::prefix('departaments')->name('department.')->group(function () {
         Route::get('/', [DepartmentController::class, 'index'])->name('index');
         Route::post('/store', [DepartmentController::class, 'store'])->name('store');
         Route::delete('/destroy', [DepartmentController::class, 'destroy'])->name('destroy');
         Route::patch('/update', [DepartmentController::class, 'update'])->name('update');
     });
 
-    Route::prefix('employees')->name('employee.')->group(function() {
+    Route::prefix('employees')->name('employee.')->group(function () {
         // Display list of all employees
         Route::get('/', [EmployeeController::class, 'employeers'])->name('employeers');
 

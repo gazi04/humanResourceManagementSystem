@@ -19,6 +19,7 @@ class DepartmentService implements DepartmentServiceInterface
     {
         return DB::transaction(function () use ($department, $data) {
             $department->update($data);
+
             return $department;
         });
     }

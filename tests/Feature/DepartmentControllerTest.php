@@ -43,12 +43,12 @@ class DepartmentControllerTest extends TestCase
     public function test_create_department_validation_rules(): void
     {
         // Simulate a POST request with invalid data
-        $response = $this->post(route('create-department'), [
+        $response = $this->post(route('admin.department.store'), [
             // Missing required fields
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error messages are present in the session
         $response->assertSessionHasErrors([
@@ -57,13 +57,13 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a POST request with invalid departmentName (not a string)
-        $response = $this->post(route('create-department'), [
+        $response = $this->post(route('admin.department.store'), [
             'departmentName' => 123, // Invalid type
             'supervisorID' => 1,
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -76,13 +76,13 @@ class DepartmentControllerTest extends TestCase
             'departmentName' => 'testDepartment',
         ]);
 
-        $response = $this->post(route('create-department'), [
+        $response = $this->post(route('admin.department.store'), [
             'departmentName' => $department->departmentName, // Duplicate name
             'supervisorID' => 1,
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -90,13 +90,13 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a POST request with an invalid supervisorID (non-existent)
-        $response = $this->post(route('create-department'), [
+        $response = $this->post(route('admin.department.store'), [
             'departmentName' => 'New Department',
             'supervisorID' => 999, // Non-existent supervisorID
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -107,12 +107,12 @@ class DepartmentControllerTest extends TestCase
     public function test_delete_department_validation_rules(): void
     {
         // Simulate a DELETE request with missing departmentID
-        $response = $this->delete(route('delete-department'), [
+        $response = $this->delete(route('admin.department.destroy'), [
             // Missing departmentID
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -120,12 +120,12 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a DELETE request with an invalid departmentID type
-        $response = $this->delete(route('delete-department'), [
+        $response = $this->delete(route('admin.department.destroy'), [
             'departmentID' => 'invalid', // Invalid type
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -133,12 +133,12 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a DELETE request with a departmentID less than 1
-        $response = $this->delete(route('delete-department'), [
+        $response = $this->delete(route('admin.department.destroy'), [
             'departmentID' => 0, // Invalid value
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -146,12 +146,12 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a DELETE request with a non-existent departmentID
-        $response = $this->delete(route('delete-department'), [
+        $response = $this->delete(route('admin.department.destroy'), [
             'departmentID' => 999, // Non-existent departmentID
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -162,12 +162,12 @@ class DepartmentControllerTest extends TestCase
     public function test_update_department_validation_rules(): void
     {
         // Simulate a PATCH request with missing fields
-        $response = $this->patch(route('update-department'), [
+        $response = $this->patch(route('admin.department.update'), [
             // Missing departmentID and newDepartmentName
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error messages are present in the session
         $response->assertSessionHasErrors([
@@ -176,13 +176,13 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a PATCH request with an invalid departmentID type
-        $response = $this->patch(route('update-department'), [
+        $response = $this->patch(route('admin.department.update'), [
             'departmentID' => 'invalid', // Invalid type
             'newDepartmentName' => 'Updated Department Name',
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -190,13 +190,13 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a PATCH request with a departmentID less than 1
-        $response = $this->patch(route('update-department'), [
+        $response = $this->patch(route('admin.department.update'), [
             'departmentID' => 0, // Invalid value
             'newDepartmentName' => 'Updated Department Name',
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -204,13 +204,13 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a PATCH request with a non-existent departmentID
-        $response = $this->patch(route('update-department'), [
+        $response = $this->patch(route('admin.department.update'), [
             'departmentID' => 999, // Non-existent departmentID
             'newDepartmentName' => 'Updated Department Name',
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -223,13 +223,13 @@ class DepartmentControllerTest extends TestCase
             'departmentName' => 'testDepartment',
         ]);
 
-        $response = $this->patch(route('update-department'), [
+        $response = $this->patch(route('admin.department.update'), [
             'departmentID' => $department->departmentID,
             'newDepartmentName' => $department->departmentName, // Duplicate name
         ]);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the specific validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -251,7 +251,7 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a POST request with valid data
-        $response = $this->post(route('create-department'), [
+        $response = $this->post(route('admin.department.store'), [
             'departmentName' => 'IT Department',
             'supervisorID' => $supervisor->employeeID,
         ]);
@@ -263,7 +263,7 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Assert that the user is redirected to the admin dashboard
-        $response->assertRedirect(route('admin-dashboard'));
+        $response->assertRedirect(route('admin.dashboard'));
 
         // Assert that the success message is present in the session
         $response->assertSessionHas('message', 'Departamenti është krijuar me sukses.');
@@ -275,7 +275,7 @@ class DepartmentControllerTest extends TestCase
     public function test_create_department_with_invalid_data(): void
     {
         // Simulate a POST request with invalid data (missing required fields)
-        $response = $this->post(route('create-department'), [
+        $response = $this->post(route('admin.department.store'), [
             'departmentName' => '', // Empty department name
             'supervisorID' => null, // Missing supervisor ID
         ]);
@@ -299,7 +299,7 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a DELETE request to delete the department
-        $response = $this->delete(route('delete-department'), [
+        $response = $this->delete(route('admin.department.destroy'), [
             'departmentID' => $department->departmentID,
         ]);
 
@@ -309,7 +309,7 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Assert that the user is redirected to the admin dashboard
-        $response->assertRedirect(route('admin-dashboard'));
+        $response->assertRedirect(route('admin.dashboard'));
 
         // Assert that the success message is present in the session
         $response->assertSessionHas('message', 'Departamenti është fshirë me sukses.');
@@ -321,7 +321,7 @@ class DepartmentControllerTest extends TestCase
     public function test_delete_non_existent_department(): void
     {
         // Simulate a DELETE request with an invalid department ID
-        $response = $this->delete(route('delete-department'), [
+        $response = $this->delete(route('admin.department.destroy'), [
             'departmentID' => 999, // Non-existent department ID
         ]);
 
@@ -329,7 +329,7 @@ class DepartmentControllerTest extends TestCase
         $this->assertDatabaseCount('departments', 0);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/'); // Redirects back to the previous URL
+        $response->assertRedirect(route('admin.department.index')); // Redirects back to the previous URL
 
         // Assert that the validation error message is present in the session
         $response->assertSessionHasErrors([
@@ -349,7 +349,7 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Simulate a PATCH request to update the department
-        $response = $this->patch(route('update-department'), [
+        $response = $this->patch(route('admin.department.update'), [
             'departmentID' => $department->departmentID,
             'newDepartmentName' => 'Updated Department Name',
         ]);
@@ -361,7 +361,7 @@ class DepartmentControllerTest extends TestCase
         ]);
 
         // Assert that the user is redirected to the admin dashboard
-        $response->assertRedirect(route('admin-dashboard'));
+        $response->assertRedirect(route('admin.dashboard'));
     }
 
     /**
@@ -370,7 +370,7 @@ class DepartmentControllerTest extends TestCase
     public function test_update_non_existent_department(): void
     {
         // Simulate a PATCH request with an invalid department ID
-        $response = $this->patch(route('update-department'), [
+        $response = $this->patch(route('admin.department.update'), [
             'departmentID' => 999, // Non-existent department ID
             'newDepartmentName' => 'Updated Department Name',
         ]);
@@ -379,7 +379,7 @@ class DepartmentControllerTest extends TestCase
         $this->assertDatabaseCount('departments', 0);
 
         // Assert that the user is redirected back with validation errors
-        $response->assertRedirect('/'); // Redirects back to the previous URL
+        $response->assertRedirect(route('admin.department.index'));
 
         // Assert that the validation error message is present in the session
         $response->assertSessionHasErrors([
