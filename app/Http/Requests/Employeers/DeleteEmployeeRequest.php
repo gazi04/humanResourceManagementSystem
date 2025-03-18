@@ -31,7 +31,6 @@ class DeleteEmployeeRequest extends FormRequest
         return [
             'employeeID' => 'required|integer|min:1|exists:employees,employeeID',
             'email' => 'required|email',
-            'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/'],
         ];
     }
 
@@ -50,9 +49,6 @@ class DeleteEmployeeRequest extends FormRequest
 
             'email.required' => 'Adresa email është e detyrueshme.',
             'email.email' => 'Adresa email nuk është e vlefshme.',
-
-            'phone.required' => 'Numri i telefonit është i detyrueshëm.',
-            'phone.regex' => 'Numri i telefonit nuk është në formatin e duhur. Përdorni formatin +383xxxxxxx ose 0xxxxxxx.',
         ];
     }
 }

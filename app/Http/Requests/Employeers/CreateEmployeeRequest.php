@@ -41,7 +41,6 @@ class CreateEmployeeRequest extends FormRequest
             'jobTitle' => 'required|string|max:255',
             'status' => 'required|in:Active,Inactive,On Leave',
             'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
-            'departmentName' => 'required|string|exists:departments,departmentName',
         ];
     }
 
@@ -87,10 +86,6 @@ class CreateEmployeeRequest extends FormRequest
             'departmentID.integer' => 'ID e departamentit duhet të jetë një numër i plotë.',
             'departmentID.min' => 'ID e departamentit duhet të jetë më e madhe se 0.',
             'departmentID.exists' => 'Departamenti me këtë ID nuk egziston.',
-
-            'departmentName.required' => 'Emri i departamentit është i detyrueshëm.',
-            'departmentName.string' => 'Emri i departamentit duhet të jetë një varg tekstual.',
-            'departmentName.exists' => 'Departamenti me këtë emër nuk egziston.',
         ];
     }
 }
