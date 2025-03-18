@@ -33,11 +33,11 @@ class DepartmentController extends Controller
         $validated = $request->only('departmentID');
         $department = Department::query()->where('departmentID', $validated['departmentID'])->first();
 
-        if ($department) {
-            $this->departmentServices->deleteDepartment($department);
-        } else {
+        if (!$department) {
             return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
         }
+
+        $this->departmentServices->deleteDepartment($department);
 
         return $this->redirector->route('admin.dashboard')->with('message', 'Departamenti është fshirë me sukses.');
     }
@@ -47,11 +47,11 @@ class DepartmentController extends Controller
         $validated = $request->only('departmentID', 'newDepartmentName');
         $department = Department::query()->where('departmentID', $validated['departmentID'])->first();
 
-        if ($department) {
-            $this->departmentServices->updateDepartment($department, ['departmentName' => $validated['newDepartmentName']]);
-        } else {
+        if (!$department) {
             return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
         }
+
+        $this->departmentServices->updateDepartment($department, ['departmentName' => $validated['newDepartmentName']]);
 
         return $this->redirector->route('admin.dashboard');
     }

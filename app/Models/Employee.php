@@ -53,6 +53,14 @@ class Employee extends Model implements AuthenticatableContract
         return $this->belongsTo(Role::class, 'roleID', 'roleID');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Department, $this>
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class, 'departmentID', 'departmentID');
+    }
+
     public function getRoleName(): string
     {
         return $this->employeeRole()->first()->role()->first()['roleName'];

@@ -10,14 +10,12 @@ class DepartmentService implements DepartmentServiceInterface
 {
     public function createDepartment(array $data): Department
     {
-        return DB::transaction(function () use ($data) {
-            return Department::create($data);
-        });
+        return DB::transaction(fn () => Department::create($data));
     }
 
     public function updateDepartment(Department $department, array $data): Department
     {
-        return DB::transaction(function () use ($department, $data) {
+        return DB::transaction(function () use ($department, $data): \App\Models\Department {
             $department->update($data);
 
             return $department;
@@ -26,7 +24,7 @@ class DepartmentService implements DepartmentServiceInterface
 
     public function deleteDepartment(Department $department): void
     {
-        DB::transaction(function () use ($department) {
+        DB::transaction(function () use ($department): void {
             $department->delete();
         });
     }
