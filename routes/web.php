@@ -4,6 +4,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HumanResourceController;
+use App\Http\Controllers\ManagerController;
 use App\Http\Middleware\EnsureUserIsLoggedInMiddleware;
 use App\Http\Middleware\EnsureUserIsNotLoggedInMiddleware;
 use App\Http\Middleware\IsUserAdminMiddleware;
@@ -18,7 +21,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class])->group(function () {
-    Route::get('/', [EmployeeController::class, 'index'])->name('dashboard');
+    Route::get('/', [HomeController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
@@ -28,7 +31,7 @@ Route::middleware(EnsureUserIsNotLoggedInMiddleware::class)->group(function () {
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::view('/dashboard', 'Admin.adminDashboard')->name('dashboard');
 
     Route::prefix('departaments')->name('department.')->group(function () {
         Route::get('/', [DepartmentController::class, 'index'])->name('index');
@@ -38,27 +41,16 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
     });
 
     Route::prefix('employees')->name('employee.')->group(function () {
-        // Display list of all employees
-        Route::get('/', [EmployeeController::class, 'employeers'])->name('employeers');
+        Route::get('/', [EmployeeController::class, 'index'])->name('index');
+        Route::get('/human-resources', [HumanResourceController::class, 'index'])->name('human-resources');
+        Route::get('/administrators', [AdminController::class, 'index'])->name('administrators');
+        Route::get('/managers', [ManagerController::class, 'index'])->name('managers');
 
-        // Display list of human resources employees
-        Route::get('/human-resources', [EmployeeController::class, 'humanResources'])->name('human-resources');
-
-        // Display list of administrators
-        Route::get('/administrators', [EmployeeController::class, 'administrators'])->name('administrators');
-
-        // Display list of managers
-        Route::get('/managers', [EmployeeController::class, 'managers'])->name('managers');
+        Route::post('/create', [EmployeeController::class, 'create'])->name('create');
+        Route::delete('/delete', [EmployeeController::class, 'destroy'])->name('destroy');
+        Route::patch('/update', [EmployeeController::class, 'update'])->name('update');
     });
 });
-
-/* Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware::class])->group(function () { */
-/*     Route::get('/admin-dashboard', [AdminController::class, 'index'])->name('admin-dashboard'); */
-/**/
-/*     Route::post('/create-department', [DepartmentController::class, 'create'])->name('create-department'); */
-/*     Route::delete('/delete-department', [DepartmentController::class, 'delete'])->name('delete-department'); */
-/*     Route::patch('/update-department', [DepartmentController::class, 'update'])->name('update-department'); */
-/* }); */
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::class])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', function () {

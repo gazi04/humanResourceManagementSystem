@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 
-class AdminController extends Controller
+class ManagerController extends Controller
 {
     public function index(): View
     {
-        return view('Admin.admin');
+        return view('Admin.depMenager');
     }
 }
