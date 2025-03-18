@@ -2,16 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Employeers\CreateEmployeeRequest;
+use App\Http\Requests\Employeers\DeleteEmployeeRequest;
+use App\Http\Requests\Employeers\UpdateEmployeeRequest;
+use App\Models\Employee;
+use App\Services\EmployeeService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class EmployeeController extends Controller
 {
+    public function __construct(protected EmployeeService $employeeService, private readonly Redirector $redirector) {}
+
     public function index(): View
     {
         return view('Admin.employee');
     }
 
-    public function update() {}
+    public function create(CreateEmployeeRequest $request): RedirectResponse
+    {
+        /* TODO- EMPLOYEE CAN'T LOGIN WITH OUT ASSIGNING HIM AN ROLE  */
+        $validated = $request->only('firstName', 'lastName', 'email', 'password', 'phone', 'hireDate', 'jobTitle', 'status', 'departmentID');
+        $validated['password'] = Hash::make($validated['password']);
 
-    public function destroy() {}
+        $this->employeeService->createEmployee($validated);
+
+        return redirect()->route('admin.employee.index')->with('success', 'Punonjësi u krijua me sukses.');
+    }
+
+    public function update(UpdateEmployeeRequest $request): RedirectResponse
+    {
+        $validated = $request->only('employeeID', 'firstName', 'lastName', 'email', 'password', 'phone', 'hireDate', 'jobTitle', 'status', 'departmentID');
+        $employee = Employee::where('employeeID', $validated['employeeID'])->first();
+
+        if(!$employee) {
+            return redirect()->route('admin.employee.index')->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
+        }
+
+        $this->employeeService->updateEmployee($employee, $validated);
+
+        return redirect()->route('admin.employee.index')->with('success', 'Punonjësi u përditësua me sukses.');
+    }
+
+    public function destroy(DeleteEmployeeRequest $request): RedirectResponse
+    {
+        $validated = $request->onlye('employeeID', 'email');
+
+        $employee = Employee::where('employeeID', $validated['employeeID'])
+            ->where('email', $validated['email'])
+            ->first();
+
+        if(!$employee) {
+            return redirect()->route('admin.employee.index')->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
+        }
+
+        $this->employeeService->deleteEmployee($employee);
+        return redirect()->route('admin.employee.index')->with('success', 'Punonjësi është fshirë me sukses.');;
+    }
 }
