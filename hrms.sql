@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 14, 2025 at 09:34 PM
+-- Generation Time: Mar 18, 2025 at 08:55 PM
 -- Server version: 11.7.2-MariaDB
 -- PHP Version: 8.4.4
 
@@ -105,7 +105,7 @@ CREATE TABLE `employees` (
 --
 
 INSERT INTO `employees` (`employeeID`, `firstName`, `lastName`, `email`, `password`, `phone`, `hireDate`, `jobTitle`, `departmentID`, `supervisorID`, `salary`, `contractID`, `status`, `remember_token`, `created_at`, `updated_at`) VALUES
-(4, 'gazi', 'gazi', 'gazi@gmail.com', '$2y$12$q/MEJ725Y5Fi4FXSyk063eOt9JKZFSTGL1SbVUDTL2mc.qVPi69ha', '045681376', NULL, NULL, NULL, NULL, NULL, NULL, 'Inactive', NULL, '2025-03-13 10:31:25', '2025-03-13 10:31:25');
+(7, 'gazi', 'gazi', 'gazi@gmail.com', '$2y$12$c7fwDGXFIk95wZE.KtrVG.1Zp4KLRm4y5.xkK.qULFBivyu7bKSqq', '045681376', NULL, NULL, NULL, NULL, NULL, NULL, 'Inactive', NULL, '2025-03-18 08:49:05', '2025-03-18 08:49:05');
 
 -- --------------------------------------------------------
 
@@ -126,7 +126,7 @@ CREATE TABLE `employee_roles` (
 --
 
 INSERT INTO `employee_roles` (`employeeRoleID`, `employeeID`, `roleID`, `created_at`, `updated_at`) VALUES
-(1, 4, 1, '2025-03-13 10:31:25', '2025-03-13 10:31:25');
+(5, 7, 5, '2025-03-18 08:49:05', '2025-03-18 08:49:05');
 
 -- --------------------------------------------------------
 
@@ -271,7 +271,7 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`roleID`, `roleName`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '2025-03-13 10:31:25', '2025-03-13 10:31:25');
+(5, 'admin', '2025-03-18 08:49:05', '2025-03-18 08:49:05');
 
 -- --------------------------------------------------------
 
@@ -322,10 +322,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('AgfT0IVnvx0m2sK7klaQlUjmzSc5IC5svyCSCrU0', NULL, '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibUM2dFNja1owVExoTnNLTHVJVTkySDFRUVVEN09zWGU0YkdWS2tIUiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1741865515),
-('MCHtRNtAWeogfp0e0Jc9jSGIhBwvbBSDpeuBbGbE', NULL, '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZW1BcVllVlpjTVhTWWlWR05ENFlqT1ZpeU5mdFNmSzFhYWwxcVBIVCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjY6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC90ZXN0Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1741962863),
-('ptvAH3Lh7JPhnSjmGuUEMNTW2APWG4n3BA8ZnJaN', NULL, '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTzdvNGtUcFRvYjNyd1FQQldRemxoTm5oanFoN05LUW05Wk53V1piUiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1741986605),
-('R093W29PmVFZzEiCYzedTcbPUtz7ftrCbfH9XW9P', NULL, '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiUDF6Y3JWcXE4UzZndWt5WEgwblBiRGRPWmlsZTlaTGl3eFV6blJUTyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTU6ImxvZ2luX2VtcGxveWVlXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NDt9', 1741943105);
+('78pdpH3j8UArIzWa29bcmzD5MeA1aa6fUlCBfBp2', NULL, '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoieFI5OVkxd2Q4VU9BS24zaHVLRDQ0NnRrS3F3c3lDOUFINXlPV3R3aCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hZG1pbi9lbXBsb3llZXMvYWRtaW5pc3RyYXRvcnMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjU1OiJsb2dpbl9lbXBsb3llZV81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjc7czoyMjoiUEhQREVCVUdCQVJfU1RBQ0tfREFUQSI7YTowOnt9fQ==', 1742300017),
+('NeZJVX2snHaBpgIHKf1MFXH9rfPyCa35OZawcd7y', NULL, '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQzlWVlpLckZ1a2FJcXZ4ZmZFQkRFNVdqU1FsdWE0MnJJelpodkRrSiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hZG1pbi9kYXNoYm9hcmQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjU1OiJsb2dpbl9lbXBsb3llZV81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjc7fQ==', 1742314707);
 
 -- --------------------------------------------------------
 
@@ -517,13 +515,13 @@ ALTER TABLE `departments`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `employeeID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `employeeID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `employee_roles`
 --
 ALTER TABLE `employee_roles`
-  MODIFY `employeeRoleID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `employeeRoleID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -559,7 +557,7 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `roleID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `roleID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `role_permissions`
