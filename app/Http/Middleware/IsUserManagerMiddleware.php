@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Employee;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Employee;
 
-class IsUserManager
+class IsUserManagerMiddleware
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,7 @@ class IsUserManager
     {
         /** @var Employee $user */
         $user = Auth::guard('employee')->user();
-        if($user->getRoleName() !== 'manager'){
+        if ($user->getRoleName() !== 'manager') {
             abort(403);
         }
 

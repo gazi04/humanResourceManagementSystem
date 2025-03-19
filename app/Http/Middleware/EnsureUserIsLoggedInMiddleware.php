@@ -6,9 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Employee;
 
-class IsUserHR
+class EnsureUserIsLoggedInMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,10 +16,8 @@ class IsUserHR
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /** @var Employee $user */
-        $user = Auth::guard('employee')->user();
-        if($user->getRoleName() !== 'hr'){
-            abort(403);
+        if (! Auth::guard('employee')->user()) {
+            return redirect()->route('loginPage');
         }
 
         return $next($request);

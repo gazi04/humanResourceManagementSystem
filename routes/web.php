@@ -1,35 +1,96 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Middleware\EnsureUserIsLoggedIn;
-use App\Http\Middleware\IsUserHR;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HumanResourceController;
+use App\Http\Controllers\ManagerController;
+use App\Http\Middleware\EnsureUserIsLoggedInMiddleware;
+use App\Http\Middleware\EnsureUserIsNotLoggedInMiddleware;
+use App\Http\Middleware\IsUserAdminMiddleware;
+use App\Http\Middleware\IsUserEmployeeMiddleware;
+use App\Http\Middleware\IsUserHRMiddleware;
+use App\Http\Middleware\IsUserManagerMiddleware;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', [EmployeeController::class, 'index'])->name('dashboard')->middleware([EnsureUserIsLoggedIn::class]);
-Route::get('/login', [LoginController::class, 'showLoginPage'])->name('loginPage');
-Route::post('/authenticate', [LoginController::class, 'login'])->name('login');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::middleware([EnsureUserIsLoggedInMiddleware::class])->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('dashboard');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
 
+Route::middleware(EnsureUserIsNotLoggedInMiddleware::class)->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginPage'])->name('loginPage');
+    Route::post('/authenticate', [LoginController::class, 'login'])->name('login');
+});
 
-Route::get('/dummy-data', function() {
+Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::view('/dashboard', 'Admin.adminDashboard')->name('dashboard');
+
+    Route::prefix('departaments')->name('department.')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index'])->name('index');
+        Route::post('/store', [DepartmentController::class, 'store'])->name('store');
+        Route::delete('/destroy', [DepartmentController::class, 'destroy'])->name('destroy');
+        Route::patch('/update', [DepartmentController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('employees')->name('employee.')->group(function () {
+        Route::get('/', [EmployeeController::class, 'index'])->name('index');
+        Route::get('/human-resources', [HumanResourceController::class, 'index'])->name('human-resources');
+        Route::get('/administrators', [AdminController::class, 'index'])->name('administrators');
+        Route::get('/managers', [ManagerController::class, 'index'])->name('managers');
+
+        Route::post('/create', [EmployeeController::class, 'create'])->name('create');
+        Route::delete('/delete', [EmployeeController::class, 'destroy'])->name('destroy');
+        Route::patch('/update', [EmployeeController::class, 'update'])->name('update');
+    });
+});
+
+Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::class])->prefix('hr')->name('hr.')->group(function () {
+    Route::get('/dashboard', function () {
+        return 'admin web page';
+    })->name('dashboard');
+});
+
+Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {
+    Route::get('/dashboard', function () {
+        return 'admin web page';
+    })->name('dashboard');
+});
+
+Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserEmployeeMiddleware::class])->prefix('employee')->name('employee.')->group(function () {
+    Route::get('/dashboard', function () {
+        return 'admin web page';
+    })->name('dashboard');
+});
+
+Route::get('/dummy-data', function () {
     $admin = Employee::create([
         'firstName' => 'gazi',
         'lastName' => 'gazi',
         'email' => 'gazi@gmail.com',
         'password' => Hash::make('gazigazi'),
-        'phone' => '045681376'
+        'phone' => '045681376',
     ]);
 
     $role = Role::create(['roleName' => 'admin']);
     $employeeRole = EmployeeRole::create([
         'employeeID' => $admin['employeeID'],
-        'roleID' => $role['roleID']
+        'roleID' => $role['roleID'],
     ]);
 
     return redirect()->route('loginPage');
+});
+
+Route::get('/dummy-dep', function () {
+    $department = Department::create([
+        'departmentID' => '100',
+        'departmentName' => 'testDepartment',
+    ]);
 });

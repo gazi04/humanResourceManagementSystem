@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('employee_roles', function (Blueprint $table) {
             $table->id('employeeRoleID');
-            $table->unsignedBigInteger('employeeID');
+            $table->unsignedBigInteger('employeeID')->unique();
             $table->unsignedBigInteger('roleID');
             $table->timestamps();
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('employee_roles');
     }
 };
