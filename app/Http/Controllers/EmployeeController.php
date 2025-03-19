@@ -48,7 +48,7 @@ class EmployeeController extends Controller
 
     public function destroy(DeleteEmployeeRequest $request): RedirectResponse
     {
-        $validated = $request->onlye('employeeID', 'email');
+        $validated = $request->only('employeeID', 'email');
 
         $employee = Employee::where('employeeID', $validated['employeeID'])
             ->where('email', $validated['email'])
