@@ -41,7 +41,7 @@ class CreateEmployeeRequest extends FormRequest
             'jobTitle' => 'required|string|max:255',
             'status' => 'required|in:Active,Inactive,On Leave',
             'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
-            'roleID' => 'required|integer|min:1|exists:roles,roleID',
+            'roleID' => 'required|integer|min:1',
         ];
     }
 
@@ -91,7 +91,6 @@ class CreateEmployeeRequest extends FormRequest
             'roleID.required' => 'ID e rolit është e detyrueshme.',
             'roleID.integer' => 'ID e rolit duhet të jetë një numër i plotë.',
             'roleID.min' => 'ID e rolit duhet të jetë më e madhe se 0.',
-            'roleId.exists' => 'Roli me këtë ID nuk egziston.',
         ];
     }
 }

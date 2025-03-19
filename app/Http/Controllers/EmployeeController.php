@@ -27,10 +27,10 @@ class EmployeeController extends Controller
         $validated = $request->only('firstName', 'lastName', 'email', 'password', 'phone', 'hireDate', 'jobTitle', 'status', 'departmentID');
         $validated['password'] = Hash::make($validated['password']);
 
-        $role = Role::where('roleID', $request->only('roleID'))->first();
+        $role = Role::where('roleID', $request->roleID)->first();
 
         if(!$role) {
-            return redirect()->route('admin.employee.index')->with('error', 'Roli nuk mund të gjendet në bazën e të dhënave.');
+            return redirect()->route('admin.employee.index')->with('error', 'Roli me këtë ID nuk egziston.');
         }
 
         $this->employeeService->createEmployee($role, $validated);
