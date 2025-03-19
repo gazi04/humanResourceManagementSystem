@@ -2,16 +2,16 @@
 
 use App\Models\Department;
 use App\Models\Employee;
-use App\Models\Role;
 use App\Models\EmployeeRole;
+use App\Models\Role;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 // Use the RefreshDatabase trait
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->artisan('migrate');
 
     // Create an admin user and log them in
@@ -33,7 +33,7 @@ beforeEach(function () {
     Auth::guard('employee')->login($employee);
 });
 
-it('creates an employee with valid data', function () {
+it('creates an employee with valid data', function (): void {
     // Create a department for the foreign key constraint
     $department = Department::create([
         'departmentID' => 1,
@@ -73,7 +73,7 @@ it('creates an employee with valid data', function () {
     expect(Hash::check('password123', $employee->password))->toBeTrue();
 });
 
-it('fails to create an employee with invalid data', function () {
+it('fails to create an employee with invalid data', function (): void {
     // Simulate a POST request with invalid data (missing required fields)
     $response = $this->post(route('admin.employee.create'), [
         // Missing required fields
@@ -99,7 +99,7 @@ it('fails to create an employee with invalid data', function () {
     $this->assertDatabaseCount('employees', 1); // Only the admin user created in beforeEach
 });
 
-it('fails to create an employee with a duplicate email', function () {
+it('fails to create an employee with a duplicate email', function (): void {
     // Create a department for the foreign key constraint
     $department = Department::create([
         'departmentID' => 1,
