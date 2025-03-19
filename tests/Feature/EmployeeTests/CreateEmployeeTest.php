@@ -40,6 +40,11 @@ it('creates an employee with valid data', function (): void {
         'departmentName' => 'IT Department',
     ]);
 
+    // Create a role for the employee
+    $role = Role::create([
+        'roleName' => 'hr',
+    ]);
+
     // Simulate a POST request with valid data
     $response = $this->post(route('admin.employee.create'), [
         'firstName' => 'John',
@@ -51,6 +56,7 @@ it('creates an employee with valid data', function (): void {
         'jobTitle' => 'Software Engineer',
         'status' => 'Active',
         'departmentID' => $department->departmentID,
+        'roleID' => $role->roleID, // Include roleID in the request
     ]);
 
     // Assert that the employee was created in the database
@@ -65,11 +71,20 @@ it('creates an employee with valid data', function (): void {
         'departmentID' => $department->departmentID,
     ]);
 
+    // Assert that the employee role was created in the database
+    $employee = Employee::where('email', 'john.doe@example.com')->first();
+    $this->assertDatabaseHas('employee_roles', [
+        'employeeID' => $employee->employeeID,
+        'roleID' => $role->roleID,
+    ]);
+
     // Assert that the user is redirected to the employee index page
     $response->assertRedirect(route('admin.employee.index'));
 
+    // Assert that the success message is present in the session
+    $response->assertSessionHas('success', 'Punonjësi u krijua me sukses.');
+
     // Assert that the password is hashed
-    $employee = Employee::where('email', 'john.doe@example.com')->first();
     expect(Hash::check('password123', $employee->password))->toBeTrue();
 });
 
@@ -93,6 +108,7 @@ it('fails to create an employee with invalid data', function (): void {
         'jobTitle' => 'Titulli i punës është i detyrueshëm.',
         'status' => 'Statusi është i detyrueshëm.',
         'departmentID' => 'ID e departamentit është e detyrueshme.',
+        'roleID' => 'ID e rolit është e detyrueshme.', // Added roleID validation
     ]);
 
     // Assert that no employee was created in the database
@@ -106,6 +122,12 @@ it('fails to create an employee with a duplicate email', function (): void {
         'departmentName' => 'IT Department',
     ]);
 
+    // Create a role for the employee
+    $role = Role::create([
+        'roleID' => 1,
+        'roleName' => 'hr',
+    ]);
+
     // Create an existing employee
     Employee::create([
         'firstName' => 'Jane',
@@ -116,7 +138,7 @@ it('fails to create an employee with a duplicate email', function (): void {
         'hireDate' => '2023-10-01',
         'jobTitle' => 'HR Manager',
         'status' => 'Active',
-        'departmentID' => 1,
+        'departmentID' => $department->departmentID,
     ]);
 
     // Simulate a POST request with a duplicate email
@@ -129,7 +151,8 @@ it('fails to create an employee with a duplicate email', function (): void {
         'hireDate' => '2023-10-01',
         'jobTitle' => 'Software Engineer',
         'status' => 'Active',
-        'departmentID' => 1,
+        'departmentID' => $department->departmentID,
+        'roleID' => $role->roleID, // Include roleID in the request
     ]);
 
     // Assert that the user is redirected back with validation errors
@@ -142,4 +165,35 @@ it('fails to create an employee with a duplicate email', function (): void {
 
     // Assert that no new employee was created in the database
     $this->assertDatabaseCount('employees', 2); // Admin user + existing employee
+});
+
+it('fails to create an employee with an invalid role', function (): void {
+    // Create a department for the foreign key constraint
+    $department = Department::create([
+        'departmentID' => 1,
+        'departmentName' => 'IT Department',
+    ]);
+
+    // Simulate a POST request with an invalid roleID
+    $response = $this->post(route('admin.employee.create'), [
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john.doe@example.com',
+        'password' => 'password123',
+        'phone' => '045123456',
+        'hireDate' => '2023-10-01',
+        'jobTitle' => 'Software Engineer',
+        'status' => 'Active',
+        'departmentID' => $department->departmentID,
+        'roleID' => 999, // Invalid roleID
+    ]);
+
+    // Assert that the user is redirected back with an error message
+    $response->assertRedirect(route('admin.employee.index'));
+
+    // Assert that the error message is present in the session
+    $response->assertSessionHas('error', 'Roli me këtë ID nuk egziston.');
+
+    // Assert that no employee was created in the database
+    $this->assertDatabaseCount('employees', 1); // Only the admin user created in beforeEach
 });

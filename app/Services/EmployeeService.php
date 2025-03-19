@@ -10,9 +10,16 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeeService implements EmployeeServiceInterface
 {
-    public function createEmployee(array $data): Employee
+    public function createEmployee(Role $role, array $data): EmployeeRole
     {
-        return DB::transaction(fn () => Employee::create($data));
+        return DB::transaction(function () use ($role, $data) {
+            $employee = Employee::create($data);
+
+            return EmployeeRole::create([
+                'employeeID' => $employee->employeeID,
+                'roleID' => $role->roleID,
+            ]);
+        });
     }
 
     public function updateEmployee(Employee $employee, array $data): Employee

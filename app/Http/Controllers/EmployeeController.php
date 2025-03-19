@@ -6,6 +6,7 @@ use App\Http\Requests\Employeers\CreateEmployeeRequest;
 use App\Http\Requests\Employeers\DeleteEmployeeRequest;
 use App\Http\Requests\Employeers\UpdateEmployeeRequest;
 use App\Models\Employee;
+use App\Models\Role;
 use App\Services\EmployeeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -23,11 +24,16 @@ class EmployeeController extends Controller
 
     public function create(CreateEmployeeRequest $request): RedirectResponse
     {
-        /* TODO- EMPLOYEE CAN'T LOGIN WITH OUT ASSIGNING HIM AN ROLE  */
         $validated = $request->only('firstName', 'lastName', 'email', 'password', 'phone', 'hireDate', 'jobTitle', 'status', 'departmentID');
         $validated['password'] = Hash::make($validated['password']);
 
-        $this->employeeService->createEmployee($validated);
+        $role = Role::where('roleID', $request->only('roleID'))->first();
+
+        if(!$role) {
+            return redirect()->route('admin.employee.index')->with('error', 'Roli nuk mund të gjendet në bazën e të dhënave.');
+        }
+
+        $this->employeeService->createEmployee($role, $validated);
 
         return redirect()->route('admin.employee.index')->with('success', 'Punonjësi u krijua me sukses.');
     }

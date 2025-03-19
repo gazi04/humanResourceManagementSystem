@@ -3,10 +3,12 @@
 namespace App\Services\Interfaces;
 
 use App\Models\Employee;
+use App\Models\EmployeeRole;
+use App\Models\Role;
 
 interface EmployeeServiceInterface
 {
-    public function createEmployee(array $data): Employee;
+    public function createEmployee(Role $role, array $data): EmployeeRole;
 
     public function updateEmployee(Employee $employee, array $data): Employee;
 
