@@ -29,8 +29,8 @@ class DeleteEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employeeID' => 'required|integer|min:1|exists:employees,employeeID',
-            'email' => 'required|email',
+            'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
+            'email' => ['required', 'email'],
         ];
     }
 

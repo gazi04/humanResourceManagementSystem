@@ -45,9 +45,9 @@ beforeEach(function (): void {
     ]);
 });
 
-it('assign role to an employee with valid data', function() {
+it('assign role to an employee with valid data', function (): void {
     $newRole = Role::create([
-        'roleName' => 'NewRole'
+        'roleName' => 'NewRole',
     ]);
 
     $response = $this->patch(route('admin.employee.assign-role'), [
@@ -59,18 +59,17 @@ it('assign role to an employee with valid data', function() {
     $response->assertSessionHas('success', 'Roli i punonjësit u ndryshua me sukses.');
 });
 
-it('assign role to an employee with invalid data', function() {
+it('assign role to an employee with invalid data', function (): void {
     $newRole = Role::create([
-        'roleName' => 'NewRole'
+        'roleName' => 'NewRole',
     ]);
 
-    $response = $this->patch(route('admin.employee.assign-role'), [ ]);
+    $response = $this->patch(route('admin.employee.assign-role'), []);
     $response->assertRedirect(route('admin.employee.index'));
     $response->assertSessionHasErrors([
         'employeeID' => 'ID e punonjësit është e detyrueshme.',
         'roleID' => 'ID e rolit është e detyrueshme.',
     ]);
-
 
     $response = $this->patch(route('admin.employee.assign-role'), [
         'employeeID' => 'sat',

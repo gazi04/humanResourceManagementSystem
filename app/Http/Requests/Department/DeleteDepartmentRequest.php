@@ -29,7 +29,7 @@ class DeleteDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
+            'departmentID' => ['required', 'integer', 'min:1', 'exists:departments,departmentID'],
         ];
     }
 

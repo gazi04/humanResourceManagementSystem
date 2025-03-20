@@ -30,18 +30,18 @@ class CreateEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email|max:255',
-            'password' => 'required|string|min:6',
+            'firstName' => ['required', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:employees,email', 'max:255'],
+            'password' => ['required', 'string', 'min:6'],
             /* TODO- IN PRODOCUTION REMOVE THE LINE ABOVE AND DECOMENT THE LINE BELOW */
             /* 'password' => ['require', Password::default(), 'string'], */
             'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/'],
-            'hireDate' => 'required|date',
-            'jobTitle' => 'required|string|max:255',
-            'status' => 'required|in:Active,Inactive,On Leave',
-            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
-            'roleID' => 'required|integer|min:1',
+            'hireDate' => ['required', 'date'],
+            'jobTitle' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'in:Active,Inactive,On Leave'],
+            'departmentID' => ['required', 'integer', 'min:1', 'exists:departments,departmentID'],
+            'roleID' => ['required', 'integer', 'min:1'],
         ];
     }
 

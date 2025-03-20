@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeeService implements EmployeeServiceInterface
 {
+    /**
+     * @param array<string, mixed> $data
+     */
     public function createEmployee(Role $role, array $data): EmployeeRole
     {
-        return DB::transaction(function () use ($role, $data) {
+        return DB::transaction(function () use ($role, $data): EmployeeRole {
+            /** @var Employee $employee */
             $employee = Employee::create($data);
 
             return EmployeeRole::create([
@@ -40,7 +44,7 @@ class EmployeeService implements EmployeeServiceInterface
 
             if ($request->has('password')) {
                 DB::table('employees')->where('employeeID', $employee->employeeID)
-                ->update(['password' => Hash::make($request->password)]);
+                    ->update(['password' => Hash::make($request->password)]);
             }
 
             return $employee;
@@ -58,9 +62,9 @@ class EmployeeService implements EmployeeServiceInterface
 
     public function assignRole(Employee $employee, Role $role): void
     {
-        DB::transaction(function () use ($employee, $role) {
+        DB::transaction(function () use ($employee, $role): void {
             DB::table('employee_roles')->where('employeeID', $employee->employeeID)
-            ->update(['roleID' => $role->roleID]);
+                ->update(['roleID' => $role->roleID]);
         });
     }
 }

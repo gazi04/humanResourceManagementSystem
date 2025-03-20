@@ -15,7 +15,7 @@ class DepartmentService implements DepartmentServiceInterface
 
     public function updateDepartment(Department $department, array $data): Department
     {
-        return DB::transaction(function () use ($department, $data): \App\Models\Department {
+        return DB::transaction(function () use ($department, $data): Department {
             $department->update($data);
 
             return $department;

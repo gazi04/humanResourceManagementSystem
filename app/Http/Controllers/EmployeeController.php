@@ -15,7 +15,7 @@ use Illuminate\View\View;
 
 class EmployeeController extends Controller
 {
-    public function __construct(protected EmployeeService $employeeService, private readonly Redirector $redirector) {}
+    public function __construct(protected EmployeeService $employeeService) {}
 
     public function index(): View
     {
@@ -29,7 +29,7 @@ class EmployeeController extends Controller
 
         $role = Role::where('roleID', $request->roleID)->first();
 
-        if(!$role) {
+        if (! $role) {
             return redirect()->route('admin.employee.index')->with('error', 'Roli me këtë ID nuk egziston.');
         }
 
@@ -43,7 +43,7 @@ class EmployeeController extends Controller
         $validated = $request->only('employeeID', 'firstName', 'lastName', 'email', 'password', 'phone', 'hireDate', 'jobTitle', 'status', 'departmentID');
         $employee = Employee::where('employeeID', $validated['employeeID'])->first();
 
-        if(!$employee) {
+        if (! $employee) {
             return redirect()->route('admin.employee.index')->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
         }
 
@@ -60,11 +60,12 @@ class EmployeeController extends Controller
             ->where('email', $validated['email'])
             ->first();
 
-        if(!$employee) {
+        if (! $employee) {
             return redirect()->route('admin.employee.index')->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
         }
 
         $this->employeeService->deleteEmployee($employee);
-        return redirect()->route('admin.employee.index')->with('success', 'Punonjësi është fshirë me sukses.');;
+
+        return redirect()->route('admin.employee.index')->with('success', 'Punonjësi është fshirë me sukses.');
     }
 }

@@ -19,9 +19,7 @@ class IsUserHRMiddleware
     {
         /** @var Employee $user */
         $user = Auth::guard('employee')->user();
-        if ($user->getRoleName() !== 'hr') {
-            abort(403);
-        }
+        abort_if($user->getRoleName() !== 'hr', 403);
 
         return $next($request);
     }

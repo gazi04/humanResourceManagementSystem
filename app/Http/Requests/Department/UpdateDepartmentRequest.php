@@ -29,8 +29,8 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
-            'newDepartmentName' => 'required|string|unique:departments,departmentName',
+            'departmentID' => ['required', 'integer', 'min:1', 'exists:departments,departmentID'],
+            'newDepartmentName' => ['required', 'string', 'unique:departments,departmentName'],
         ];
     }
 

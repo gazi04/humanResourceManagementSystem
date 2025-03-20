@@ -19,15 +19,16 @@ class EmployeeRoleController extends Controller
         $employee = Employee::where('employeeID', $validate['employeeID'])->first();
         $role = Role::where('roleID', $validate['roleID'])->first();
 
-        if(!$employee) {
+        if (! $employee) {
             return redirect()->route('admin.employee.index')->with('error', 'Punonjësi nuk gjendet në bazën e të dhënave.');
         }
 
-        if(!$role) {
+        if (! $role) {
             return redirect()->route('admin.employee.index')->with('error', 'Roli nuk gjendet në bazën e të dhënave.');
         }
 
         $this->employeeService->assignRole($employee, $role);
+
         return redirect()->route('admin.employee.index')->with('success', 'Roli i punonjësit u ndryshua me sukses.');
     }
 }

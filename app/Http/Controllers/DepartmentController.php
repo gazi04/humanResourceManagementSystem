@@ -33,7 +33,7 @@ class DepartmentController extends Controller
         $validated = $request->only('departmentID');
         $department = Department::query()->where('departmentID', $validated['departmentID'])->first();
 
-        if (!$department) {
+        if (! $department) {
             return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
         }
 
@@ -47,7 +47,7 @@ class DepartmentController extends Controller
         $validated = $request->only('departmentID', 'newDepartmentName');
         $department = Department::query()->where('departmentID', $validated['departmentID'])->first();
 
-        if (!$department) {
+        if (! $department) {
             return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
         }
 

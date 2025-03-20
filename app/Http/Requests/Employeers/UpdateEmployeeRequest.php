@@ -30,15 +30,15 @@ class UpdateEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employeeID' => 'required|integer|min:1|exists:employees,employeeID',
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email,' . $this->employeeID . ',employeeID|max:255',
+            'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
+            'firstName' => ['required', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
+            'email' => 'required|email|unique:employees,email,'.$this->employeeID.',employeeID|max:255',
             'password' => ['sometimes', Password::default(), 'string'],
             'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/'],
-            'jobTitle' => 'required|string|max:255',
-            'status' => 'required|in:Active,Inactive,On Leave',
-            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
+            'jobTitle' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'in:Active,Inactive,On Leave'],
+            'departmentID' => ['required', 'integer', 'min:1', 'exists:departments,departmentID'],
         ];
     }
 

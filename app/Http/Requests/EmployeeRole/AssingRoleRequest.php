@@ -29,8 +29,8 @@ class AssingRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employeeID' => 'required|integer|min:1|exists:employees,employeeID',
-            'roleID' => 'required|integer|min:1|exists:roles,roleID',
+            'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
+            'roleID' => ['required', 'integer', 'min:1', 'exists:roles,roleID'],
         ];
     }
 
