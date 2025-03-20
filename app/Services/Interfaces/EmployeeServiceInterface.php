@@ -10,7 +10,7 @@ use App\Models\Role;
 interface EmployeeServiceInterface
 {
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function createEmployee(Role $role, array $data): EmployeeRole;
 

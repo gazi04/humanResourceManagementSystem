@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class EmployeeService implements EmployeeServiceInterface
 {
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function createEmployee(Role $role, array $data): EmployeeRole
     {
@@ -66,5 +66,31 @@ class EmployeeService implements EmployeeServiceInterface
             DB::table('employee_roles')->where('employeeID', $employee->employeeID)
                 ->update(['roleID' => $role->roleID]);
         });
+    }
+
+    public function selectEmployeesBasedOnRoles(Role $role): void
+    {
+        DB::transaction(fn() => DB::table('employees as e')
+            ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
+            ->join('roles as r', 'er.roleID', '=', 'r.roleID')
+            ->leftJoin('departments as d', 'e.departmentID', '=', 'd.departmentID')
+            ->leftJoin('employees as s', 'e.supervisorID', '=', 's.employeeID')
+            ->where('r.roleID', $role->roleID)
+            ->select([
+                'e.employeeID',
+                'e.firstName',
+                'e.lastName',
+                'e.email',
+                'e.phone',
+                'e.hireDate',
+                'e.jobTitle',
+                'e.salary',
+                'e.status',
+                'd.departmentName',
+                's.firstName as supervisorFirstName',
+                's.lastName as supervisorLastName',
+                'r.roleName',
+            ])
+            ->paginate(10));
     }
 }
