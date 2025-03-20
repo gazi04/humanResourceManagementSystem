@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateEmployeeRoleRequest;
+use App\Http\Requests\EmployeeRole\AssingRoleRequest;
 use App\Models\Employee;
 use App\Models\Role;
 use App\Services\EmployeeService;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class EmployeeRoleController extends Controller
 {
     public function __construct(protected EmployeeService $employeeService) {}
 
-    public function update(UpdateEmployeeRoleRequest $request)
+    public function update(AssingRoleRequest $request): RedirectResponse
     {
         $validate = $request->only('employeeID', 'roleID');
 

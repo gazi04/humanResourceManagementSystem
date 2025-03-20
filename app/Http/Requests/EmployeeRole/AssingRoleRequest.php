@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\EmployeeRole;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEmployeeRoleRequest extends FormRequest
+class AssingRoleRequest extends FormRequest
 {
     /**
      * The route that users should be redirected to if validation fails.

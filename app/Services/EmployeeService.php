@@ -59,10 +59,8 @@ class EmployeeService implements EmployeeServiceInterface
     public function assignRole(Employee $employee, Role $role): void
     {
         DB::transaction(function () use ($employee, $role) {
-            /** @var EmployeeRole $employeeRole */
-            $employeeRole = EmployeeRole::where('employeeID', $employee->employeeID);
-            $employeeRole->roleID = $role->roleID;
-            $employeeRole->update();
+            DB::table('employee_roles')->where('employeeID', $employee->employeeID)
+            ->update(['roleID' => $role->roleID]);
         });
     }
 }
