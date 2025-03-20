@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Http\Requests\Employeers\UpdateEmployeeRequest;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
 use App\Services\Interfaces\EmployeeServiceInterface;
+use Hash;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeService implements EmployeeServiceInterface
@@ -22,10 +24,24 @@ class EmployeeService implements EmployeeServiceInterface
         });
     }
 
-    public function updateEmployee(Employee $employee, array $data): Employee
+    public function updateEmployee(Employee $employee, UpdateEmployeeRequest $request): Employee
     {
-        return DB::transaction(function () use ($employee, $data): Employee {
-            $employee->update($data);
+        return DB::transaction(function () use ($employee, $request): Employee {
+            DB::table('employees')->where('employeeID', $employee->employeeID)
+                ->update($request->only(
+                    'firstName',
+                    'lastName',
+                    'email',
+                    'phone',
+                    'jobTitle',
+                    'status',
+                    'departmentID',
+                ));
+
+            if ($request->has('password')) {
+                DB::table('employees')->where('employeeID', $employee->employeeID)
+                ->update(['password' => Hash::make($request->password)]);
+            }
 
             return $employee;
         });
@@ -34,33 +50,19 @@ class EmployeeService implements EmployeeServiceInterface
     public function deleteEmployee(Employee $employee): void
     {
         DB::transaction(function () use ($employee): void {
+            EmployeeRole::where('employeeID', $employee->employeeID)->delete();
+
             $employee->delete();
         });
     }
 
-    public function assignRole(int $employeeID, int $roleID): void
+    public function assignRole(Employee $employee, Role $role): void
     {
-        DB::transaction(function () use ($employeeID, $roleID) {
-            $employee = Employee::find($employeeID);
-            $role = Role::find($roleID);
-
-            throw_unless($employee, new \RuntimeException('Punonjësi nuk u gjet në bazën e të dhënave.'));
-
-            throw_unless($role, new \RuntimeException('Roli nuk u gjet në bazën e të dhënave.'));
-
-            $employeeRole = EmployeeRole::where('employeeID', $employeeID)
-                ->first();
-
-            if ($employeeRole) {
-                return $employeeRole::update([
-                    'roleID' => $roleID,
-                ]);
-            }
-
-            return EmployeeRole::create([
-                'employeeID' => $employeeID,
-                'roleID' => $roleID,
-            ]);
+        DB::transaction(function () use ($employee, $role) {
+            /** @var EmployeeRole $employeeRole */
+            $employeeRole = EmployeeRole::where('employeeID', $employee->employeeID);
+            $employeeRole->roleID = $role->roleID;
+            $employeeRole->update();
         });
     }
 }

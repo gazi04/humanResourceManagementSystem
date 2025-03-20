@@ -33,8 +33,8 @@ class UpdateEmployeeRequest extends FormRequest
             'employeeID' => 'required|integer|min:1|exists:employees,employeeID',
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email|max:255',
-            'password' => 'require|string|min:6',
+            'email' => 'required|email|unique:employees,email,' . $this->employeeID . ',employeeID|max:255',
+            'password' => 'sometimes|string|min:6',
             /* TODO- IN PRODOCUTION REMOVE THE LINE ABOVE AND DECOMENT THE LINE BELOW */
             /* 'password' => ['require', Password::default(), 'string'], */
             'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/'],
@@ -65,7 +65,6 @@ class UpdateEmployeeRequest extends FormRequest
             'email.unique' => 'Kjo adresë email është tashmë e përdorur.',
             'email.max' => 'Adresa email nuk mund të jetë më e gjatë se 255 karaktere.',
 
-            'password.required' => 'Fjalëkalimi është i detyrueshëm.',
             'password.string' => 'Fjalëkalimi duhet të jetë një varg tekstual.',
             'password.min' => 'Fjalëkalimi duhet të ketë të paktën 6 karaktere.',
 

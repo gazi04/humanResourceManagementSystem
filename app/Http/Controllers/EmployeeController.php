@@ -47,7 +47,7 @@ class EmployeeController extends Controller
             return redirect()->route('admin.employee.index')->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
         }
 
-        $this->employeeService->updateEmployee($employee, $validated);
+        $this->employeeService->updateEmployee($employee, $request);
 
         return redirect()->route('admin.employee.index')->with('success', 'Punonjësi u përditësua me sukses.');
     }
