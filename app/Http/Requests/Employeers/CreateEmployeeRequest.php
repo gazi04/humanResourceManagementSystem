@@ -68,7 +68,10 @@ class CreateEmployeeRequest extends FormRequest
 
             'password.required' => 'Fjalëkalimi është i detyrueshëm.',
             'password.string' => 'Fjalëkalimi duhet të jetë një varg tekstual.',
-            'password.min' => 'Fjalëkalimi duhet të ketë të paktën 6 karaktere.',
+            'password.min' => 'Fjalëkalimi duhet të ketë të paktën 8 karaktere.',
+            'password.mixed' => 'Fjalëkalimi duhet të përmbajë të paktën një shkronjë të madhe dhe një të vogël.',
+            'password.numbers' => 'Fjalëkalimi duhet të përmbajë të paktën një numër.',
+            'password.symbols' => 'Fjalëkalimi duhet të përmbajë të paktën një karakter special.',
 
             'phone.required' => 'Fusha e numrit të telefonit është e detyrueshme.',
             'phone.regex' => 'Numri i telefonit nuk është i vlefshëm. Duhet të fillojë me +383 ose 0 dhe të përmbajë 7 shifra pas prefiksit.',
