@@ -17,7 +17,9 @@ class DepartmentController extends Controller
 
     public function index(): View
     {
-        return view('Admin.departments');
+        $result = $this->departmentServices->showDepartments();
+
+        return view('Admin.departments', ['departments' => $result]);
     }
 
     public function store(CreateDepartmentRequest $request): RedirectResponse

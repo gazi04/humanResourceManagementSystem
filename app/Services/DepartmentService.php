@@ -28,4 +28,19 @@ class DepartmentService implements DepartmentServiceInterface
             $department->delete();
         });
     }
+
+    public function showDepartments()
+    {
+        return DB::transaction(function() {
+            return DB::table('departments')
+                ->leftJoin('employees', 'departments.supervisorID', '=', 'employees.employeeID')
+                ->select(
+                    'departments.departmentID',
+                    'departments.departmentName',
+                    'employees.firstName as supervisor_firstName',
+                    'employees.lastName as supervisor_lastName'
+                )
+                ->paginate(10);
+        });
+    }
 }
