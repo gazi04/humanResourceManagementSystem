@@ -68,14 +68,14 @@ class EmployeeService implements EmployeeServiceInterface
         });
     }
 
-    public function selectEmployeesBasedOnRoles(Role $role): void
+    public function selectEmployeesBasedOnRoles(int $roleID)
     {
-        DB::transaction(fn() => DB::table('employees as e')
+        return DB::transaction(fn () => DB::table('employees as e')
             ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
             ->join('roles as r', 'er.roleID', '=', 'r.roleID')
             ->leftJoin('departments as d', 'e.departmentID', '=', 'd.departmentID')
             ->leftJoin('employees as s', 'e.supervisorID', '=', 's.employeeID')
-            ->where('r.roleID', $role->roleID)
+            ->where('r.roleID', $roleID)
             ->select([
                 'e.employeeID',
                 'e.firstName',

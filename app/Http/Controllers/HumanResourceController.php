@@ -12,8 +12,12 @@ class HumanResourceController extends Controller
 
     public function index(): View
     {
-        $role = Role::create(['roleName' => 'bla']);
-        $this->employeeService->selectEmployeesBasedOnRoles($role);
-        return view('Admin.hrEmploye');
+        $roleID = Role::query()
+            ->where('roleName', 'hr')
+            ->value('roleID');
+
+        $result = $this->employeeService->selectEmployeesBasedOnRoles($roleID);
+
+        return view('Admin.hrEmploye', ['hrs' => $result]);
     }
 }
