@@ -25,6 +25,8 @@ class EmployeeSeeder extends Seeder
                 $employee->supervisorID = $supervisor->employeeID;
                 $employee->save();
             }
+
+            //todo-impleemen the seeder for the employeeRole
         });
     }
 }
