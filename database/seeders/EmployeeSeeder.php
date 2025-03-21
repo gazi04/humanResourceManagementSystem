@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EmployeeSeeder extends Seeder
