@@ -22,7 +22,7 @@ class EmployeeFactory extends Factory
             'jobTitle' => $this->faker->jobTitle,
             'salary' => $this->faker->numberBetween(30000, 100000),
             'status' => $this->faker->randomElement(['Active', 'Inactive']),
-            'departmentID' => $this->faker->numberBetween(3, 6),
+            'departmentID' => $this->faker->numberBetween(1, 4),
             'supervisorID' => null, // Initially set to null
             'contractID' => $this->faker->numberBetween(1, 10), // Assuming 10 contracts exist
         ];

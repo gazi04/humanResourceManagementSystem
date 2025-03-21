@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\EmployeeRole;
+use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -26,7 +28,16 @@ class EmployeeSeeder extends Seeder
                 $employee->save();
             }
 
-            //todo-impleemen the seeder for the employeeRole
+            $roles = Role::all(); // Get all roles from the roles table
+
+            $employees->each(function ($employee) use ($roles) {
+                // Assign a random role to the employee
+                $role = $roles->random();
+                EmployeeRole::create([
+                    'employeeID' => $employee->employeeID,
+                    'roleID' => $role->roleID,
+                ]);
+            });
         });
     }
 }
