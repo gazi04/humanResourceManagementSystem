@@ -54,25 +54,24 @@ class DepartmentController extends Controller
             return $this->redirector->route('admin.department.index')->with('error', 'Departamenti me'.$validated['departmentID'].' nuk u gjet në bazën e të dhënave.');
         }
 
-        if($request->has('newSupervisorID')) {
-            $newSupervisorID = $request->only('newSupervisorID');
+        if ($request->has('newSupervisorID')) {
+            $validatedSupervisorID = $request->only('newSupervisorID');
             /** @var Employee $employee */
-            $employee = Employee::where('employeeID', $newSupervisorID)->first();
+            $employee = Employee::where('employeeID', $validatedSupervisorID['newSupervisorID'])->first();
 
-            if(!$employee) {
-                return $this->redirector->route('admin.department.index')->with('error', 'Nuk ka asnjë punonjës me ID '.$newSupervisorID.' në bazën e të dhënave.');
+            if (! $employee) {
+                return $this->redirector->route('admin.department.index')->with('error', 'Nuk ka asnjë punonjës me ID '.$validatedSupervisorID['newSupervisorID'].' në bazën e të dhënave.');
             }
 
-            if($employee->getRoleName() != 'manager') {
+            if ($employee->getRoleName() != 'manager') {
                 return $this->redirector->route('admin.department.index')->with('error', 'Punonjësi i përzgjedhur nuk është menaxher.');
             }
 
             $this->departmentServices->updateDepartment($department, [
                 'departmentName' => $validated['newDepartmentName'],
-                'supervisorID' => $newSupervisorID,
+                'supervisorID' => $validatedSupervisorID['newSupervisorID'],
             ]);
-        }
-        else {
+        } else {
             $this->departmentServices->updateDepartment($department, ['departmentName' => $validated['newDepartmentName']]);
         }
 
