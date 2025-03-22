@@ -35,13 +35,14 @@ beforeEach(function (): void {
     Auth::guard('employee')->login($employee);
 });
 
-it('delete department with valid data', function() {
+it('tests the delete department function with valid data', function () {
+    $department = Department::create(['departmentName' => 'bla']);
     $response = $this->delete(route('admin.department.destroy'), [
-        'departmentID' => 1
+        'departmentID' => $department->departmentID,
     ]);
 
     $this->assertDatabaseMissing('departments', [
-        'departmentID' => 1,
+        'departmentID' => $department->departmentID,
         'departmentName' => 'test',
     ]);
 
@@ -49,34 +50,34 @@ it('delete department with valid data', function() {
     $response->assertSessionHas('success', 'Departamenti është fshirë me sukses.');
 });
 
-it('delete department with invalid data', function() {
+it('tests the delete department function with invalid data', function () {
     $response = $this->delete(route('admin.department.destroy', []));
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHasErrors([
-        'departmentID' => 'ID e departamentit është e detyrueshme.'
+        'departmentID' => 'ID e departamentit është e detyrueshme.',
     ]);
 
     $response = $this->delete(route('admin.department.destroy', [
-        'departmentID' => 'test'
+        'departmentID' => 'test',
     ]));
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHasErrors([
-        'departmentID' => 'ID e departamentit duhet të jetë një numër i plotë.'
+        'departmentID' => 'ID e departamentit duhet të jetë një numër i plotë.',
     ]);
 
     $response = $this->delete(route('admin.department.destroy', [
-        'departmentID' => 0
+        'departmentID' => 0,
     ]));
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHasErrors([
-        'departmentID' => 'ID e departamentit duhet të jetë më e madhe se 0.'
+        'departmentID' => 'ID e departamentit duhet të jetë më e madhe se 0.',
     ]);
 
     $response = $this->delete(route('admin.department.destroy', [
-        'departmentID' => 999
+        'departmentID' => 999,
     ]));
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHasErrors([
-        'departmentID' => 'Departamenti me këtë ID nuk egziston.'
+        'departmentID' => 'Departamenti me këtë ID nuk egziston.',
     ]);
 });

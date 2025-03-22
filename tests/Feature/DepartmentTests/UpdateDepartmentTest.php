@@ -8,13 +8,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-// Use the RefreshDatabase trait
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     $this->artisan('migrate');
 
-    // Create an admin user and log them in
     $employee = Employee::create([
         'firstName' => 'gazi',
         'lastName' => 'halili',
@@ -27,9 +25,8 @@ beforeEach(function (): void {
         'lastName' => 'bla',
         'email' => 'tes@gmail.com',
         'phone' => '045987232',
-        'password' => Hash::make('test1234')
+        'password' => Hash::make('test1234'),
     ]);
-
 
     $role = Role::create(['roleName' => 'admin']);
     $this->roleManager = Role::create(['roleName' => 'manager']);
@@ -40,62 +37,102 @@ beforeEach(function (): void {
     ]);
     EmployeeRole::create([
         'employeeID' => $manager->employeeID,
-        'roleID' => $this->roleManager->roleID
+        'roleID' => $this->roleManager->roleID,
     ]);
 
     $this->dep = Department::create([
         'departmentName' => 'test',
-        'supervisorID' => $manager->employeeID
+        'supervisorID' => $manager->employeeID,
     ]);
 
     Auth::guard('employee')->login($employee);
 });
 
-it('update department with valid data', function() {
-    // Update department name only
+it('tests update department function with valid data', function () {
     $response = $this->patch(route('admin.department.update'), [
         'departmentID' => $this->dep->departmentID,
-        'newDepartmentName' => 'new name'
+        'newDepartmentName' => 'new name',
     ]);
 
-    // Assert that the department name was updated
     $this->assertDatabaseHas('departments', [
         'departmentID' => $this->dep->departmentID,
-        'departmentName' => 'new name'
+        'departmentName' => 'new name',
     ]);
 
-    // Assert redirect and success message
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHas('success', 'Të dhënat e departamentit janë përditësuar me sukses.');
 
-    // Create a new manager
     $newManager = Employee::create([
         'firstName' => 'new',
         'lastName' => 'new12',
         'email' => 'new@gmail.com',
         'phone' => '045087232',
-        'password' => Hash::make('test1234')
+        'password' => Hash::make('test1234'),
     ]);
     EmployeeRole::create([
         'employeeID' => $newManager->employeeID,
         'roleID' => $this->roleManager->roleID,
     ]);
 
-    // Update department name and supervisor
     $response = $this->patch(route('admin.department.update'), [
         'departmentID' => $this->dep->departmentID,
         'newDepartmentName' => 'new name 2',
-        'newSupervisorID' => $newManager->employeeID
+        'newSupervisorID' => $newManager->employeeID,
     ]);
 
-    // Assert that the department name and supervisor were updated
     $this->assertDatabaseHas('departments', [
         'departmentID' => $this->dep->departmentID,
         'departmentName' => 'new name 2',
-        'supervisorID' => $newManager->employeeID
+        'supervisorID' => $newManager->employeeID,
     ]);
 
-    // Assert redirect and success message
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHas('success', 'Të dhënat e departamentit janë përditësuar me sukses.');
+});
+
+it('tests update department function with invalid data', function () {
+    $response = $this->patch(route('admin.department.update'), []);
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'departmentID' => 'ID e departamentit është e detyrueshme.',
+        'newDepartmentName' => 'Emri i ri i departamentit është i detyrueshëm.',
+    ]);
+
+    $response = $this->patch(route('admin.department.update'), [
+        'departmentID' => 'asdf',
+        'newDepartmentName' => 123,
+        'newSupervisorID' => 'asdf',
+    ]);
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'departmentID' => 'ID e departamentit duhet të jetë një numër i plotë.',
+        'newDepartmentName' => 'Emri i ri i departamentit duhet të jetë një varg tekstual.',
+        'newSupervisorID' => 'ID e menaxherit duhet të jetë një numër i plotë.',
+    ]);
+
+    Department::create(['departmentName' => 'departamenti sokav']);
+
+    $response = $this->patch(route('admin.department.update'), [
+        'departmentID' => 0,
+        'newDepartmentName' => 'departamenti sokav',
+        'newSupervisorID' => 0,
+    ]);
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'departmentID' => 'ID e departamentit duhet të jetë më e madhe se 0.',
+        'newDepartmentName' => 'Ekziston tashmë një departament me këtë emër.',
+        'newSupervisorID' => 'ID e menaxherit duhet të jetë më e madhe se 0.',
+    ]);
+
+    $response = $this->patch(route('admin.department.update'), [
+        'departmentID' => 99,
+        'newDepartmentName' => 'departamenti sokav',
+        'newSupervisorID' => 99,
+    ]);
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'departmentID' => 'Departamenti me këtë ID nuk egziston.',
+        'newDepartmentName' => 'Ekziston tashmë një departament me këtë emër.',
+        'newSupervisorID' => 'Menaxheri me këtë ID nuk egziston.',
+    ]);
 });

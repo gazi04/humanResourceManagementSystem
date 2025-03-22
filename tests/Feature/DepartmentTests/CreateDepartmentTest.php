@@ -47,7 +47,7 @@ beforeEach(function (): void {
     Auth::guard('employee')->login($employee);
 });
 
-it('create department with valid data', function() {
+it('tests create department function with valid data', function () {
     $response = $this->post(route('admin.department.store'), [
         'departmentName' => 'testDEp',
         'supervisorID' => $this->manager->employeeID,
@@ -60,4 +60,43 @@ it('create department with valid data', function() {
 
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHas('success', 'Departamenti është krijuar me sukses.');
+});
+
+it('tests create department function with invalid data', function () {
+    $response = $this->post(route('admin.department.store', []));
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'departmentName' => 'Emri i departamentit është i detyrueshëm.',
+        'supervisorID' => 'ID e mbikëqyrësit është e detyrueshme.',
+    ]);
+
+    $response = $this->post(route('admin.department.store'), [
+        'departmentName' => 10,
+        'supervisorID' => 'asdf',
+    ]);
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'departmentName' => 'Emri i departamentit duhet të jetë një varg tekstual.',
+        'supervisorID' => 'ID e mbikëqyrësit duhet të jetë një numër i plotë.',
+    ]);
+
+    Department::create(['departmentName' => 'test']);
+    $response = $this->post(route('admin.department.store', [
+        'departmentName' => 'test',
+        'supervisorID' => 0,
+    ]));
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'departmentName' => 'Ekziston tashmë një departament me këtë emër.',
+        'supervisorID' => 'ID e mbikëqyrësit duhet të jetë më e madhe se 0.',
+    ]);
+
+    $response = $this->post(route('admin.department.store', [
+        'departmentName' => 'bla',
+        'supervisorID' => 99,
+    ]));
+    $response->assertRedirect(route('admin.department.index'));
+    $response->assertSessionHasErrors([
+        'supervisorID' => 'ID e mbikëqyrësit nuk egziston ne tabelen e punonjesve.',
+    ]);
 });
