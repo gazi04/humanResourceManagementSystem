@@ -32,7 +32,7 @@ class DepartmentService implements DepartmentServiceInterface
 
     public function showDepartments(): LengthAwarePaginator
     {
-        return DB::transaction(function() {
+        return DB::transaction(function () {
             return DB::table('departments')
                 ->leftJoin('employees', 'departments.supervisorID', '=', 'employees.employeeID')
                 ->select(

@@ -32,18 +32,13 @@ Route::middleware(EnsureUserIsNotLoggedInMiddleware::class)->group(function () {
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
-    Route::view('/dashboard', 'Admin.adminDashboard')->name('dashboard');
+    Route::view('/', 'Admin.adminDashboard')->name('dashboard');
 
     Route::prefix('departaments')->name('department.')->group(function () {
         Route::get('/', [DepartmentController::class, 'index'])->name('index');
         Route::post('/store', [DepartmentController::class, 'store'])->name('store');
         Route::delete('/destroy', [DepartmentController::class, 'destroy'])->name('destroy');
         Route::patch('/update', [DepartmentController::class, 'update'])->name('update');
-
-        Route::get('/test', function() {
-            /* TODO- TEST MANUALLY THE UPDATE DEPARTMENT FUNCTION */
-            return;
-        })->name('test');
     });
 
     Route::prefix('employees')->name('employee.')->group(function () {

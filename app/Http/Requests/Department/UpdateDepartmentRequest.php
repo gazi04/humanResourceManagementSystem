@@ -31,7 +31,7 @@ class UpdateDepartmentRequest extends FormRequest
         return [
             'departmentID' => ['required', 'integer', 'min:1', 'exists:departments,departmentID'],
             'newDepartmentName' => ['required', 'string', 'unique:departments,departmentName'],
-            'newSupervisorID' => ['nullable', 'integer', 'min:1', 'exists:employees,employeeID']
+            'newSupervisorID' => ['nullable', 'integer', 'min:1', 'exists:employees,employeeID'],
         ];
     }
 
