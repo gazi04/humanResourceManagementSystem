@@ -60,8 +60,8 @@ class DepartmentService implements DepartmentServiceInterface
                 'employees.firstName as supervisor_firstName',
                 'employees.lastName as supervisor_lastName'
             )
-            ->where(function ($query) use ($searchTerm) {
-                $query->where('departments.departmentName', 'like', "%$query%")
+            ->where(function ($query) use ($searchTerm): void {
+                $query->where('departments.departmentName', 'like', "%$searchTerm%")
                     ->orWhere('employees.firstName', 'like', "%$searchTerm%")
                     ->orWhere('employees.lastName', 'like', "%$searchTerm%");
             })

@@ -29,7 +29,7 @@ class SearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'searchingTerm' => 'required|string|min:1|max:255'
+            'searchingTerm' => ['required', 'string', 'min:1', 'max:255'],
         ];
     }
 
@@ -38,7 +38,7 @@ class SearchRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    public function message(): array
+    public function messages(): array
     {
         return [
             'searchingTerm.required' => 'Termi i kërkimit është i detyrueshëm.',

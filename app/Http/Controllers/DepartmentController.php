@@ -79,7 +79,7 @@ class DepartmentController extends Controller
         return $this->redirector->route('admin.department.index')->with('success', 'Të dhënat e departamentit janë përditësuar me sukses.');
     }
 
-    public function search(SearchRequest $request)
+    public function search(SearchRequest $request): View
     {
         $validated = $request->only('searchingTerm');
         $result = $this->departmentServices->searchDepartment($validated['searchingTerm']);

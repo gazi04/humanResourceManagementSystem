@@ -146,16 +146,16 @@ class EmployeeService implements EmployeeServiceInterface
                 'r.roleID',
                 'r.roleName',
             ])
-             ->where(function ($query) use ($searchTerm) {
+            ->where(function ($query) use ($searchTerm): void {
                 $query->where('e.firstName', 'like', "%$searchTerm%")
-                  ->orWhere('e.lastName', 'like', "%$searchTerm%")
-                  ->orWhere('e.email', 'like', "%$searchTerm%")
-                  ->orWhere('e.phone', 'like', "%$searchTerm%")
-                  ->orWhere('e.jobTitle', 'like', "%$searchTerm%")
-                  ->orWhere('d.departmentName', 'like', "%$searchTerm%")
-                  ->orWhere('r.roleName', 'like', "%$searchTerm%")
-                  ->orWhere('s.firstName', 'like', "%$searchTerm%")
-                  ->orWhere('s.lastName', 'like', "%$searchTerm%");
+                    ->orWhere('e.lastName', 'like', "%$searchTerm%")
+                    ->orWhere('e.email', 'like', "%$searchTerm%")
+                    ->orWhere('e.phone', 'like', "%$searchTerm%")
+                    ->orWhere('e.jobTitle', 'like', "%$searchTerm%")
+                    ->orWhere('d.departmentName', 'like', "%$searchTerm%")
+                    ->orWhere('r.roleName', 'like', "%$searchTerm%")
+                    ->orWhere('s.firstName', 'like', "%$searchTerm%")
+                    ->orWhere('s.lastName', 'like', "%$searchTerm%");
             })
             ->paginate(10));
     }
