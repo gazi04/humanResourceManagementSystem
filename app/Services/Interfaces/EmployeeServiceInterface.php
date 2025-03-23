@@ -24,4 +24,6 @@ interface EmployeeServiceInterface
     public function selectEmployeesBasedOnRoles(int $roleID): LengthAwarePaginator;
 
     public function getEmployees(): LengthAwarePaginator;
+
+    public function searchEmployees(string $searchTerm): LengthAwarePaginator;
 }

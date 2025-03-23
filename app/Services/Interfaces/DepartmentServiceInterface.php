@@ -22,4 +22,6 @@ interface DepartmentServiceInterface
     public function showDepartments(): LengthAwarePaginator;
 
     public function updateManager(Department $department, int $managerID): void;
+
+    public function searchDepartment(string $searchTerm): LengthAwarePaginator;
 }

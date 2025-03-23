@@ -121,4 +121,42 @@ class EmployeeService implements EmployeeServiceInterface
             ])
             ->paginate(10));
     }
+
+    public function searchEmployees(string $searchTerm): LengthAwarePaginator
+    {
+        return DB::transaction(fn () => DB::table('employees as e')
+            ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
+            ->join('roles as r', 'er.roleID', '=', 'r.roleID')
+            ->leftJoin('departments as d', 'e.departmentID', '=', 'd.departmentID')
+            ->leftJoin('employees as s', 'e.supervisorID', '=', 's.employeeID')
+            ->select([
+                'e.employeeID',
+                'e.firstName',
+                'e.lastName',
+                'e.email',
+                'e.phone',
+                'e.hireDate',
+                'e.jobTitle',
+                'e.salary',
+                'e.status',
+                'd.departmentID',
+                'd.departmentName',
+                's.firstName as supervisorFirstName',
+                's.lastName as supervisorLastName',
+                'r.roleID',
+                'r.roleName',
+            ])
+             ->where(function ($query) use ($searchTerm) {
+                $query->where('e.firstName', 'like', "%$searchTerm%")
+                  ->orWhere('e.lastName', 'like', "%$searchTerm%")
+                  ->orWhere('e.email', 'like', "%$searchTerm%")
+                  ->orWhere('e.phone', 'like', "%$searchTerm%")
+                  ->orWhere('e.jobTitle', 'like', "%$searchTerm%")
+                  ->orWhere('d.departmentName', 'like', "%$searchTerm%")
+                  ->orWhere('r.roleName', 'like', "%$searchTerm%")
+                  ->orWhere('s.firstName', 'like', "%$searchTerm%")
+                  ->orWhere('s.lastName', 'like', "%$searchTerm%");
+            })
+            ->paginate(10));
+    }
 }
