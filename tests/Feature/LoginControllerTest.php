@@ -46,7 +46,7 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Assert the user is redirected to the correct dashboard based on their role
-        $testResponse->assertRedirect(route('employee-dashboard'));
+        $testResponse->assertRedirect(route('employee.dashboard'));
         $this->assertAuthenticatedAs($employee, 'employee');
     }
 
@@ -75,7 +75,7 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Assert the admin is redirected to the admin dashboard
-        $testResponse->assertRedirect(route('admin-dashboard'));
+        $testResponse->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticatedAs($admin, 'employee');
     }
 
@@ -104,7 +104,7 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Assert the HR is redirected to the HR dashboard
-        $testResponse->assertRedirect(route('hr-dashboard'));
+        $testResponse->assertRedirect(route('hr.dashboard'));
         $this->assertAuthenticatedAs($hr, 'employee');
     }
 
@@ -133,7 +133,7 @@ class LoginControllerTest extends TestCase
         ]);
 
         // Assert the manager is redirected to the manager dashboard
-        $testResponse->assertRedirect(route('manager-dashboard'));
+        $testResponse->assertRedirect(route('manager.dashboard'));
         $this->assertAuthenticatedAs($manager, 'employee');
     }
 

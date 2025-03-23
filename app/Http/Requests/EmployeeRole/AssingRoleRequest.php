@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Employeers;
+namespace App\Http\Requests\EmployeeRole;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteEmployeeRequest extends FormRequest
+class AssingRoleRequest extends FormRequest
 {
     /**
      * The route that users should be redirected to if validation fails.
@@ -30,7 +30,7 @@ class DeleteEmployeeRequest extends FormRequest
     {
         return [
             'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
-            'email' => ['required', 'email'],
+            'roleID' => ['required', 'integer', 'min:1', 'exists:roles,roleID'],
         ];
     }
 
@@ -47,8 +47,10 @@ class DeleteEmployeeRequest extends FormRequest
             'employeeID.min' => 'ID e punonjësit duhet të jetë më e madhe se 0.',
             'employeeID.exists' => 'Punonjësi me këtë ID nuk egziston.',
 
-            'email.required' => 'Adresa email është e detyrueshme.',
-            'email.email' => 'Adresa email nuk është e vlefshme.',
+            'roleID.required' => 'ID e rolit është e detyrueshme.',
+            'roleID.integer' => 'ID e rolit duhet të jetë një numër i plotë.',
+            'roleID.min' => 'ID e rolit duhet të jetë më e madhe se 0.',
+            'roleID.exists' => 'Roli me këtë ID nuk egziston.',
         ];
     }
 }

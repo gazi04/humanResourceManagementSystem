@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EmployeeRoleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\ManagerController;
@@ -31,7 +32,7 @@ Route::middleware(EnsureUserIsNotLoggedInMiddleware::class)->group(function () {
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
-    Route::view('/dashboard', 'Admin.adminDashboard')->name('dashboard');
+    Route::view('/', 'Admin.adminDashboard')->name('dashboard');
 
     Route::prefix('departaments')->name('department.')->group(function () {
         Route::get('/', [DepartmentController::class, 'index'])->name('index');
@@ -49,6 +50,8 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::post('/create', [EmployeeController::class, 'create'])->name('create');
         Route::delete('/delete', [EmployeeController::class, 'destroy'])->name('destroy');
         Route::patch('/update', [EmployeeController::class, 'update'])->name('update');
+
+        Route::patch('/assignRole', [EmployeeRoleController::class, 'update'])->name('assign-role');
     });
 });
 

@@ -168,13 +168,11 @@ it('fails to create an employee with a duplicate email', function (): void {
 });
 
 it('fails to create an employee with an invalid role', function (): void {
-    // Create a department for the foreign key constraint
     $department = Department::create([
         'departmentID' => 1,
         'departmentName' => 'IT Department',
     ]);
 
-    // Simulate a POST request with an invalid roleID
     $response = $this->post(route('admin.employee.create'), [
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -185,15 +183,9 @@ it('fails to create an employee with an invalid role', function (): void {
         'jobTitle' => 'Software Engineer',
         'status' => 'Active',
         'departmentID' => $department->departmentID,
-        'roleID' => 999, // Invalid roleID
+        'roleID' => 999,
     ]);
-
-    // Assert that the user is redirected back with an error message
     $response->assertRedirect(route('admin.employee.index'));
-
-    // Assert that the error message is present in the session
     $response->assertSessionHas('error', 'Roli me këtë ID nuk egziston.');
-
-    // Assert that no employee was created in the database
-    $this->assertDatabaseCount('employees', 1); // Only the admin user created in beforeEach
+    $this->assertDatabaseCount('employees', 1);
 });

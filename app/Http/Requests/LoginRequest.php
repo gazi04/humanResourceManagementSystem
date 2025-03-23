@@ -23,7 +23,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/', 'exists:employees,phone'],
-            'password' => 'required|string|min:6',
+            'password' => ['required', 'string', 'min:6'],
             /* TODO- IN PRODOCUTION REMOVE THE LINE ABOVE AND DECOMENT THE LINE BELOW */
             /* 'password' => ['require', Password::default(), 'string'], */
         ];
