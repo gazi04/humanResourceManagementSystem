@@ -39,6 +39,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::post('/store', [DepartmentController::class, 'store'])->name('store');
         Route::delete('/destroy', [DepartmentController::class, 'destroy'])->name('destroy');
         Route::patch('/update', [DepartmentController::class, 'update'])->name('update');
+        Route::get('/search', [DepartmentController::class, 'search'])->name('search');
     });
 
     Route::prefix('employees')->name('employee.')->group(function () {
