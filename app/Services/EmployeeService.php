@@ -8,6 +8,7 @@ use App\Models\EmployeeRole;
 use App\Models\Role;
 use App\Services\Interfaces\EmployeeServiceInterface;
 use Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeService implements EmployeeServiceInterface
@@ -68,7 +69,7 @@ class EmployeeService implements EmployeeServiceInterface
         });
     }
 
-    public function selectEmployeesBasedOnRoles(int $roleID)
+    public function selectEmployeesBasedOnRoles(int $roleID): LengthAwarePaginator
     {
         return DB::transaction(fn () => DB::table('employees as e')
             ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
@@ -89,6 +90,33 @@ class EmployeeService implements EmployeeServiceInterface
                 'd.departmentName',
                 's.firstName as supervisorFirstName',
                 's.lastName as supervisorLastName',
+                'r.roleName',
+            ])
+            ->paginate(10));
+    }
+
+    public function getEmployees(): LengthAwarePaginator
+    {
+        return DB::transaction(fn () => DB::table('employees as e')
+            ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
+            ->join('roles as r', 'er.roleID', '=', 'r.roleID')
+            ->leftJoin('departments as d', 'e.departmentID', '=', 'd.departmentID')
+            ->leftJoin('employees as s', 'e.supervisorID', '=', 's.employeeID')
+            ->select([
+                'e.employeeID',
+                'e.firstName',
+                'e.lastName',
+                'e.email',
+                'e.phone',
+                'e.hireDate',
+                'e.jobTitle',
+                'e.salary',
+                'e.status',
+                'd.departmentID',
+                'd.departmentName',
+                's.firstName as supervisorFirstName',
+                's.lastName as supervisorLastName',
+                'r.roleID',
                 'r.roleName',
             ])
             ->paginate(10));

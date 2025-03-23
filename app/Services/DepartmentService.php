@@ -32,22 +32,20 @@ class DepartmentService implements DepartmentServiceInterface
 
     public function showDepartments(): LengthAwarePaginator
     {
-        return DB::transaction(function () {
-            return DB::table('departments')
-                ->leftJoin('employees', 'departments.supervisorID', '=', 'employees.employeeID')
-                ->select(
-                    'departments.departmentID',
-                    'departments.departmentName',
-                    'employees.firstName as supervisor_firstName',
-                    'employees.lastName as supervisor_lastName'
-                )
-                ->paginate(10);
-        });
+        return DB::transaction(fn () => DB::table('departments')
+            ->leftJoin('employees', 'departments.supervisorID', '=', 'employees.employeeID')
+            ->select(
+                'departments.departmentID',
+                'departments.departmentName',
+                'employees.firstName as supervisor_firstName',
+                'employees.lastName as supervisor_lastName'
+            )
+            ->paginate(10));
     }
 
     public function updateManager(Department $department, int $managerID): void
     {
-        DB::transaction(function () use ($department, $managerID) {
+        DB::transaction(function () use ($department, $managerID): void {
             $department->update(['supervisorID' => $managerID]);
         });
     }

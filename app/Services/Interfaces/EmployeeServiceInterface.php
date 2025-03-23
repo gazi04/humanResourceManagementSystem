@@ -6,6 +6,7 @@ use App\Http\Requests\Employeers\UpdateEmployeeRequest;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface EmployeeServiceInterface
 {
@@ -19,4 +20,8 @@ interface EmployeeServiceInterface
     public function deleteEmployee(Employee $employee): void;
 
     public function assignRole(Employee $employee, Role $role): void;
+
+    public function selectEmployeesBasedOnRoles(int $roleID): LengthAwarePaginator;
+
+    public function getEmployees(): LengthAwarePaginator;
 }

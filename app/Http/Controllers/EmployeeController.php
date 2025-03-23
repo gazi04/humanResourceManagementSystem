@@ -18,11 +18,7 @@ class EmployeeController extends Controller
 
     public function index(): View
     {
-        $roleID = Role::query()
-            ->where('roleName', 'employee')
-            ->value('roleID');
-
-        $result = $this->employeeService->selectEmployeesBasedOnRoles($roleID);
+        $result = $this->employeeService->getEmployees();
 
         return view('Admin.employee', ['employees' => $result]);
     }
