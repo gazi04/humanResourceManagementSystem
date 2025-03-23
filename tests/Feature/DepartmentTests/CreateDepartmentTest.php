@@ -47,7 +47,7 @@ beforeEach(function (): void {
     Auth::guard('employee')->login($employee);
 });
 
-it('tests create department function with valid data', function () {
+it('tests create department function with valid data', function (): void {
     $response = $this->post(route('admin.department.store'), [
         'departmentName' => 'testDEp',
         'supervisorID' => $this->manager->employeeID,
@@ -62,7 +62,7 @@ it('tests create department function with valid data', function () {
     $response->assertSessionHas('success', 'Departamenti është krijuar me sukses.');
 });
 
-it('tests create department function with invalid data', function () {
+it('tests create department function with invalid data', function (): void {
     $response = $this->post(route('admin.department.store', []));
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHasErrors([

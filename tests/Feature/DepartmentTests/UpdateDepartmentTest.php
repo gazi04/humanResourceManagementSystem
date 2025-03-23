@@ -48,7 +48,7 @@ beforeEach(function (): void {
     Auth::guard('employee')->login($employee);
 });
 
-it('tests update department function with valid data', function () {
+it('tests update department function with valid data', function (): void {
     $response = $this->patch(route('admin.department.update'), [
         'departmentID' => $this->dep->departmentID,
         'newDepartmentName' => 'new name',
@@ -90,7 +90,7 @@ it('tests update department function with valid data', function () {
     $response->assertSessionHas('success', 'Të dhënat e departamentit janë përditësuar me sukses.');
 });
 
-it('tests update department function with invalid data', function () {
+it('tests update department function with invalid data', function (): void {
     $response = $this->patch(route('admin.department.update'), []);
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHasErrors([

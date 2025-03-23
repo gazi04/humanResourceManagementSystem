@@ -35,7 +35,7 @@ beforeEach(function (): void {
     Auth::guard('employee')->login($employee);
 });
 
-it('tests the delete department function with valid data', function () {
+it('tests the delete department function with valid data', function (): void {
     $department = Department::create(['departmentName' => 'bla']);
     $response = $this->delete(route('admin.department.destroy'), [
         'departmentID' => $department->departmentID,
@@ -50,7 +50,7 @@ it('tests the delete department function with valid data', function () {
     $response->assertSessionHas('success', 'Departamenti është fshirë me sukses.');
 });
 
-it('tests the delete department function with invalid data', function () {
+it('tests the delete department function with invalid data', function (): void {
     $response = $this->delete(route('admin.department.destroy', []));
     $response->assertRedirect(route('admin.department.index'));
     $response->assertSessionHasErrors([
