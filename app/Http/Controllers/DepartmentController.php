@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Department\CreateDepartmentRequest;
 use App\Http\Requests\Department\DeleteDepartmentRequest;
+use App\Http\Requests\Department\SearchDepartmentRequest;
 use App\Http\Requests\Department\UpdateDepartmentRequest;
-use App\Http\Requests\SearchRequest;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Services\DepartmentService;
@@ -79,7 +79,7 @@ class DepartmentController extends Controller
         return $this->redirector->route('admin.department.index')->with('success', 'Të dhënat e departamentit janë përditësuar me sukses.');
     }
 
-    public function search(SearchRequest $request): View
+    public function search(SearchDepartmentRequest $request): View
     {
         $validated = $request->only('searchingTerm');
         $result = $this->departmentServices->searchDepartment($validated['searchingTerm']);
