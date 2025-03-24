@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Employeers\CreateEmployeeRequest;
 use App\Http\Requests\Employeers\DeleteEmployeeRequest;
 use App\Http\Requests\Employeers\UpdateEmployeeRequest;
+use App\Http\Requests\SearchRequest;
 use App\Models\Employee;
 use App\Models\Role;
 use App\Services\EmployeeService;
@@ -68,5 +69,13 @@ class EmployeeController extends Controller
         $this->employeeService->deleteEmployee($employee);
 
         return redirect()->route('admin.employee.index')->with('success', 'Punonjësi është fshirë me sukses.');
+    }
+
+    public function search(SearchRequest $request): View
+    {
+        $validated = $request->only('searchingTerm');
+        $result = $this->employeeService->searchEmployees($validated['searchingTerm']);
+
+        return view('Admin.employee', ['employees' => $result]);
     }
 }

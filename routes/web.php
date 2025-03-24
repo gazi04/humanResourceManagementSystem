@@ -53,6 +53,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::patch('/update', [EmployeeController::class, 'update'])->name('update');
 
         Route::patch('/assignRole', [EmployeeRoleController::class, 'update'])->name('assign-role');
+        Route::get('/search', [EmployeeController::class, 'search'])->name('search');
     });
 });
 
