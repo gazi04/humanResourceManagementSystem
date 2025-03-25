@@ -235,7 +235,10 @@
             <div class="dropdown-menu">
               <a class="dropdown-item" href="profile.html">Profili</a>
               <a class="dropdown-item" href="settings.html">Settings</a>
-              <a class="dropdown-item" href="login.html">Çkyçu</a>
+              <form method="POST" action="{{ route('logout') }}">
+                  @csrf
+                  <input type='submit' value='Çkyçu' class="dropdown-item" />
+              </form>
             </div>
           </li>
         </ul>

@@ -44,7 +44,6 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
 
     Route::prefix('employees')->name('employee.')->group(function () {
         Route::get('/', [EmployeeController::class, 'index'])->name('index');
-        Route::get('/human-resources', [HumanResourceController::class, 'index'])->name('human-resources');
         Route::get('/administrators', [AdminController::class, 'index'])->name('administrators');
         Route::get('/managers', [ManagerController::class, 'index'])->name('managers');
 
@@ -64,9 +63,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {
-    Route::get('/dashboard', function () {
-        return 'admin web page';
-    })->name('dashboard');
+    Route::get('/human-resources', [HumanResourceController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserEmployeeMiddleware::class])->prefix('employee')->name('employee.')->group(function () {
@@ -83,12 +80,40 @@ Route::get('/dummy-data', function () {
         'password' => Hash::make('gazigazi'),
         'phone' => '045681376',
     ]);
+    $hr = Employee::create([
+        'firstName' => 'gazi',
+        'lastName' => 'gazi',
+        'email' => 'gaz123221@gmail.com',
+        'password' => Hash::make('123123'),
+        'phone' => '045681371',
+    ]);
+    $manager = Employee::create([
+        'firstName' => 'gazi',
+        'lastName' => 'gazi',
+        'email' => 'gazi32@gmail.com',
+        'password' => Hash::make('123123'),
+        'phone' => '045681370',
+    ]);
 
     $role = Role::create(['roleName' => 'admin']);
+    $hrRole = Role::create(['roleName' => 'hr']);
+    $managerRole = Role::create(['roleName' => 'manager']);
+
     $employeeRole = EmployeeRole::create([
         'employeeID' => $admin['employeeID'],
         'roleID' => $role['roleID'],
     ]);
+
+    EmployeeRole::create(
+        [
+            'employeeID' => $manager->employeeID,
+            'roleID' => $managerRole->roleID,
+        ],
+        [
+            'employeeID' => $hr->employeeID,
+            'roleID' => $hrRole->roleID,
+        ],
+    );
 
     return redirect()->route('loginPage');
 });
