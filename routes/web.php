@@ -58,7 +58,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::class])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', function () {
-        return 'admin web page';
+        return 'hr web page';
     })->name('dashboard');
 });
 
@@ -104,16 +104,14 @@ Route::get('/dummy-data', function () {
         'roleID' => $role['roleID'],
     ]);
 
-    EmployeeRole::create(
-        [
-            'employeeID' => $manager->employeeID,
-            'roleID' => $managerRole->roleID,
-        ],
-        [
-            'employeeID' => $hr->employeeID,
-            'roleID' => $hrRole->roleID,
-        ],
-    );
+    EmployeeRole::create([
+        'employeeID' => $manager->employeeID,
+        'roleID' => $managerRole->roleID,
+    ]);
+    EmployeeRole::create([
+        'employeeID' => $hr->employeeID,
+        'roleID' => $hrRole->roleID,
+    ]);
 
     return redirect()->route('loginPage');
 });

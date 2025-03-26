@@ -7,7 +7,7 @@ use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
 use App\Services\Interfaces\EmployeeServiceInterface;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
