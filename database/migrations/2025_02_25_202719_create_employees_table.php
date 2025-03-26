@@ -23,7 +23,6 @@ return new class extends Migration
             $table->unsignedBigInteger('departmentID')->nullable();
             $table->unsignedBigInteger('supervisorID')->nullable();
             $table->decimal('salary', 10, 2)->nullable();
-            $table->unsignedBigInteger('contractID')->nullable();
             $table->enum('status', ['Active', 'Inactive', 'On Leave'])->default('Inactive');
             $table->string('remember_token')->nullable();
             $table->timestamps();
