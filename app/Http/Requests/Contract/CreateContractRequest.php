@@ -4,7 +4,7 @@ namespace App\Http\Requests\Contract;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateContract extends FormRequest
+class CreateContractRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class CreateContract extends FormRequest
     public function rules(): array
     {
         return [
-            'contract' => 'required|file|mimes:pdf|max:2048',
+            'contract_file' => ['required', 'file', 'mimes:pdf', 'max:2048'],
         ];
     }
 
@@ -34,10 +34,10 @@ class CreateContract extends FormRequest
     public function messages(): array
     {
         return [
-            'contract.required' => 'Kontrata është e detyrueshme.',
-            'contract.file' => 'Kontrata duhet të jetë një skedar.',
-            'contract.mimes' => 'Kontrata duhet të jetë një skedar PDF.',
-            'contract.max' => 'Kontrata nuk mund të jetë më e madhe se 2MB.',
+            'contract_file.required' => 'Kontrata është e detyrueshme.',
+            'contract_file.file' => 'Kontrata duhet të jetë një skedar.',
+            'contract_file.mimes' => 'Kontrata duhet të jetë një skedar PDF.',
+            'contract_file.max' => 'Kontrata nuk mund të jetë më e madhe se 2MB.',
         ];
     }
 }
