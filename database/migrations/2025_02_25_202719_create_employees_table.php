@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('email', 100)->unique();
             $table->string('password');
             $table->string('phone', 15);
+            $table->string('contract_path', 100)->nullable();
             $table->date('hireDate')->nullable();
             $table->string('jobTitle', 100)->nullable();
             $table->unsignedBigInteger('departmentID')->nullable();
             $table->unsignedBigInteger('supervisorID')->nullable();
-            $table->decimal('salary', 10, 2)->nullable();
             $table->enum('status', ['Active', 'Inactive', 'On Leave'])->default('Inactive');
             $table->string('remember_token')->nullable();
             $table->timestamps();

@@ -28,10 +28,10 @@ class Employee extends Model implements AuthenticatableContract
         'jobTitle',
         'salary',
         'status',
+        'contract_path',
 
         'departmentID',
         'supervisorID',
-        'contractID',
     ];
 
     protected $hidden = [
@@ -53,11 +53,6 @@ class Employee extends Model implements AuthenticatableContract
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'departmentID', 'departmentID');
-    }
-
-    public function contracts(): HasMany
-    {
-        return $this->hasMany(Contract::class, 'employeeID', 'employeeID');
     }
 
     public function getRoleName(): string
