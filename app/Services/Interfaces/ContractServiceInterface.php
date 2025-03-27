@@ -2,14 +2,12 @@
 
 namespace App\Services\Interfaces;
 
-use App\Models\Contract;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Employee;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 interface ContractServiceInterface
 {
-    public function createContract(array $data): Contract;
+    public function uploadContract(Employee $employee, array $data): void;
 
-    public function getContract(int $contractID): Contract;
-
-    public function getEmployeeContracts(int $employeeID): LengthAwarePaginator;
+    public function downloadContract(Employee $employee): StreamedResponse;
 }
