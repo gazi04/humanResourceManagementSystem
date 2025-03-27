@@ -4,27 +4,37 @@ namespace App\Services;
 
 use App\Models\Contract;
 use App\Services\Interfaces\ContractServiceInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class ContractService implements ContractServiceInterface
 {
     public function createContract(array $data): Contract
     {
-
+        return DB::transaction(function () use ($data): Contract {
+            return Contract::create($data);
+        });
     }
 
-    public function updateContract(Contract $contract, array $data): Contract
+    public function getContract(int $contractID): Contract
     {
-
+        return DB::transaction(function () use ($contractID): Contract {
+            return Contract::find($contractID);
+        });
     }
 
-    public function getContract(Contract $contract): Contract
+    public function getEmployeeContracts(int $employeeID): LengthAwarePaginator
     {
-
-    }
-
-    public function getEmployeeContracts(int $employeeID): array
-    {
-
+        return DB::transaction(function () use ($employeeID): LengthAwarePaginator {
+            return DB::table('contracts')
+                ->where('employeeID', $employeeID)
+                ->select([
+                    'contractID',
+                    'employeeID',
+                    'filePath',
+                    'uploadDate'
+                ])
+                ->paginate(10);
+        });
     }
 }

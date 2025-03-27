@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
-    public function store()
-    {
+    public function show() {}
 
-    }
+    public function store() {}
 }

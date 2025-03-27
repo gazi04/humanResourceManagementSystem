@@ -3,14 +3,13 @@
 namespace App\Services\Interfaces;
 
 use App\Models\Contract;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface ContractServiceInterface
 {
     public function createContract(array $data): Contract;
 
-    public function updateContract(Contract $contract, array $data): Contract;
+    public function getContract(int $contractID): Contract;
 
-    public function getContract(Contract $contract): Contract;
-
-    public function getEmployeeContracts(int $employeeID): array;
+    public function getEmployeeContracts(int $employeeID): LengthAwarePaginator;
 }
