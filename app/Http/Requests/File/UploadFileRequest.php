@@ -22,7 +22,28 @@ class UploadFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
+            'contract_file' => ['required', 'file', 'mimes:pdf', 'max:2048'],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'employeeID.required' => 'ID e punonjësit është e detyrueshme.',
+            'employeeID.integer' => 'ID e punonjësit duhet të jetë një numër i plotë.',
+            'employeeID.min' => 'ID e punonjësit duhet të jetë më e madhe se 0.',
+            'employeeID.exists' => 'Punonjësi me këtë ID nuk egziston.',
+
+            'contract_file.required' => 'Kontrata është e detyrueshme.',
+            'contract_file.file' => 'Kontrata duhet të jetë një skedar.',
+            'contract_file.mimes' => 'Kontrata duhet të jetë një skedar PDF.',
+            'contract_file.max' => 'Kontrata nuk mund të jetë më e madhe se 2MB.',
         ];
     }
 }

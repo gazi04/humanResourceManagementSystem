@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRoleController;
@@ -58,8 +59,11 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::class])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', function () {
-        return 'hr web page';
+        return view('test');
     })->name('dashboard');
+
+    Route::post('/upload', [ContractController::class, 'upload'])->name('upload-contract');
+    Route::post('/download', [ContractController::class, 'download'])->name('download-contract');
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {
