@@ -16,7 +16,7 @@ class ContractService implements ContractServiceInterface
 
         throw_unless($file instanceof UploadedFile, new \InvalidArgumentException('Ngarkimi i skedarit i pavlefshëm.'));
 
-        $filename = 'contract_'.time().'.'.$file->getClientOriginalExtension();
+        $filename = 'contract_' . time() . '.' . $file->getClientOriginalExtension();
 
         $path = Storage::disk('contracts')->putFileAs(
             '',
@@ -25,6 +25,8 @@ class ContractService implements ContractServiceInterface
         );
 
         throw_if($path === false, new \RuntimeException('Failed to store the contract file.'));
+
+        $this->deleteExistingContract($employee);
 
         $employee->update([
             'contractPath' => $path,
@@ -38,5 +40,18 @@ class ContractService implements ContractServiceInterface
         throw_unless(Storage::disk('contracts')->exists($employee->contractPath), new \Exception('Skedari i kontratës nuk gjendet në sistem.'));
 
         return Storage::disk('contracts')->download($employee->contractPath);
+    }
+
+    private function deleteExistingContract(Employee $employee): bool
+    {
+        if (empty($employee->contractPath)) {
+            return false;
+        }
+
+        if (Storage::disk('contracts')->exists($employee->contractPath)) {
+            Storage::disk('contracts')->delete($employee->contractPath);
+        }
+
+        return true;
     }
 }
