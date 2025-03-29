@@ -160,7 +160,6 @@ it('searches employees by role name', function (): void {
         ['searchingTerm' => 'manager']
     );
 
-    dd($response);
     $response->assertStatus(200);
     $response->assertSee('Jane Smith');
     $response->assertDontSee('John Doe');
