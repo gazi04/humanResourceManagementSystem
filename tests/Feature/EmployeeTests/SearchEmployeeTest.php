@@ -3,7 +3,6 @@
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
-use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
