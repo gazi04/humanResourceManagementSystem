@@ -20,16 +20,18 @@ beforeEach(function (): void {
         'password' => Hash::make('gazi04'),
     ]);
 
-    $adminRole = Role::create(['roleName' => 'admin']);
     EmployeeRole::create([
         'employeeID' => $admin->employeeID,
-        'roleID' => $adminRole->roleID,
+        'roleID' => 1,
     ]);
 
     Auth::guard('employee')->login($admin);
 
     $department = Department::create([
         'departmentName' => 'IT Department',
+    ]);
+    $secondDepartment = Department::create([
+        'departmentName' => 'Logistic',
     ]);
 
     $employee1 = Employee::create([
@@ -49,18 +51,16 @@ beforeEach(function (): void {
         'phone' => '987654321',
         'password' => Hash::make('gazi04'),
         'jobTitle' => 'HR Manager',
-        'departmentID' => $department->departmentID,
+        'departmentID' => $secondDepartment->departmentID,
     ]);
 
-    $employeeRole = Role::create(['roleName' => 'employee']);
-    $managerRole = Role::create(['roleName' => 'manager']);
     EmployeeRole::create([
         'employeeID' => $employee1->employeeID,
-        'roleID' => $employeeRole->roleID,
+        'roleID' => 3,
     ]);
     EmployeeRole::create([
         'employeeID' => $employee2->employeeID,
-        'roleID' => $managerRole->roleID,
+        'roleID' => 4,
     ]);
 });
 
@@ -140,7 +140,7 @@ it('searches employees by department name', function (): void {
 
     $response->assertStatus(200);
     $response->assertSee('John Doe');
-    $response->assertSee('Jane Smith');
+    $response->assertDontSee('Jane Smith');
 });
 
 it('searches employees by role name', function (): void {
@@ -160,6 +160,7 @@ it('searches employees by role name', function (): void {
         ['searchingTerm' => 'manager']
     );
 
+    dd($response);
     $response->assertStatus(200);
     $response->assertSee('Jane Smith');
     $response->assertDontSee('John Doe');
