@@ -16,13 +16,13 @@ class ContractController extends Controller
         $validated = $request->only('employeeID', 'contract_file');
         $employee = Employee::where('employeeID', $validated['employeeID'])->first();
 
-        if (!$employee) {
+        if (! $employee) {
             return redirect()->route('hr.dashboard')->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
         }
 
         try {
             $this->contractService->uploadContract($employee, [
-                'contract_path' => $request->file('contract_file'),
+                'contractPath' => $request->file('contract_file'),
             ]);
 
             return back()->with('success', 'Kontrata u ngarkua me sukses.');
@@ -36,13 +36,12 @@ class ContractController extends Controller
         $validated = $request->only('employeeID');
         $employee = Employee::where('employeeID', $validated['employeeID'])->first();
 
-        if (!$employee) {
+        if (! $employee) {
             return redirect()->route('hr.dashboard')->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
         }
 
         try {
-            $this->contractService->downloadContract($employee);
-            return back()->with('success', 'Kontrata u ngarkua me sukses.');
+            return $this->contractService->downloadContract($employee);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
