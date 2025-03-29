@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('email', 100)->unique();
             $table->string('password');
             $table->string('phone', 15);
-            $table->string('contractPath', 100)->nullable();
             $table->date('hireDate')->nullable();
             $table->string('jobTitle', 100)->nullable();
             $table->unsignedBigInteger('departmentID')->nullable();

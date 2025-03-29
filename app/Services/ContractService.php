@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Contract;
 use App\Models\Employee;
 use App\Services\Interfaces\ContractServiceInterface;
 use Illuminate\Http\UploadedFile;
@@ -16,7 +17,7 @@ class ContractService implements ContractServiceInterface
 
         throw_unless($file instanceof UploadedFile, new \InvalidArgumentException('Ngarkimi i skedarit i pavlefshëm.'));
 
-        $filename = 'contract_' . time() . '.' . $file->getClientOriginalExtension();
+        $filename = 'contract_'.time().'.'.$file->getClientOriginalExtension();
 
         $path = Storage::disk('contracts')->putFileAs(
             '',
@@ -24,11 +25,10 @@ class ContractService implements ContractServiceInterface
             $filename
         );
 
-        throw_if($path === false, new \RuntimeException('Failed to store the contract file.'));
+        throw_if($path === false, new \RuntimeException('Dështoi në ruajtjen e skedarit të kontratës.'));
 
-        $this->deleteExistingContract($employee);
-
-        $employee->update([
+        Contract::create([
+            'employeeID' => $employee->employeeID,
             'contractPath' => $path,
         ]);
     }
