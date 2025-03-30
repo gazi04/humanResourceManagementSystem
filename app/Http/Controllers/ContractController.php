@@ -19,10 +19,6 @@ class ContractController extends Controller
         $validated = $request->only('employeeID');
         $employee = Employee::where('employeeID', $validated['employeeID'])->first();
 
-        if (! $employee) {
-            return back()->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
-        }
-
         try {
             return $this->contractService->getEmployeeContracts($employee);
         } catch (\Exception $e) {
@@ -32,14 +28,10 @@ class ContractController extends Controller
         }
     }
 
-    public function upload(UploadContractRequest $request)
+    public function create(UploadContractRequest $request)
     {
         $validated = $request->only('employeeID', 'contract_file');
         $employee = Employee::where('employeeID', $validated['employeeID'])->first();
-
-        if (! $employee) {
-            return back()->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
-        }
 
         try {
             $this->contractService->uploadContract($employee, [
@@ -54,7 +46,7 @@ class ContractController extends Controller
         }
     }
 
-    public function download(DownloadContractRequest $request)
+    public function show(DownloadContractRequest $request)
     {
         $validated = $request->only('contractID');
         $contract = Contract::where('contractID', $validated['contractID'])->first();
