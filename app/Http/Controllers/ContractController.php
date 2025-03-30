@@ -26,7 +26,7 @@ class ContractController extends Controller
         try {
             return $this->contractService->getEmployeeContracts($employee);
         } catch (\Exception $e) {
-            Log::error('Gjatë ngarkimit të kontratës ndodhi ky gabim: ', $e->getMessage());
+            Log::error('Gjatë ngarkimit të kontratës ndodhi ky gabim: ', [$e->getMessage()]);
 
             return back()->with('error', 'Ndodhi një gabim në sistem me marrjen e kontratave, provoni përsëri më vonë.');
         }
@@ -48,7 +48,7 @@ class ContractController extends Controller
 
             return back()->with('success', 'Kontrata u ngarkua me sukses.');
         } catch (\Exception $e) {
-            Log::error('Gjatë ngarkimit të kontratës ndodhi ky gabim: ', $e->getMessage());
+            Log::error('Gjatë ngarkimit të kontratës ndodhi ky gabim: ', [$e->getMessage()]);
 
             return back()->with('error', 'Ndodhi një gabim në sistem me ngarkimin e kontratës, provoni përsëri më vonë.');
         }
@@ -59,14 +59,10 @@ class ContractController extends Controller
         $validated = $request->only('contractID');
         $contract = Contract::where('contractID', $validated['contractID'])->first();
 
-        if (! $contract) {
-            return back()->with('error', 'Punonjësi nuk u gjet në bazën e të dhënave.');
-        }
-
         try {
             return $this->contractService->downloadContract($contract);
         } catch (\Exception $e) {
-            Log::error('Gjatë ngarkimit të kontratës ndodhi ky gabim: ', $e->getMessage());
+            Log::error('Gjatë ngarkimit të kontratës ndodhi ky gabim: ', [$e->getMessage()]);
 
             return back()->with('error', 'Ndodhi një gabim në sistem me ngarkimin e kontratës, provoni përsëri më vonë.');
         }

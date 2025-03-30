@@ -24,8 +24,15 @@
     <input type='file' name='contract_file' />
     <input type='submit' />
 </form>
+<br>
 <form method="POST" action="{{ route('hr.download-contract') }}" enctype="multipart/form-data">
     @csrf
-    <input type='hidden' name='employeeID' value="1" />
+    <input type='hidden' name='contractID' value="4" />
     <input type='submit' />
+</form>
+<br>
+<form method="POST" action="{{ route('hr.get-contracts') }}">
+    @csrf
+    <input type='hidden' name='employeeID' value="1" />
+    <input type='submit' value='get contracts' />
 </form>

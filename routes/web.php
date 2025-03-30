@@ -62,6 +62,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         return view('test');
     })->name('dashboard');
 
+    Route::post('/getContracts', [ContractController::class, 'index'])->name('get-contracts');
     Route::post('/upload', [ContractController::class, 'upload'])->name('upload-contract');
     Route::post('/download', [ContractController::class, 'download'])->name('download-contract');
 });

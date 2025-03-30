@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 uses(RefreshDatabase::class);
 uses()->group('contracts');
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->artisan('migrate');
 
     // Setup storage fake for contracts
@@ -51,7 +52,7 @@ beforeEach(function () {
     ]);
 });
 
-it('requires authentication for upload', function () {
+it('requires authentication for upload', function (): void {
     Auth::guard('employee')->logout();
 
     $response = $this->post(route('hr.upload-contract'), [
@@ -62,7 +63,7 @@ it('requires authentication for upload', function () {
     $response->assertRedirect(route('loginPage'));
 });
 
-it('validates upload request', function () {
+it('validates upload request', function (): void {
     // Test missing fields
     $response = $this->post(route('hr.upload-contract'), []);
     $response->assertSessionHasErrors(['employeeID', 'contract_file']);
@@ -89,7 +90,7 @@ it('validates upload request', function () {
     $response->assertSessionHasErrors(['employeeID']);
 });
 
-it('uploads contract successfully', function () {
+it('uploads contract successfully', function (): void {
     $file = UploadedFile::fake()->create('contract.pdf', 1000);
 
     $response = $this->post(route('hr.upload-contract'), [
@@ -100,15 +101,17 @@ it('uploads contract successfully', function () {
     $response->assertRedirect();
     $response->assertSessionHas('success', 'Kontrata u ngarkua me sukses.');
 
-    // Assert file was stored
-    $this->employee->refresh();
-    Storage::disk('contracts')->assertExists($this->employee->contractPath);
+    // Verify contract record was created
+    $contract = Contract::first();
+    expect($contract)->not->toBeNull()
+        ->and($contract->employeeID)->toBe($this->employee->employeeID)
+        ->and($contract->contractPath)->toMatch('/^contract_\d+\.pdf$/');
 
-    // Assert filename follows expected pattern
-    expect($this->employee->contractPath)->toMatch('/^contract_\d+\.pdf$/');
+    // Verify file was stored
+    Storage::disk('contracts')->assertExists($contract->contractPath);
 });
 
-it('handles upload errors gracefully', function () {
+it('handles upload errors gracefully', function (): void {
     // Mock a storage failure
     Storage::shouldReceive('disk->putFileAs')
         ->once()
@@ -123,7 +126,7 @@ it('handles upload errors gracefully', function () {
     $response->assertSessionHas('error');
 });
 
-it('requires authentication for download', function () {
+it('requires authentication for download', function (): void {
     Auth::guard('employee')->logout();
 
     $response = $this->post(route('hr.download-contract'), [
@@ -133,55 +136,75 @@ it('requires authentication for download', function () {
     $response->assertRedirect(route('loginPage'));
 });
 
-it('validates download request', function () {
+it('validates download request', function (): void {
     // Test missing employeeID
     $response = $this->post(route('hr.download-contract'), []);
-    $response->assertSessionHasErrors(['employeeID']);
+    $response->assertSessionHasErrors(['contractID']);
 
     // Test invalid employee
     $response = $this->post(route('hr.download-contract'), [
-        'employeeID' => 9999,
+        'contractID' => 9999,
     ]);
-    $response->assertSessionHasErrors(['employeeID']);
+    $response->assertSessionHasErrors(['contractID']);
 });
 
-it('downloads contract successfully', function () {
-    // First upload a contract
-    $file = UploadedFile::fake()->create('contract.pdf', 1000);
-    $this->post(route('hr.upload-contract'), [
+it('downloads contract successfully', function (): void {
+    // Create a contract record
+    $contract = Contract::create([
         'employeeID' => $this->employee->employeeID,
-        'contract_file' => $file,
+        'contractPath' => 'test_contract.pdf',
     ]);
 
-    $this->employee->refresh();
+    // Create a fake file in storage
+    Storage::disk('contracts')->put('test_contract.pdf', 'test content');
+
     $response = $this->post(route('hr.download-contract'), [
-        'employeeID' => $this->employee->employeeID,
+        'contractID' => $contract->contractID,
     ]);
 
-    // Assert download response
     expect($response->baseResponse)->toBeInstanceOf(StreamedResponse::class);
-
     expect($response->headers->get('Content-Disposition'))
-        ->toBe('attachment; filename='.$this->employee->contractPath);
+        ->toContain('attachment; filename=test_contract.pdf');
 });
 
-it('handles download errors when no contract exists', function () {
+it('handles download errors when no contract exists', function (): void {
+    // Non-existent contract
     $response = $this->post(route('hr.download-contract'), [
-        'employeeID' => $this->employee->employeeID,
+        'contractID' => 9999,
     ]);
-
     $response->assertRedirect();
-    $response->assertSessionHas('error', 'Nuk u gjet asnjë kontratë për këtë punonjës.');
+    $response->assertSessionHasErrors([
+        'contractID' => 'Kontrata me këtë ID nuk egziston.'
+    ]);
 });
 
-it('handles download errors when file missing', function () {
+it('handles download errors when file missing', function (): void {
     // Set contract path but don't actually store the file
-    $this->employee->update(['contractPath' => 'missing_contract.pdf']);
-
-    $response = $this->post(route('hr.download-contract'), [
+    $contract = Contract::create([
         'employeeID' => $this->employee->employeeID,
+        'contractPath' => 'missing_contract.pdf',
+    ]);
+    $response = $this->post(route('hr.download-contract'), [
+        'contractID' => $contract->contractID,
     ]);
 
     $response->assertRedirect();
-    $response->assertSessionHas('error', 'Skedari i kontratës nuk gjendet në sistem.');
+    $response->assertSessionHas('error', 'Ndodhi një gabim në sistem me ngarkimin e kontratës, provoni përsëri më vonë.');
+});
+
+it('lists employee contracts paginated', function () {
+    for ($i=0; $i < 15; $i++) {
+        Contract::create([
+            'employeeID' => $this->employee->employeeID,
+            'contractPath' => 'missing_contract.pdf',
+        ]);
+    }
+
+    $response = $this->post(route('hr.get-contracts', [
+        'employeeID' => $this->employee->employeeID,
+    ]));
+
+    $response->assertOk();
+    expect($response->json('data'))->toHaveCount(10)
+        ->and($response->json('total'))->toBe(15);
 });
