@@ -37,11 +37,49 @@ class ContractService implements ContractServiceInterface
 
     public function downloadContract(Contract $contract): StreamedResponse
     {
-        throw_unless($contract->contractPath, new \Exception('Nuk u gjet asnjë kontratë për këtë punonjës.'));
-
         throw_unless(Storage::disk('contracts')->exists($contract->contractPath), new \Exception('Skedari i kontratës nuk gjendet në sistem.'));
 
         return Storage::disk('contracts')->download($contract->contractPath);
+    }
+
+    public function updateContract(Contract $contract, Employee $employee, array $data): void
+    {
+        DB::transaction(function () use ($contract, $employee, $data) {
+            throw_unless($contract->employeeID === $employee->employeeID, new \InvalidArgumentException('The specified contract does not belong to this employee.'));
+
+            $file = $data['contractPath'] ?? null;
+
+            throw_unless($file instanceof UploadedFile, new \InvalidArgumentException('Invalid file upload'));
+
+            $filename = 'contract_'.time().'.'.$file->getClientOriginalExtension();
+
+            $newPath = Storage::disk('contracts')->putFileAs(
+                '',
+                $file,
+                $filename
+            );
+
+            throw_if($newPath === false, new \RuntimeException('Failed to store the new contract file.'));
+
+            if (Storage::disk('contracts')->exists($contract->contractPath)) {
+                Storage::disk('contracts')->delete($contract->contractPath);
+            }
+
+            $contract->update([
+                'contractPath' => $newPath,
+            ]);
+        });
+    }
+
+    public function deleteContract(Contract $contract): void
+    {
+        DB::transaction(function () use ($contract) {
+            if (Storage::disk('contracts')->exists($contract->contractPath)) {
+                Storage::disk('contracts')->delete($contract->contractPath);
+            }
+
+            $contract->delete();
+        });
     }
 
     public function getEmployeeContracts(Employee $employee): LengthAwarePaginator
