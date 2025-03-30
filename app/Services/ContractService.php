@@ -6,6 +6,8 @@ use App\Models\Contract;
 use App\Models\Employee;
 use App\Services\Interfaces\ContractServiceInterface;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -33,25 +35,20 @@ class ContractService implements ContractServiceInterface
         ]);
     }
 
-    public function downloadContract(Employee $employee): StreamedResponse
+    public function downloadContract(Contract $contract): StreamedResponse
     {
-        throw_unless($employee->contractPath, new \Exception('Nuk u gjet asnjë kontratë për këtë punonjës.'));
+        throw_unless($contract->contractPath, new \Exception('Nuk u gjet asnjë kontratë për këtë punonjës.'));
 
-        throw_unless(Storage::disk('contracts')->exists($employee->contractPath), new \Exception('Skedari i kontratës nuk gjendet në sistem.'));
+        throw_unless(Storage::disk('contracts')->exists($contract->contractPath), new \Exception('Skedari i kontratës nuk gjendet në sistem.'));
 
-        return Storage::disk('contracts')->download($employee->contractPath);
+        return Storage::disk('contracts')->download($contract->contractPath);
     }
 
-    private function deleteExistingContract(Employee $employee): bool
+    public function getEmployeeContracts(Employee $employee): LengthAwarePaginator
     {
-        if (empty($employee->contractPath)) {
-            return false;
-        }
-
-        if (Storage::disk('contracts')->exists($employee->contractPath)) {
-            Storage::disk('contracts')->delete($employee->contractPath);
-        }
-
-        return true;
+        return DB::transaction(fn(): LengthAwarePaginator => DB::table('contracts')->where('employeeID', $employee->employeeID)
+            ->select('contractID', 'contractPath')
+            ->latest()
+            ->paginate(10));
     }
 }
