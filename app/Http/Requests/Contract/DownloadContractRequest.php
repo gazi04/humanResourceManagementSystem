@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\File;
+namespace App\Http\Requests\Contract;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DownloadFileRequest extends FormRequest
+class DownloadContractRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class DownloadFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
+            'contractID' => ['required', 'integer', 'min:1', 'exists:contracts,contractID'],
         ];
     }
 
@@ -34,10 +34,10 @@ class DownloadFileRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'employeeID.required' => 'ID e punonjësit është e detyrueshme.',
-            'employeeID.integer' => 'ID e punonjësit duhet të jetë një numër i plotë.',
-            'employeeID.min' => 'ID e punonjësit duhet të jetë më e madhe se 0.',
-            'employeeID.exists' => 'Punonjësi me këtë ID nuk egziston.',
+            'contractID.required' => 'ID e kontratës është e detyrueshme.',
+            'contractID.integer' => 'ID e kontratës duhet të jetë një numër i plotë.',
+            'contractID.min' => 'ID e kontratës duhet të jetë më e madhe se 0.',
+            'contractID.exists' => 'Kontrata me këtë ID nuk egziston.',
         ];
     }
 }

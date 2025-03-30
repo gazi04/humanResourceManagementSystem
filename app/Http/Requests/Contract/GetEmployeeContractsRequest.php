@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\File;
+namespace App\Http\Requests\Contract;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UploadFileRequest extends FormRequest
+class GetEmployeeContractsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,6 @@ class UploadFileRequest extends FormRequest
     {
         return [
             'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
-            'contract_file' => ['required', 'file', 'mimes:pdf', 'max:2048'],
         ];
     }
 
@@ -39,11 +38,6 @@ class UploadFileRequest extends FormRequest
             'employeeID.integer' => 'ID e punonjësit duhet të jetë një numër i plotë.',
             'employeeID.min' => 'ID e punonjësit duhet të jetë më e madhe se 0.',
             'employeeID.exists' => 'Punonjësi me këtë ID nuk egziston.',
-
-            'contract_file.required' => 'Kontrata është e detyrueshme.',
-            'contract_file.file' => 'Kontrata duhet të jetë një skedar.',
-            'contract_file.mimes' => 'Kontrata duhet të jetë një skedar PDF.',
-            'contract_file.max' => 'Kontrata nuk mund të jetë më e madhe se 2MB.',
         ];
     }
 }

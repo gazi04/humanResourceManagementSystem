@@ -46,9 +46,9 @@ class ContractService implements ContractServiceInterface
 
     public function getEmployeeContracts(Employee $employee): LengthAwarePaginator
     {
-        return DB::transaction(fn(): LengthAwarePaginator => DB::table('contracts')->where('employeeID', $employee->employeeID)
-            ->select('contractID', 'contractPath')
-            ->latest()
+        return DB::transaction(fn (): LengthAwarePaginator => DB::table('contracts')->where('employeeID', $employee->employeeID)
+            ->select('contractID', 'contractPath', 'created_at')
+            ->latest('created_at')
             ->paginate(10));
     }
 }
