@@ -18,7 +18,6 @@ use App\Http\Middleware\IsUserManagerMiddleware;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
-use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -100,22 +99,18 @@ Route::get('/dummy-data', function () {
         'phone' => '045681370',
     ]);
 
-    $role = Role::create(['roleName' => 'admin']);
-    $hrRole = Role::create(['roleName' => 'hr']);
-    $managerRole = Role::create(['roleName' => 'manager']);
-
     $employeeRole = EmployeeRole::create([
         'employeeID' => $admin['employeeID'],
-        'roleID' => $role['roleID'],
+        'roleID' => 1,
     ]);
 
     EmployeeRole::create([
         'employeeID' => $manager->employeeID,
-        'roleID' => $managerRole->roleID,
+        'roleID' => 4,
     ]);
     EmployeeRole::create([
         'employeeID' => $hr->employeeID,
-        'roleID' => $hrRole->roleID,
+        'roleID' => 2,
     ]);
 
     return redirect()->route('loginPage');
