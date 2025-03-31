@@ -61,9 +61,16 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         return view('test');
     })->name('dashboard');
 
+    Route::prefix('employees')->name('employee.')->group(function () {
+        Route::get('/', [EmployeeController::class, 'index'])->name('index');
+        Route::get('/profile', [EmployeeController::class, 'show'])->name('profile');
+    });
+
     Route::post('/getContracts', [ContractController::class, 'index'])->name('get-contracts');
-    Route::post('/upload', [ContractController::class, 'upload'])->name('upload-contract');
-    Route::post('/download', [ContractController::class, 'download'])->name('download-contract');
+    Route::post('/upload', [ContractController::class, 'create'])->name('upload-contract');
+    Route::post('/download', [ContractController::class, 'show'])->name('download-contract');
+    Route::patch('/update', [ContractController::class, 'update'])->name('update-contract');
+    Route::delete('/delete', [ContractController::class, 'delete'])->name('delete-contract');
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {
