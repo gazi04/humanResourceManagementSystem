@@ -47,7 +47,7 @@ class ContractService implements ContractServiceInterface
         DB::transaction(function () use ($contract, $employee, $data) {
             throw_unless($contract->employeeID === $employee->employeeID, new \InvalidArgumentException('The specified contract does not belong to this employee.'));
 
-            $file = $data['contractPath'] ?? null;
+            $file = $data['contract_file'] ?? null;
 
             throw_unless($file instanceof UploadedFile, new \InvalidArgumentException('Invalid file upload'));
 
@@ -82,11 +82,11 @@ class ContractService implements ContractServiceInterface
         });
     }
 
-    public function getEmployeeContracts(Employee $employee): LengthAwarePaginator
+    public function getEmployeeContracts(int $employeeID): LengthAwarePaginator
     {
-        return DB::transaction(fn (): LengthAwarePaginator => DB::table('contracts')->where('employeeID', $employee->employeeID)
+        return DB::transaction(fn (): LengthAwarePaginator => DB::table('contracts')->where('employeeID', $employeeID)
             ->select('contractID', 'contractPath', 'created_at')
             ->latest('created_at')
-            ->paginate(10));
+            ->paginate(5));
     }
 }

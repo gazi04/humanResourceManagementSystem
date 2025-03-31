@@ -26,4 +26,6 @@ interface EmployeeServiceInterface
     public function getEmployees(): LengthAwarePaginator;
 
     public function searchEmployees(string $searchTerm): LengthAwarePaginator;
+
+    public function getEmployee(int $employeeID): array;
 }

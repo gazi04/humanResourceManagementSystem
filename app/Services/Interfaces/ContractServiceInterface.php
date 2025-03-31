@@ -17,5 +17,5 @@ interface ContractServiceInterface
 
     public function deleteContract(Contract $contract): void;
 
-    public function getEmployeeContracts(Employee $employee): LengthAwarePaginator;
+    public function getEmployeeContracts(int $employeeID): LengthAwarePaginator;
 }

@@ -156,4 +156,28 @@ class EmployeeService implements EmployeeServiceInterface
             })
             ->paginate(10));
     }
+
+    public function getEmployee(int $employeeID): array
+    {
+        return DB::transaction(fn () => DB::table('employees as e')
+            ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
+            ->join('roles as r', 'er.roleID', '=', 'r.roleID')
+            ->leftJoin('departments as d', 'e.departmentID', '=', 'd.departmentID')
+            ->leftJoin('employees as s', 'e.supervisorID', '=', 's.employeeID')
+            ->where('e.employeeID', $employeeID)
+            ->select([
+                'e.employeeID',
+                'e.firstName',
+                'e.lastName',
+                'e.email',
+                'e.phone',
+                'e.hireDate',
+                'e.jobTitle',
+                'e.status',
+                'd.departmentName',
+                's.firstName as supervisorFirstName',
+                's.lastName as supervisorLastName',
+                'r.roleName',
+            ])->get()->toArray());
+    }
 }
