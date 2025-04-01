@@ -112,7 +112,7 @@
                     <small class="text-muted">Uploaded: {{ \Carbon\Carbon::parse($contract->created_at)->format('M d, Y H:i') }}</small>
                 </div>
                 <div class="btn-group">
-                    <form method="POST" action="{{ route('hr.download-contract') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('hr.employee.contract.download-contract') }}" enctype="multipart/form-data">
                         @csrf
                         <input type='hidden' name='contractID' value="{{ $contract->contractID }}" />
                         <input type='submit' value='Dowload Contract'/>
