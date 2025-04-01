@@ -196,19 +196,120 @@ it('handles download errors when file missing', function (): void {
 });
 
 it('updates contract with invalid data', function() {
-    expect(true)->toBe(true);
+    $response = $this->patch(route('hr.employee.contract.update'), []);
+    $response->assertSessionHasErrors([
+        'employeeID' => 'ID e punonjësit është e detyrueshme.',
+        'contractID' => 'ID e kontratës është e detyrueshme.',
+        'contract_file' => 'Kontrata është e detyrueshme.',
+    ]);
+
+    $response = $this->patch(route('hr.employee.contract.update'), [
+        'employeeID' => 'tesr',
+        'contractID' => 'test',
+        'contract_file' => 'test',
+    ]);
+    $response->assertSessionHasErrors([
+        'employeeID' => 'ID e punonjësit duhet të jetë një numër i plotë.',
+        'contractID' => 'ID e kontratës duhet të jetë një numër i plotë.',
+        'contract_file' => 'Kontrata duhet të jetë një skedar.',
+    ]);
+
+    $response = $this->patch(route('hr.employee.contract.update'), [
+        'employeeID' => 0,
+        'contractID' => 0,
+        'contract_file' => UploadedFile::fake()->create('new_contract.txt', 1000),
+    ]);
+    $response->assertSessionHasErrors([
+        'employeeID' => 'ID e punonjësit duhet të jetë më e madhe se 0.',
+        'contractID' => 'ID e kontratës duhet të jetë më e madhe se 0.',
+        'contract_file' => 'Kontrata duhet të jetë një skedar PDF.',
+    ]);
+
+    $response = $this->patch(route('hr.employee.contract.update'), [
+        'employeeID' => 999,
+        'contractID' => 999,
+        'contract_file' => UploadedFile::fake()->create('contract.pdf', 3000),
+    ]);
+    $response->assertSessionHasErrors([
+        'employeeID' => 'Punonjësi me këtë ID nuk egziston.',
+        'contractID' => 'Kontrata me këtë ID nuk egziston.',
+        'contract_file' => 'Kontrata nuk mund të jetë më e madhe se 2MB.',
+    ]);
 });
 
 it('update contract with valid data', function() {
-    expect(true)->toBe(true);
+    Storage::disk('contracts')->put('old_contract.pdf', 'dummy content');
+    $contract = Contract::create([
+        'employeeID' => $this->employee->employeeID,
+        'contractPath' => 'old_contract.pdf',
+    ]);
+
+    $newFile = UploadedFile::fake()->create('new_contract.pdf', 1024, 'application/pdf');
+
+    $response = $this->patch(route('hr.employee.contract.update'), [
+        'employeeID' => $this->employee->employeeID,
+        'contractID' => $contract->contractID,
+        'contract_file' => $newFile,
+    ]);
+
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Kontrata u përditësua me sukses.');
+
+    Storage::disk('contracts')->assertMissing('old_contract.pdf');
+
+    $contract->refresh();
+    Storage::disk('contracts')->assertExists($contract->contractPath);
+
+    $this->assertDatabaseHas('contracts', [
+        'contractID' => $contract->contractID,
+        'employeeID' => $this->employee->employeeID,
+        'contractPath' => $contract->contractPath,
+    ]);
+
+    expect($contract->contractPath)
+        ->not->toBe('old_contract.pdf')
+        ->and($contract->contractPath)
+        ->toMatch('/^contract_\d+\.pdf$/');
 });
 
 it('deletes contract with invalid data', function() {
-    expect(true)->toBe(true);
+    $response = $this->delete(route('hr.employee.contract.delete'), []);
+    $response->assertSessionHasErrors(['contractID' => 'ID e kontratës është e detyrueshme.']);
+
+    $response = $this->delete(route('hr.employee.contract.delete'), [
+        'contractID' => 'asdf',
+    ]);
+    $response->assertSessionHasErrors(['contractID' => 'ID e kontratës duhet të jetë një numër i plotë.']);
+
+    $response = $this->delete(route('hr.employee.contract.delete'), [
+        'contractID' => 0,
+    ]);
+    $response->assertSessionHasErrors(['contractID' => 'ID e kontratës duhet të jetë më e madhe se 0.']);
+
+    $response = $this->delete(route('hr.employee.contract.delete'), [
+        'contractID' => 9999,
+    ]);
+    $response->assertSessionHasErrors(['contractID' => 'Kontrata me këtë ID nuk egziston.']);
 });
 
 it('deletes contract with valid data', function() {
-    expect(true)->toBe(true);
+    $contract = Contract::create([
+        'employeeID' => $this->employee->employeeID,
+        'contractPath' => 'contract_to_delete.pdf',
+    ]);
+
+    $response = $this->delete(route('hr.employee.contract.delete'), [
+        'contractID' => $contract->contractID,
+    ]);
+
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Kontrata u fshi me sukses.');
+
+    Storage::disk('contracts')->assertMissing('contract_to_delete.pdf');
+
+    $this->assertDatabaseMissing('contracts', [
+        'contractID' => $contract->contractID,
+    ]);
 });
 
 it('lists employee contracts paginated', function () {
@@ -246,10 +347,8 @@ it('updates contract successfully', function () {
     $response->assertRedirect();
     $response->assertSessionHas('success');
 
-    // Verify old file was deleted
     Storage::disk('contracts')->assertMissing('existing_contract.pdf');
 
-    // Verify new file was stored
-    $this->contract->refresh();
-    Storage::disk('contracts')->assertExists($this->contract->contractPath);
+    $contract->refresh();
+    Storage::disk('contracts')->assertExists($contract->contractPath);
 });
