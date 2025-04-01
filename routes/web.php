@@ -62,15 +62,16 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
     })->name('dashboard');
 
     Route::prefix('employees')->name('employee.')->group(function () {
+        /* TODO- NEED TO IMPLEMENT ALSO THE SEARCH FEATURE  */
         Route::get('/', [EmployeeController::class, 'index'])->name('index');
         Route::get('/profile', [EmployeeController::class, 'show'])->name('profile');
 
         Route::prefix('contracts')->name('contract.')->group(function () {
-            Route::post('/getContracts', [ContractController::class, 'index'])->name('get-contracts');
-            Route::post('/upload', [ContractController::class, 'create'])->name('upload-contract');
-            Route::post('/download', [ContractController::class, 'show'])->name('download-contract');
-            Route::patch('/update', [ContractController::class, 'update'])->name('update-contract');
-            Route::delete('/delete', [ContractController::class, 'delete'])->name('delete-contract');
+            Route::post('/getContracts', [ContractController::class, 'index'])->name('show');
+            Route::post('/upload', [ContractController::class, 'create'])->name('upload');
+            Route::post('/download', [ContractController::class, 'show'])->name('download');
+            Route::patch('/update', [ContractController::class, 'update'])->name('update');
+            Route::delete('/delete', [ContractController::class, 'delete'])->name('delete');
         });
     });
 });

@@ -85,7 +85,8 @@ class ContractController extends Controller
         $contract = Contract::where('contractID', $validated['contractID'])->first();
 
         try {
-            return $this->contractService->deleteContract($contract);
+            $this->contractService->deleteContract($contract);
+            return redirect()->back()->with('success', 'Kontrata u fshi me sukses.');
         } catch (\Exception $e) {
             Log::error('Gjatë fshirjes së kontratës ndodhi ky gabim: ', [$e->getMessage()]);
 
