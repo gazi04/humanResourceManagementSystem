@@ -116,7 +116,7 @@
         <div class="list-group-item">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-1">{{ pathinfo($contract->contractPath, PATHINFO_FILENAME) }}</h5>
+                    <h5 class="mb-1">{{ pathinfo($contract->contractPath, PATHINFO_BASENAME) }}</h5>
                     <small class="text-muted">Uploaded: {{ \Carbon\Carbon::parse($contract->created_at)->format('M d, Y H:i') }}</small>
                 </div>
                 <div class="btn-group">
