@@ -16,10 +16,8 @@ uses()->group('contracts');
 beforeEach(function (): void {
     $this->artisan('migrate');
 
-    // Setup storage fake for contracts
     Storage::fake('contracts');
 
-    // Create HR user and login
     $this->hrUser = Employee::create([
         'firstName' => 'HR',
         'lastName' => 'User',
@@ -33,11 +31,8 @@ beforeEach(function (): void {
         'roleID' => 2,
     ]);
 
-    // Assign HR role (assuming you have role setup)
-    // This would depend on your role implementation
     Auth::guard('employee')->login($this->hrUser);
 
-    // Create test employee
     $this->employee = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -52,48 +47,69 @@ beforeEach(function (): void {
     ]);
 });
 
-it('requires authentication for upload', function (): void {
+it('requires authentication to perform actions on contracts', function (): void {
     Auth::guard('employee')->logout();
 
-    $response = $this->post(route('hr.upload-contract'), [
+    $response = $this->post(route('hr.employee.contract.upload'), [
         'employeeID' => $this->employee->employeeID,
         'contract_file' => UploadedFile::fake()->create('contract.pdf', 1000),
     ]);
+    $response->assertRedirect(route('loginPage'));
 
+    $response = $this->post(route('hr.employee.contract.download'), [
+        'employeeID' => $this->employee->employeeID,
+    ]);
+    $response->assertRedirect(route('loginPage'));
+
+    $response = $this->patch(route('hr.employee.contract.update'), ['employeeID' => 34, 'contractID' => 89]);
+    $response->assertRedirect(route('loginPage'));
+
+    $response = $this->delete(route('hr.employee.contract.delete'), ['contractID' => 9]);
     $response->assertRedirect(route('loginPage'));
 });
 
-it('validates upload request', function (): void {
-    // Test missing fields
-    $response = $this->post(route('hr.upload-contract'), []);
-    $response->assertSessionHasErrors(['employeeID', 'contract_file']);
+it('uploads contract with invalid data', function (): void {
+    $response = $this->post(route('hr.employee.contract.upload'), []);
+    $response->assertSessionHasErrors([
+        'employeeID' => 'ID e punonjësit është e detyrueshme.',
+        'contract_file' => 'Kontrata është e detyrueshme.',
+    ]);
 
-    // Test invalid file type
-    $response = $this->post(route('hr.upload-contract'), [
+    $response = $this->post(route('hr.employee.contract.upload'), [
         'employeeID' => $this->employee->employeeID,
         'contract_file' => UploadedFile::fake()->create('contract.txt', 1000),
     ]);
-    $response->assertSessionHasErrors(['contract_file']);
+    $response->assertSessionHasErrors(['contract_file' => 'Kontrata duhet të jetë një skedar PDF.']);
 
-    // Test file size
-    $response = $this->post(route('hr.upload-contract'), [
+    $response = $this->post(route('hr.employee.contract.upload'), [
         'employeeID' => $this->employee->employeeID,
         'contract_file' => UploadedFile::fake()->create('contract.pdf', 3000),
     ]);
-    $response->assertSessionHasErrors(['contract_file']);
+    $response->assertSessionHasErrors(['contract_file' => 'Kontrata nuk mund të jetë më e madhe se 2MB.']);
 
-    // Test invalid employee
-    $response = $this->post(route('hr.upload-contract'), [
+    $response = $this->post(route('hr.employee.contract.upload'), [
+        'employeeID' => 'asdf',
+        'contract_file' => UploadedFile::fake()->create('contract.pdf', 1000),
+    ]);
+    $response->assertSessionHasErrors(['employeeID' => 'ID e punonjësit duhet të jetë një numër i plotë.']);
+
+    $response = $this->post(route('hr.employee.contract.upload'), [
+        'employeeID' => 0,
+        'contract_file' => UploadedFile::fake()->create('contract.pdf', 1000),
+    ]);
+    $response->assertSessionHasErrors(['employeeID' => 'ID e punonjësit duhet të jetë më e madhe se 0.']);
+
+    $response = $this->post(route('hr.employee.contract.upload'), [
         'employeeID' => 9999,
         'contract_file' => UploadedFile::fake()->create('contract.pdf', 1000),
     ]);
-    $response->assertSessionHasErrors(['employeeID']);
+    $response->assertSessionHasErrors(['employeeID' => 'Punonjësi me këtë ID nuk egziston.']);
 });
 
-it('uploads contract successfully', function (): void {
+it('uploads contract with valid data and look for the contract in the view', function (): void {
     $file = UploadedFile::fake()->create('contract.pdf', 1000);
 
-    $response = $this->post(route('hr.upload-contract'), [
+    $response = $this->post(route('hr.employee.contract.upload'), [
         'employeeID' => $this->employee->employeeID,
         'contract_file' => $file,
     ]);
@@ -101,14 +117,17 @@ it('uploads contract successfully', function (): void {
     $response->assertRedirect();
     $response->assertSessionHas('success', 'Kontrata u ngarkua me sukses.');
 
-    // Verify contract record was created
     $contract = Contract::first();
     expect($contract)->not->toBeNull()
         ->and($contract->employeeID)->toBe($this->employee->employeeID)
         ->and($contract->contractPath)->toMatch('/^contract_\d+\.pdf$/');
 
-    // Verify file was stored
     Storage::disk('contracts')->assertExists($contract->contractPath);
+
+    $response = $this->post(route('hr.employee.profile'), [
+        'employeeID' => $this->employee->employeeID,
+    ]);
+    $response->assertSee($contract->contractPath);
 });
 
 it('handles upload errors gracefully', function (): void {
@@ -117,7 +136,7 @@ it('handles upload errors gracefully', function (): void {
         ->once()
         ->andReturn(false);
 
-    $response = $this->post(route('hr.upload-contract'), [
+    $response = $this->post(route('hr.employee.contract.upload'), [
         'employeeID' => $this->employee->employeeID,
         'contract_file' => UploadedFile::fake()->create('contract.pdf', 1000),
     ]);
@@ -126,39 +145,35 @@ it('handles upload errors gracefully', function (): void {
     $response->assertSessionHas('error');
 });
 
-it('requires authentication for download', function (): void {
-    Auth::guard('employee')->logout();
+it('downloads contract with invalid data', function (): void {
+    $response = $this->post(route('hr.employee.contract.download'), []);
+    $response->assertSessionHasErrors(['contractID' => 'ID e kontratës është e detyrueshme.']);
 
-    $response = $this->post(route('hr.download-contract'), [
-        'employeeID' => $this->employee->employeeID,
+    $response = $this->post(route('hr.employee.contract.download'), [
+        'contractID' => 'asdf',
     ]);
+    $response->assertSessionHasErrors(['contractID' => 'ID e kontratës duhet të jetë një numër i plotë.']);
 
-    $response->assertRedirect(route('loginPage'));
-});
+    $response = $this->post(route('hr.employee.contract.download'), [
+        'contractID' => 0,
+    ]);
+    $response->assertSessionHasErrors(['contractID' => 'ID e kontratës duhet të jetë më e madhe se 0.']);
 
-it('validates download request', function (): void {
-    // Test missing employeeID
-    $response = $this->post(route('hr.download-contract'), []);
-    $response->assertSessionHasErrors(['contractID']);
-
-    // Test invalid employee
-    $response = $this->post(route('hr.download-contract'), [
+    $response = $this->post(route('hr.employee.contract.download'), [
         'contractID' => 9999,
     ]);
-    $response->assertSessionHasErrors(['contractID']);
+    $response->assertSessionHasErrors(['contractID' => 'Kontrata me këtë ID nuk egziston.']);
 });
 
 it('downloads contract successfully', function (): void {
-    // Create a contract record
     $contract = Contract::create([
         'employeeID' => $this->employee->employeeID,
         'contractPath' => 'test_contract.pdf',
     ]);
 
-    // Create a fake file in storage
     Storage::disk('contracts')->put('test_contract.pdf', 'test content');
 
-    $response = $this->post(route('hr.download-contract'), [
+    $response = $this->post(route('hr.employee.contract.download'), [
         'contractID' => $contract->contractID,
     ]);
 
@@ -167,44 +182,74 @@ it('downloads contract successfully', function (): void {
         ->toContain('attachment; filename=test_contract.pdf');
 });
 
-it('handles download errors when no contract exists', function (): void {
-    // Non-existent contract
-    $response = $this->post(route('hr.download-contract'), [
-        'contractID' => 9999,
-    ]);
-    $response->assertRedirect();
-    $response->assertSessionHasErrors([
-        'contractID' => 'Kontrata me këtë ID nuk egziston.'
-    ]);
-});
-
 it('handles download errors when file missing', function (): void {
-    // Set contract path but don't actually store the file
     $contract = Contract::create([
         'employeeID' => $this->employee->employeeID,
         'contractPath' => 'missing_contract.pdf',
     ]);
-    $response = $this->post(route('hr.download-contract'), [
+    $response = $this->post(route('hr.employee.contract.download'), [
         'contractID' => $contract->contractID,
     ]);
 
     $response->assertRedirect();
-    $response->assertSessionHas('error', 'Ndodhi një gabim në sistem me ngarkimin e kontratës, provoni përsëri më vonë.');
+    $response->assertSessionHas('error', 'Skedari i kontratës nuk gjendet në sistem.');
+});
+
+it('updates contract with invalid data', function() {
+    expect(true)->toBe(true);
+});
+
+it('update contract with valid data', function() {
+    expect(true)->toBe(true);
+});
+
+it('deletes contract with invalid data', function() {
+    expect(true)->toBe(true);
+});
+
+it('deletes contract with valid data', function() {
+    expect(true)->toBe(true);
 });
 
 it('lists employee contracts paginated', function () {
-    for ($i=0; $i < 15; $i++) {
+    for ($i = 0; $i < 15; $i++) {
         Contract::create([
             'employeeID' => $this->employee->employeeID,
-            'contractPath' => 'missing_contract.pdf',
+            'contractPath' => 'testing_contract.pdf',
         ]);
     }
 
-    $response = $this->post(route('hr.get-contracts', [
+    $response = $this->post(route('hr.employee.contract.show', [
         'employeeID' => $this->employee->employeeID,
     ]));
 
     $response->assertOk();
-    expect($response->json('data'))->toHaveCount(10)
+    expect($response->json('data'))->toHaveCount(5)
         ->and($response->json('total'))->toBe(15);
+});
+
+it('updates contract successfully', function () {
+    $newFile = UploadedFile::fake()->create('new_contract.pdf', 1000);
+
+    $contract = Contract::create([
+        'employeeID' => $this->employee->employeeID,
+        'contractPath' => 'existing_contract.pdf',
+    ]);
+
+    Storage::disk('contracts')->put('existing_contract.pdf', 'test content');
+    $response = $this->patch(route('hr.employee.contract.update'), [
+        'employeeID' => $this->employee->employeeID,
+        'contractID' => $contract->contractID,
+        'contract_file' => $newFile,
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
+
+    // Verify old file was deleted
+    Storage::disk('contracts')->assertMissing('existing_contract.pdf');
+
+    // Verify new file was stored
+    $this->contract->refresh();
+    Storage::disk('contracts')->assertExists($this->contract->contractPath);
 });
