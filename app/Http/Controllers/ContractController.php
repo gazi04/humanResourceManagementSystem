@@ -22,7 +22,7 @@ class ContractController extends Controller
         $employee = Employee::where('employeeID', $validated['employeeID'])->first();
 
         try {
-            return $this->contractService->getEmployeeContracts($employee);
+            return $this->contractService->getEmployeeContracts($employee->employeeID);
         } catch (\Exception $e) {
             Log::error('Gjatë ngarkimit të kontratave ndodhi ky gabim: ', [$e->getMessage()]);
 
@@ -58,7 +58,7 @@ class ContractController extends Controller
         } catch (\Exception $e) {
             Log::error('Gjatë shkarkimit të kontratës ndodhi ky gabim: ', [$e->getMessage()]);
 
-            return back()->with('error', 'Ndodhi një gabim në sistem me ngarkimin e kontratës, provoni përsëri më vonë.');
+            return back()->with('error', $e->getMessage());
         }
     }
 
