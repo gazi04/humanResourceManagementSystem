@@ -119,10 +119,12 @@
                     </form>
                     <br>
 
-                    <form action="" method="POST" class="mr-2">
+                    <form action="{{ route('hr.employee.contract.update') }}" method="POST" class="mr-2" enctype="multipart/form-data">
                         @csrf
-                        @method('PUT')
+                        @method('PATCH')
                         <input type="hidden" name="contractID" value="{{ $contract->contractID }}">
+                        <input type="hidden" name="employeeID" value="{{ $employee->employeeID }}">
+                        <input type='file' name='contract_file' />
                         <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
                     </form>
 
