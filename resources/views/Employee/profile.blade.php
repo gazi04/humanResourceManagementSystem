@@ -91,6 +91,14 @@
             </div>
         </div>
 
+        <h2>Add a new contract</h2>
+        <form method="POST" action="{{ route('hr.employee.contract.upload') }}" enctype="multipart/form-data">
+            @csrf
+            <input type='hidden' name='employeeID' value='{{ $employee->employeeID }}' />
+            <input type='file' name='contract_file' />
+            <input type='submit' value='Upload Contract'/>
+        </form>
+
         <div class="card-footer text-right">
             <a href="" class="btn btn-primary">
                 <i class="fas fa-edit"></i> Edit Profile
