@@ -16,6 +16,10 @@
         </div>
     @endif
 
+    <form method="GET" action="{{ route('hr.employee.search') }}">
+        <input type='text' name="searchingTerm" />
+        <input type="submit"/>
+    </form>
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
