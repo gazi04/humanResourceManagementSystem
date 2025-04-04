@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\DB;
 
 class TicketService implements TicketServiceInterface
 {
-    public function createticket(array $data): void
+    public function createTicket(array $data): Ticket
     {
-        ticket::create($data);
+        return DB::transaction(function () use ($data) {
+            $ticket = Ticket::create($data);
+            return $ticket;
+        });
     }
 
     public function getTickets(): LengthAwarePaginator
@@ -19,6 +22,7 @@ class TicketService implements TicketServiceInterface
         return DB::transaction(fn(): LengthAwarePaginator => DB::table('tickets as t')
             ->join('employees as e', 't.employeeID', '=', 'e.employeeID')
             ->select([
+                't.ticketID',
                 't.subject',
                 't.description',
                 't.status',

@@ -9,6 +9,7 @@ use App\Http\Controllers\EmployeeRoleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\TicketController;
 use App\Http\Middleware\EnsureUserIsLoggedInMiddleware;
 use App\Http\Middleware\EnsureUserIsNotLoggedInMiddleware;
 use App\Http\Middleware\IsUserAdminMiddleware;
@@ -54,6 +55,10 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::patch('/assignRole', [EmployeeRoleController::class, 'update'])->name('assign-role');
         Route::get('/search', [EmployeeController::class, 'search'])->name('search');
     });
+
+    Route::prefix('tickets')->name('ticket.')->group(function() {
+        Route::get('/show', [TicketController::class, 'show'])->name('show');
+    });
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::class])->prefix('hr')->name('hr.')->group(function () {
@@ -73,6 +78,11 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
             Route::patch('/update', [ContractController::class, 'update'])->name('update');
             Route::delete('/delete', [ContractController::class, 'delete'])->name('delete');
         });
+    });
+
+    Route::prefix('tickets')->name('ticket.')->group(function() {
+        Route::get('/', function () { return view('Ticket.Create'); })->name('index');
+        Route::post('/create', [TicketController::class, 'create'])->name('create');
     });
 });
 
