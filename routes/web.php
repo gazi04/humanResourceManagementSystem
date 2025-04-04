@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('dashboard');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
 Route::middleware(EnsureUserIsNotLoggedInMiddleware::class)->group(function () {

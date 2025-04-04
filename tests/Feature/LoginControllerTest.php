@@ -182,7 +182,7 @@ it('logs out authenticated users', function (): void {
     Auth::guard('employee')->login($employee);
     $this->assertAuthenticated('employee');
 
-    $response = $this->post(route('logout'));
+    $response = $this->get(route('logout'));
 
     $response->assertRedirect(route('loginPage'));
     $response->assertSessionHas('success', 'You have been logged out.');
