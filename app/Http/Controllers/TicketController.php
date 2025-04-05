@@ -31,16 +31,16 @@ class TicketController extends Controller
 
             switch (true) {
                 case request()->is('hr/*'):
-                    $view = 'hr.dashboard';
+                    $route = 'hr.dashboard';
 
                 case request()->is('employee/*'):
-                    $view = 'employee.dashboard';
+                    $route = 'employee.dashboard';
 
                 case request()->is('manager/*'):
-                    $view = 'manager.dashboard';
+                    $route = 'manager.dashboard';
             }
 
-            return redirect()->route($view)
+            return redirect()->route($route)
                 ->with('success', 'Ticket created successfully');
 
         } catch (\Illuminate\Database\QueryException $e) {
