@@ -2,34 +2,75 @@
 
 namespace App\Services;
 
+use App\Models\Employee;
 use App\Models\Ticket;
+use App\Notifications\NewTicketNotification;
 use App\Services\Interfaces\TicketServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class TicketService implements TicketServiceInterface
 {
+    private function gettodaytickets()
+    {
+        return db::transaction(fn() => db::table('tickets as t')
+            ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
+            ->select([
+                't.ticketid',
+                't.subject',
+                't.description',
+                't.status',
+                't.created_at',
+                'e.firstname',
+                'e.lastname',
+                'e.email',
+            ])
+            /* ->where('t.created_at', today()) */
+            ->get());
+    }
+
+    private function getunfinishedpasttickets()
+    {
+        return db::transaction(fn() => db::table('tickets as t')
+            ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
+            ->select([
+                't.ticketid',
+                't.subject',
+                't.description',
+                't.status',
+                't.created_at',
+                'e.firstname',
+                'e.lastname',
+                'e.email',
+            ])
+            ->where('t.status', '!=', 'finished')
+            ->where('t.created_at', '<', today())
+            ->orderby('t.created_at', 'desc')
+            ->get());
+    }
+
     public function createTicket(array $data): Ticket
     {
         return DB::transaction(function () use ($data) {
             $ticket = Ticket::create($data);
+            $admins = Employee::whereHas('employeeRole', function($query) {
+                $query->where('roleID', 1);
+            })->get();
+            Notification::send($admins, new NewTicketNotification($ticket));
             return $ticket;
         });
     }
 
-    public function getTickets(): LengthAwarePaginator
+    public function getTickets()
     {
-        return DB::transaction(fn(): LengthAwarePaginator => DB::table('tickets as t')
-            ->join('employees as e', 't.employeeID', '=', 'e.employeeID')
-            ->select([
-                't.ticketID',
-                't.subject',
-                't.description',
-                't.status',
-                'e.firstName',
-                'e.lastName',
-                'e.email',
-            ])
-            ->paginate(10));
+        return DB::transaction(function () {
+            $todayTickets = $this->getTodayTickets();
+            $unfinishedTickets = $this->getUnfinishedPastTickets();
+            return [
+                'todayTickets' => $todayTickets,
+                'unfinishedTickets' => $unfinishedTickets
+            ];
+        });
     }
 }

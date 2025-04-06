@@ -12,11 +12,19 @@ class TicketController extends Controller
 {
     public function __construct(protected TicketService $ticketService) {}
 
-    public function show(): View
+    public function index()
     {
-        $result = $this->ticketService->getTickets();
-
-        return view('Ticket.Show', ['tickets' => $result]);
+        try {
+            $tickets = $this->ticketService->getTickets();
+        } catch (\Exception $ex) {
+            Log::error("Couldn't get the tickets from the database.", $ex->getMessage());
+            return redirect()->route('admin.dashboard')->with('error', 'Ndodhi një gabim gjatë procesit të marrjes së biletave nga baza e të dhënave.');
+        }
+        dd($tickets);
+        return view('Admin.tickets', [
+            'tickets' => $tickets['todayTickets'],
+            'unfinishedTickets' => $tickets['unfinishedTickets']
+        ]);
     }
 
     public function create(CreateTicketRequest $request)
@@ -27,21 +35,29 @@ class TicketController extends Controller
             $user = Auth::guard('employee')->user();
             $validated['employeeID'] = $user->employeeID;
 
-            $ticket = $this->ticketService->createTicket($validated);
+            try {
+                $ticket = $this->ticketService->createTicket($validated);
+            } catch (\Throwable $th) {
+                return redirect()->back()->with('error', $th->getMessage());
+            }
 
-            switch (true) {
-                case request()->is('hr/*'):
-                    $route = 'hr.dashboard';
+            if (empty($ticket)) {
+                return redirect()->back()->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
+            }
 
-                case request()->is('employee/*'):
-                    $route = 'employee.dashboard';
 
-                case request()->is('manager/*'):
-                    $route = 'manager.dashboard';
+            if ($request->is('hr/*')) {
+                $route = 'hr.dashboard';
+            }
+            else if ($request->is('employee/*')) {
+                $route = 'employee.dashboard';
+            }
+            else if ($request->is('manager/*')) {
+                $route = 'employee.dashboard';
             }
 
             return redirect()->route($route)
-                ->with('success', 'Ticket created successfully');
+                ->with('success', 'Bileta u krijua me sukses.');
 
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error('Krijimi i biletës dështoi për shkak të gabimit të bazës së të dhënave.',
