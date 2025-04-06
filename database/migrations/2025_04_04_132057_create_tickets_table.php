@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('ticketID');
             $table->string('subject')->nullable();
             $table->text('description');
-            $table->enum('status', ['open', 'closed'])->default('closed');
+            $table->enum('status', ['open', 'closed', 'finished'])->default('closed');
             $table->unsignedBigInteger('employeeID');
             $table->timestamps();
 
