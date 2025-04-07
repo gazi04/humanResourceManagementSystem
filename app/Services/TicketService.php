@@ -6,7 +6,6 @@ use App\Models\Employee;
 use App\Models\Ticket;
 use App\Notifications\NewTicketNotification;
 use App\Services\Interfaces\TicketServiceInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
@@ -26,7 +25,10 @@ class TicketService implements TicketServiceInterface
                 'e.lastname',
                 'e.email',
             ])
+            ->where('t.status', '!=', 'finished')
+            /* TODO- DECOMENT THE LINE BELOW */
             /* ->where('t.created_at', today()) */
+            /* ->orderby('t.created_at', 'desc') */
             ->get());
     }
 
@@ -71,6 +73,31 @@ class TicketService implements TicketServiceInterface
                 'todayTickets' => $todayTickets,
                 'unfinishedTickets' => $unfinishedTickets
             ];
+        });
+    }
+
+    public function finishTicket(int $ticketID): Ticket
+    {
+        return DB::transaction(function() use ($ticketID): Ticket {
+            $ticket = Ticket::where('ticketID', '=', $ticketID)
+                ->update([
+                    'status' => 'finished'
+                ])
+                ->get();
+            return $ticket;
+        });
+    }
+
+    /* TODO- BE CAREFULL WITH THE IMPLEMENTATION OF THIS METHOD IN THE FRONT END PART  */
+    public function openTicket(int $ticketID): Ticket
+    {
+        return DB::transaction(function() use ($ticketID): Ticket {
+            $ticket = Ticket::where('ticketID', '=', $ticketID)
+                ->update([
+                    'status' => 'open'
+                ])
+                ->get();
+            return $ticket;
         });
     }
 }
