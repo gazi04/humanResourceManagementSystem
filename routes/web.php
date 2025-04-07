@@ -56,7 +56,8 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::get('/search', [EmployeeController::class, 'search'])->name('search');
     });
 
-    Route::prefix('tickets')->name('ticket.')->group(function() {
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', [TicketController::class, 'index'])->name('index');
         Route::get('/show', [TicketController::class, 'show'])->name('show');
     });
 });
@@ -67,9 +68,9 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
     })->name('dashboard');
 
     Route::prefix('employees')->name('employee.')->group(function () {
-        /* TODO- NEED TO IMPLEMENT ALSO THE SEARCH FEATURE  */
         Route::get('/', [EmployeeController::class, 'index'])->name('index');
         Route::get('/profile', [EmployeeController::class, 'show'])->name('profile');
+        Route::get('/search', [EmployeeController::class, 'search'])->name('search');
 
         Route::prefix('contracts')->name('contract.')->group(function () {
             Route::post('/getContracts', [ContractController::class, 'index'])->name('show');
@@ -80,8 +81,10 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         });
     });
 
-    Route::prefix('tickets')->name('ticket.')->group(function() {
-        Route::get('/', function () { return view('Ticket.Create'); })->name('index');
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', function () {
+            return view('Ticket.Create');
+        })->name('index');
         Route::post('/create', [TicketController::class, 'create'])->name('create');
     });
 });
