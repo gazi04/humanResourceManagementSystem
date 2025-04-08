@@ -26,7 +26,6 @@ class Employee extends Model implements AuthenticatableContract
         'phone',
         'hireDate',
         'jobTitle',
-        'salary',
         'status',
 
         'departmentID',
