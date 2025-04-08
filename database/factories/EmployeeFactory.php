@@ -20,7 +20,6 @@ class EmployeeFactory extends Factory
             'phone' => $this->faker->numerify('+###########'),
             'hireDate' => $this->faker->date,
             'jobTitle' => $this->faker->jobTitle,
-            'salary' => $this->faker->numberBetween(30000, 100000),
             'status' => $this->faker->randomElement(['Active', 'Inactive']),
             'departmentID' => $this->faker->numberBetween(1, 4),
             'supervisorID' => null, // Initially set to null

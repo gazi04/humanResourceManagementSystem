@@ -127,7 +127,7 @@ it('returns paginated search results', function (): void {
                 'firstName' => 'Supervisor '.$i,
                 'lastName' => 'Lastname '.$i,
                 'email' => 'supervisor'.$i.'@example.com',
-                'phone' => '04512345'.$i,
+                'phone' => '04512341'.$i,
                 'password' => Hash::make('password123'),
             ])->employeeID,
         ]);

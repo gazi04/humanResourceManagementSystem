@@ -9,6 +9,7 @@ use App\Http\Controllers\EmployeeRoleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\TicketController;
 use App\Http\Middleware\EnsureUserIsLoggedInMiddleware;
 use App\Http\Middleware\EnsureUserIsNotLoggedInMiddleware;
 use App\Http\Middleware\IsUserAdminMiddleware;
@@ -21,9 +22,10 @@ use App\Models\EmployeeRole;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
+/* TODO- NEED TO TEST THE MIDDLEWARE */
 Route::middleware([EnsureUserIsLoggedInMiddleware::class])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('dashboard');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
 Route::middleware(EnsureUserIsNotLoggedInMiddleware::class)->group(function () {
@@ -40,6 +42,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::delete('/destroy', [DepartmentController::class, 'destroy'])->name('destroy');
         Route::patch('/update', [DepartmentController::class, 'update'])->name('update');
         Route::get('/search', [DepartmentController::class, 'search'])->name('search');
+        Route::get('/search/manager', [DepartmentController::class, 'searchManager'])->name('search.manager');
     });
 
     Route::prefix('employees')->name('employee.')->group(function () {
@@ -54,6 +57,11 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::patch('/assignRole', [EmployeeRoleController::class, 'update'])->name('assign-role');
         Route::get('/search', [EmployeeController::class, 'search'])->name('search');
     });
+
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', [TicketController::class, 'index'])->name('index');
+        Route::get('/show', [TicketController::class, 'show'])->name('show');
+    });
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::class])->prefix('hr')->name('hr.')->group(function () {
@@ -62,9 +70,9 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
     })->name('dashboard');
 
     Route::prefix('employees')->name('employee.')->group(function () {
-        /* TODO- NEED TO IMPLEMENT ALSO THE SEARCH FEATURE  */
         Route::get('/', [EmployeeController::class, 'index'])->name('index');
         Route::get('/profile', [EmployeeController::class, 'show'])->name('profile');
+        Route::get('/search', [EmployeeController::class, 'search'])->name('search');
 
         Route::prefix('contracts')->name('contract.')->group(function () {
             Route::post('/getContracts', [ContractController::class, 'index'])->name('show');
@@ -74,16 +82,37 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
             Route::delete('/delete', [ContractController::class, 'delete'])->name('delete');
         });
     });
+
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', function () {
+            return view('Hr.createTicket');
+        })->name('index');
+        Route::post('/create', [TicketController::class, 'create'])->name('create');
+    });
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {
-    Route::get('/human-resources', [HumanResourceController::class, 'index'])->name('dashboard');
+    Route::get('/', [HumanResourceController::class, 'index'])->name('dashboard');
+
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', function () {
+            return view('Manager.createTicket');
+        })->name('index');
+        Route::post('/create', [TicketController::class, 'create'])->name('create');
+    });
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserEmployeeMiddleware::class])->prefix('employee')->name('employee.')->group(function () {
     Route::get('/dashboard', function () {
         return 'admin web page';
     })->name('dashboard');
+
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', function () {
+            return view('Employee.createTicket');
+        })->name('index');
+        Route::post('/create', [TicketController::class, 'create'])->name('create');
+    });
 });
 
 Route::get('/dummy-data', function () {
