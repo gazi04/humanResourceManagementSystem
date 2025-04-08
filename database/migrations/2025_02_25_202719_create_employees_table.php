@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('lastName', 50);
             $table->string('email', 100)->unique();
             $table->string('password');
-            $table->string('phone', 15);
+            $table->string('phone', 15)->unique();
             $table->date('hireDate')->nullable();
             $table->string('jobTitle', 100)->nullable();
             $table->unsignedBigInteger('departmentID')->nullable();
