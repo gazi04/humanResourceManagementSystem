@@ -83,10 +83,11 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
 
     Route::prefix('tickets')->name('ticket.')->group(function () {
         Route::get('/', function () {
-            return view('Ticket.Create');
+            return view('Hr.createTicket');
         })->name('index');
         Route::post('/create', [TicketController::class, 'create'])->name('create');
     });
+
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {

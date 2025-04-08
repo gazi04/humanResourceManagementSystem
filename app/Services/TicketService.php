@@ -56,10 +56,10 @@ class TicketService implements TicketServiceInterface
     {
         return DB::transaction(function () use ($data) {
             $ticket = Ticket::create($data);
-            $admins = Employee::whereHas('employeeRole', function($query) {
+            $admins = Employee::whereHas('employeeRole', function ($query) {
                 $query->where('roleID', 1);
             })->get();
-            Notification::send($admins, new NewTicketNotification($ticket));
+            // Notification::send($admins, new NewTicketNotification($ticket));
             return $ticket;
         });
     }
@@ -78,7 +78,7 @@ class TicketService implements TicketServiceInterface
 
     public function finishTicket(int $ticketID): Ticket
     {
-        return DB::transaction(function() use ($ticketID): Ticket {
+        return DB::transaction(function () use ($ticketID): Ticket {
             $ticket = Ticket::where('ticketID', '=', $ticketID)
                 ->update([
                     'status' => 'finished'
@@ -91,7 +91,7 @@ class TicketService implements TicketServiceInterface
     /* TODO- BE CAREFULL WITH THE IMPLEMENTATION OF THIS METHOD IN THE FRONT END PART  */
     public function openTicket(int $ticketID): Ticket
     {
-        return DB::transaction(function() use ($ticketID): Ticket {
+        return DB::transaction(function () use ($ticketID): Ticket {
             $ticket = Ticket::where('ticketID', '=', $ticketID)
                 ->update([
                     'status' => 'open'
