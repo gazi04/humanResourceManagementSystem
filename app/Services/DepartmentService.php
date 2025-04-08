@@ -49,4 +49,22 @@ class DepartmentService implements DepartmentServiceInterface
             $department->update(['supervisorID' => $managerID]);
         });
     }
+
+    public function searchDepartment(string $searchTerm): LengthAwarePaginator
+    {
+        return DB::transaction(fn () => DB::table('departments')
+            ->leftJoin('employees', 'departments.supervisorID', '=', 'employees.employeeID')
+            ->select(
+                'departments.departmentID',
+                'departments.departmentName',
+                'employees.firstName as supervisor_firstName',
+                'employees.lastName as supervisor_lastName'
+            )
+            ->where(function ($query) use ($searchTerm): void {
+                $query->where('departments.departmentName', 'like', "%$searchTerm%")
+                    ->orWhere('employees.firstName', 'like', "%$searchTerm%")
+                    ->orWhere('employees.lastName', 'like', "%$searchTerm%");
+            })
+            ->paginate(10));
+    }
 }

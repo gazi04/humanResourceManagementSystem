@@ -1,216 +1,226 @@
 <?php
-
-namespace Tests\Feature;
-
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
 
-class LoginControllerTest extends TestCase
-{
-    use RefreshDatabase; // Refresh the database after each test
+uses()->group('authentication');
+uses(RefreshDatabase::class);
 
-    public function test_login_page_is_accessible(): void
-    {
-        $testResponse = $this->get(route('loginPage'));
+beforeEach(function () {
+    $this->artisan('migrate');
 
-        $testResponse->assertOk();
-        $testResponse->assertViewIs('Auth.Login');
-    }
+    $this->employeeRole = Role::create(['roleName' => 'employee']);
+    $this->adminRole = Role::create(['roleName' => 'admin']);
+    $this->hrRole = Role::create(['roleName' => 'hr']);
+    $this->managerRole = Role::create(['roleName' => 'manager']);
+});
 
-    public function test_user_can_login_with_valid_credentials(): void
-    {
-        $employee = Employee::create([
-            'firstName' => 'gazi',
-            'lastName' => 'halili',
-            'email' => 'gaz@gmail.com',
-            'phone' => '045618376',
-            'password' => Hash::make('gazi04'),
-        ]);
+it('shows login page to unauthenticated users', function () {
+    $response = $this->get(route('loginPage'));
 
-        $role = Role::create(['roleName' => 'employee']);
+    $response->assertOk();
+    $response->assertViewIs('Auth.Login');
+});
 
-        EmployeeRole::create([
-            'employeeID' => $employee['employeeID'],
-            'roleID' => $role['roleID'],
-        ]);
+it('redirects authenticated users away from login page', function () {
+    $employee = Employee::create([
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john@example.com',
+        'phone' => '123456789',
+        'password' => Hash::make('password123'),
+    ]);
 
-        // Attempt to login
-        $testResponse = $this->post(route('login'), [
-            'phone' => '045618376',
-            'password' => 'gazi04',
-        ]);
+    EmployeeRole::create([
+        'employeeID' => $employee->employeeID,
+        'roleID' => $this->employeeRole->roleID,
+    ]);
 
-        // Assert the user is redirected to the correct dashboard based on their role
-        $testResponse->assertRedirect(route('employee.dashboard'));
-        $this->assertAuthenticatedAs($employee, 'employee');
-    }
+    Auth::guard('employee')->login($employee);
 
-    public function test_admin_can_login_with_valid_credentials(): void
-    {
-        // Create an admin user in the database
-        $admin = Employee::create([
-            'firstName' => 'admin',
-            'lastName' => 'user',
-            'email' => 'admin@gmail.com',
-            'phone' => '045618377',
-            'password' => Hash::make('admin123'),
-        ]);
+    $response = $this->get(route('loginPage'));
+    $response->assertRedirect(route('dashboard'));
+});
 
-        $role = Role::create(['roleName' => 'admin']);
+it('allows employee to login with valid credentials', function () {
+    $employee = Employee::create([
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john@example.com',
+        'phone' => '045789123',
+        'password' => Hash::make('password123'),
+    ]);
 
-        EmployeeRole::create([
-            'employeeID' => $admin['employeeID'],
-            'roleID' => $role['roleID'],
-        ]);
+    EmployeeRole::create([
+        'employeeID' => $employee->employeeID,
+        'roleID' => $this->employeeRole->roleID,
+    ]);
 
-        // Attempt to login
-        $testResponse = $this->post(route('login'), [
-            'phone' => '045618377',
-            'password' => 'admin123',
-        ]);
+    $response = $this->post(route('login'), [
+        'phone' => '045789123',
+        'password' => 'password123',
+    ]);
 
-        // Assert the admin is redirected to the admin dashboard
-        $testResponse->assertRedirect(route('admin.dashboard'));
-        $this->assertAuthenticatedAs($admin, 'employee');
-    }
+    $response->assertRedirect(route('employee.dashboard'));
+    $this->assertAuthenticatedAs($employee, 'employee');
+});
 
-    public function test_hr_can_login_with_valid_credentials(): void
-    {
-        // Create an HR user in the database
-        $hr = Employee::create([
-            'firstName' => 'hr',
-            'lastName' => 'user',
-            'email' => 'hr@gmail.com',
-            'phone' => '045618378',
-            'password' => Hash::make('hr123456'),
-        ]);
+it('allows admin to login with valid credentials', function () {
+    $admin = Employee::create([
+        'firstName' => 'Admin',
+        'lastName' => 'User',
+        'email' => 'admin@example.com',
+        'phone' => '045789123',
+        'password' => Hash::make('admin123'),
+    ]);
 
-        $role = Role::create(['roleName' => 'hr']);
+    EmployeeRole::create([
+        'employeeID' => $admin->employeeID,
+        'roleID' => $this->adminRole->roleID,
+    ]);
 
-        EmployeeRole::create([
-            'employeeID' => $hr['employeeID'],
-            'roleID' => $role['roleID'],
-        ]);
+    $response = $this->post(route('login'), [
+        'phone' => '045789123',
+        'password' => 'admin123',
+    ]);
 
-        // Attempt to login
-        $testResponse = $this->post(route('login'), [
-            'phone' => '045618378',
-            'password' => 'hr123456',
-        ]);
+    $response->assertRedirect(route('admin.dashboard'));
+    $this->assertAuthenticatedAs($admin, 'employee');
+});
 
-        // Assert the HR is redirected to the HR dashboard
-        $testResponse->assertRedirect(route('hr.dashboard'));
-        $this->assertAuthenticatedAs($hr, 'employee');
-    }
+it('allows HR to login with valid credentials', function () {
+    $hr = Employee::create([
+        'firstName' => 'HR',
+        'lastName' => 'User',
+        'email' => 'hr@example.com',
+        'phone' => '045789123',
+        'password' => Hash::make('hr123456'),
+    ]);
 
-    public function test_manager_can_login_with_valid_credentials(): void
-    {
-        // Create a manager user in the database
-        $manager = Employee::create([
-            'firstName' => 'manager',
-            'lastName' => 'user',
-            'email' => 'manager@gmail.com',
-            'phone' => '045618379',
-            'password' => Hash::make('manager123'),
-        ]);
+    EmployeeRole::create([
+        'employeeID' => $hr->employeeID,
+        'roleID' => $this->hrRole->roleID,
+    ]);
 
-        $role = Role::create(['roleName' => 'manager']);
+    $response = $this->post(route('login'), [
+        'phone' => '045789123',
+        'password' => 'hr123456',
+    ]);
 
-        EmployeeRole::create([
-            'employeeID' => $manager['employeeID'],
-            'roleID' => $role['roleID'],
-        ]);
+    $response->assertRedirect(route('hr.dashboard'));
+    $this->assertAuthenticatedAs($hr, 'employee');
+});
 
-        // Attempt to login
-        $testResponse = $this->post(route('login'), [
-            'phone' => '045618379',
-            'password' => 'manager123',
-        ]);
+it('allows manager to login with valid credentials', function () {
+    $manager = Employee::create([
+        'firstName' => 'Manager',
+        'lastName' => 'User',
+        'email' => 'manager@example.com',
+        'phone' => '045789123',
+        'password' => Hash::make('manager123'),
+    ]);
 
-        // Assert the manager is redirected to the manager dashboard
-        $testResponse->assertRedirect(route('manager.dashboard'));
-        $this->assertAuthenticatedAs($manager, 'employee');
-    }
+    EmployeeRole::create([
+        'employeeID' => $manager->employeeID,
+        'roleID' => $this->managerRole->roleID,
+    ]);
 
-    public function test_user_cannot_login_with_invalid_credentials(): void
-    {
-        // Create a user in the database
-        Employee::create([
-            'firstName' => 'gazi',
-            'lastName' => 'halili',
-            'email' => 'gaz@gmail.com',
-            'phone' => '045618376',
-            'password' => Hash::make('gazi04'),
-        ]);
+    $response = $this->post(route('login'), [
+        'phone' => '045789123',
+        'password' => 'manager123',
+    ]);
 
-        // Attempt to login with wrong password
-        $testResponse = $this->post(route('login'), [
-            'phone' => '123456789',
-            'password' => 'wrongpassword',
-        ]);
+    $response->assertRedirect(route('manager.dashboard'));
+    $this->assertAuthenticatedAs($manager, 'employee');
+});
 
-        // Assert the user is redirected back with errors
-        $testResponse->assertSessionHasErrors(['phone']);
-        $this->assertGuest('employee');
-    }
+it('rejects login with invalid credentials', function () {
+    Employee::create([
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john@example.com',
+        'phone' => '123456789',
+        'password' => Hash::make('password123'),
+    ]);
 
-    public function test_login_validation_rules(): void
-    {
-        // Attempt to login without providing phone and password
-        $testResponse = $this->post(route('login'), []);
+    $response = $this->post(route('login'), [
+        'phone' => '123456789',
+        'password' => 'wrongpassword',
+    ]);
 
-        // Assert validation errors for phone and password
-        $testResponse->assertSessionHasErrors(['phone', 'password']);
-    }
+    $response->assertSessionHasErrors(['phone']);
+    $this->assertGuest('employee');
+});
 
-    public function test_login_validation_messages(): void
-    {
-        // Attempt to login without providing phone and password
-        $testResponse = $this->post(route('login'), []);
+it('requires phone and password fields', function () {
+    $response = $this->post(route('login'), []);
 
-        // Assert custom validation messages
-        $testResponse->assertSessionHasErrors([
-            'phone' => 'Fusha e numrit të telefonit është e detyrueshme.',
-            'password' => 'Fusha e fjalëkalimit është e detyrueshme.',
-        ]);
+    $response->assertSessionHasErrors([
+        'phone' => 'Fusha e numrit të telefonit është e detyrueshme.',
+        'password' => 'Fusha e fjalëkalimit është e detyrueshme.',
+    ]);
+});
 
-        $this->assertGuest('employee');
-    }
+it('logs out authenticated users', function () {
+    $employee = Employee::create([
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john@example.com',
+        'phone' => '123456789',
+        'password' => Hash::make('password123'),
+    ]);
 
-    public function test_logout_functionality(): void
-    {
-        // Create a test employee
-        $employee = Employee::create([
-            'firstName' => 'gazi',
-            'lastName' => 'halili',
-            'email' => 'gaz@gmail.com',
-            'phone' => '045618376',
-            'password' => Hash::make('gazi04'),
-        ]);
+    EmployeeRole::create([
+        'employeeID' => $employee->employeeID,
+        'roleID' => $this->employeeRole->roleID,
+    ]);
 
-        // Log in the employee
-        Auth::guard('employee')->login($employee);
+    Auth::guard('employee')->login($employee);
+    $this->assertAuthenticated('employee');
 
-        // Start a session (required for session-related operations like logout)
-        $this->withSession([]);
+    $response = $this->post(route('logout'));
 
-        // Simulate a logout request
-        $testResponse = $this->post('/logout', [
-            '_token' => csrf_token(),
-        ]);
+    $response->assertRedirect(route('loginPage'));
+    $response->assertSessionHas('success', 'You have been logged out.');
+    $this->assertGuest('employee');
+});
 
-        // Assert that the user is redirected to the login page
-        $testResponse->assertRedirect(route('loginPage'));
+it('redirects to proper dashboard based on role', function () {
+    // Test employee
+    $employee = Employee::create([
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john@example.com',
+        'phone' => '123456789',
+        'password' => Hash::make('password123'),
+    ]);
+    EmployeeRole::create([
+        'employeeID' => $employee->employeeID,
+        'roleID' => $this->employeeRole->roleID,
+    ]);
 
-        // Assert that the success message is present
-        $testResponse->assertSessionHas('success', 'You have been logged out.');
+    Auth::guard('employee')->login($employee);
+    $response = $this->get(route('dashboard'));
+    $response->assertRedirect(route('employee.dashboard'));
 
-        // Assert that the user is logged out
-        $this->assertGuest('employee');
-    }
-}
+    // Test admin
+    $admin = Employee::create([
+        'firstName' => 'Admin',
+        'lastName' => 'User',
+        'email' => 'admin@example.com',
+        'phone' => '987654321',
+        'password' => Hash::make('admin123'),
+    ]);
+    EmployeeRole::create([
+        'employeeID' => $admin->employeeID,
+        'roleID' => $this->adminRole->roleID,
+    ]);
+
+    Auth::guard('employee')->login($admin);
+    $response = $this->get(route('dashboard'));
+    $response->assertRedirect(route('admin.dashboard'));
+});
+

@@ -339,7 +339,15 @@
               </div>
             </div>
           </div>
-          <!-- /Page Header -->
+          {{--<!-- 📔 TODO- DONAT DUHESH EDHE SEARCH BAR ME NDREQ-->--}}
+          <div class="row">
+              <div class="col-md-12">
+                  <form method="GET" action="{{ route('admin.department.search') }}">
+                      <input type='text' name="searchingTerm" />
+                      <input type="submit"/>
+                    </form>
+              </div>
+          </div>
 
           <div class="row">
             <div class="col-md-12">
