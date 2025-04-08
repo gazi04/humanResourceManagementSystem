@@ -122,9 +122,7 @@ it('fails to create an employee with a duplicate email', function (): void {
         'departmentName' => 'IT Department',
     ]);
 
-    // Create a role for the employee
     $role = Role::create([
-        'roleID' => 1,
         'roleName' => 'hr',
     ]);
 

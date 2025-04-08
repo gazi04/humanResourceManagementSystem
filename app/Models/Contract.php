@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Contract extends Model
 {
@@ -11,9 +12,15 @@ class Contract extends Model
     protected $primaryKey = 'contractID';
 
     protected $fillable = [
-        'contractID',
         'employeeID',
-        'filePath',
-        'uploadDate',
+        'contractPath',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Employee, $this>
+     */
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
+    }
 }

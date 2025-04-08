@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('contracts', function (Blueprint $table) {
             $table->id('contractID');
             $table->unsignedBigInteger('employeeID');
-            $table->string('filePath');
-            $table->date('uploadDate');
+            $table->string('contractPath');
             $table->timestamps();
 
             $table->foreign('employeeID')->references('employeeID')->on('employees');

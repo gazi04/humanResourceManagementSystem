@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRoleController;
@@ -17,7 +18,6 @@ use App\Http\Middleware\IsUserManagerMiddleware;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
-use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -58,8 +58,22 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::class])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', function () {
-        return 'admin web page';
+        return view('test');
     })->name('dashboard');
+
+    Route::prefix('employees')->name('employee.')->group(function () {
+        /* TODO- NEED TO IMPLEMENT ALSO THE SEARCH FEATURE  */
+        Route::get('/', [EmployeeController::class, 'index'])->name('index');
+        Route::get('/profile', [EmployeeController::class, 'show'])->name('profile');
+
+        Route::prefix('contracts')->name('contract.')->group(function () {
+            Route::post('/getContracts', [ContractController::class, 'index'])->name('show');
+            Route::post('/upload', [ContractController::class, 'create'])->name('upload');
+            Route::post('/download', [ContractController::class, 'show'])->name('download');
+            Route::patch('/update', [ContractController::class, 'update'])->name('update');
+            Route::delete('/delete', [ContractController::class, 'delete'])->name('delete');
+        });
+    });
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {
@@ -95,25 +109,19 @@ Route::get('/dummy-data', function () {
         'phone' => '045681370',
     ]);
 
-    $role = Role::create(['roleName' => 'admin']);
-    $hrRole = Role::create(['roleName' => 'hr']);
-    $managerRole = Role::create(['roleName' => 'manager']);
-
     $employeeRole = EmployeeRole::create([
         'employeeID' => $admin['employeeID'],
-        'roleID' => $role['roleID'],
+        'roleID' => 1,
     ]);
 
-    EmployeeRole::create(
-        [
-            'employeeID' => $manager->employeeID,
-            'roleID' => $managerRole->roleID,
-        ],
-        [
-            'employeeID' => $hr->employeeID,
-            'roleID' => $hrRole->roleID,
-        ],
-    );
+    EmployeeRole::create([
+        'employeeID' => $manager->employeeID,
+        'roleID' => 4,
+    ]);
+    EmployeeRole::create([
+        'employeeID' => $hr->employeeID,
+        'roleID' => 2,
+    ]);
 
     return redirect()->route('loginPage');
 });

@@ -38,6 +38,12 @@ return [
             'report' => false,
         ],
 
+        'contracts' => [
+            'driver' => 'local',
+            'root' => storage_path('app/contracts'),
+            'visibility' => 'private',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

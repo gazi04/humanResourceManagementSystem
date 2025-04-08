@@ -1,7 +1,7 @@
 <?php
-use App\Models\Employee;
+
 use App\Models\Department;
-use App\Models\Role;
+use App\Models\Employee;
 use App\Models\EmployeeRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->artisan('migrate');
     $admin = Employee::create([
         'firstName' => 'gazi',
@@ -19,16 +19,18 @@ beforeEach(function () {
         'password' => Hash::make('gazi04'),
     ]);
 
-    $adminRole = Role::create(['roleName' => 'admin']);
     EmployeeRole::create([
         'employeeID' => $admin->employeeID,
-        'roleID' => $adminRole->roleID,
+        'roleID' => 1,
     ]);
 
     Auth::guard('employee')->login($admin);
 
     $department = Department::create([
         'departmentName' => 'IT Department',
+    ]);
+    $secondDepartment = Department::create([
+        'departmentName' => 'Logistic',
     ]);
 
     $employee1 = Employee::create([
@@ -48,29 +50,27 @@ beforeEach(function () {
         'phone' => '987654321',
         'password' => Hash::make('gazi04'),
         'jobTitle' => 'HR Manager',
-        'departmentID' => $department->departmentID,
+        'departmentID' => $secondDepartment->departmentID,
     ]);
 
-    $employeeRole = Role::create(['roleName' => 'employee']);
-    $managerRole = Role::create(['roleName' => 'manager']);
     EmployeeRole::create([
         'employeeID' => $employee1->employeeID,
-        'roleID' => $employeeRole->roleID,
+        'roleID' => 3,
     ]);
     EmployeeRole::create([
         'employeeID' => $employee2->employeeID,
-        'roleID' => $managerRole->roleID,
+        'roleID' => 4,
     ]);
 });
 
-it('requires search term', function () {
+it('requires search term', function (): void {
     $response = $this->get(route('admin.employee.search'));
 
     $response->assertRedirect(route('admin.employee.index'));
     $response->assertSessionHasErrors(['searchingTerm']);
 });
 
-it('searches employees by first name', function () {
+it('searches employees by first name', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),
@@ -82,7 +82,7 @@ it('searches employees by first name', function () {
     $response->assertDontSee('Jane Smith');
 });
 
-it('searches employees by last name', function () {
+it('searches employees by last name', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),
@@ -94,7 +94,7 @@ it('searches employees by last name', function () {
     $response->assertDontSee('Jane Smith');
 });
 
-it('searches employees by email', function () {
+it('searches employees by email', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),
@@ -106,7 +106,7 @@ it('searches employees by email', function () {
     $response->assertDontSee('Jane Smith');
 });
 
-it('searches employees by phone number', function () {
+it('searches employees by phone number', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),
@@ -118,7 +118,7 @@ it('searches employees by phone number', function () {
     $response->assertDontSee('Jane Smith');
 });
 
-it('searches employees by job title', function () {
+it('searches employees by job title', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),
@@ -130,7 +130,7 @@ it('searches employees by job title', function () {
     $response->assertDontSee('Jane Smith');
 });
 
-it('searches employees by department name', function () {
+it('searches employees by department name', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),
@@ -139,10 +139,10 @@ it('searches employees by department name', function () {
 
     $response->assertStatus(200);
     $response->assertSee('John Doe');
-    $response->assertSee('Jane Smith');
+    $response->assertDontSee('Jane Smith');
 });
 
-it('searches employees by role name', function() {
+it('searches employees by role name', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),
@@ -164,7 +164,7 @@ it('searches employees by role name', function() {
     $response->assertDontSee('John Doe');
 });
 
-it('returns empty results when no matches found', function () {
+it('returns empty results when no matches found', function (): void {
     $response = $this->call(
         'GET',
         route('admin.employee.search'),

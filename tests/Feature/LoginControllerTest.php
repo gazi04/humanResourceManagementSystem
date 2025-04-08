@@ -1,4 +1,5 @@
 <?php
+
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 uses()->group('authentication');
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->artisan('migrate');
 
     $this->employeeRole = Role::create(['roleName' => 'employee']);
@@ -18,14 +19,14 @@ beforeEach(function () {
     $this->managerRole = Role::create(['roleName' => 'manager']);
 });
 
-it('shows login page to unauthenticated users', function () {
+it('shows login page to unauthenticated users', function (): void {
     $response = $this->get(route('loginPage'));
 
     $response->assertOk();
     $response->assertViewIs('Auth.Login');
 });
 
-it('redirects authenticated users away from login page', function () {
+it('redirects authenticated users away from login page', function (): void {
     $employee = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -45,7 +46,7 @@ it('redirects authenticated users away from login page', function () {
     $response->assertRedirect(route('dashboard'));
 });
 
-it('allows employee to login with valid credentials', function () {
+it('allows employee to login with valid credentials', function (): void {
     $employee = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -68,7 +69,7 @@ it('allows employee to login with valid credentials', function () {
     $this->assertAuthenticatedAs($employee, 'employee');
 });
 
-it('allows admin to login with valid credentials', function () {
+it('allows admin to login with valid credentials', function (): void {
     $admin = Employee::create([
         'firstName' => 'Admin',
         'lastName' => 'User',
@@ -91,7 +92,7 @@ it('allows admin to login with valid credentials', function () {
     $this->assertAuthenticatedAs($admin, 'employee');
 });
 
-it('allows HR to login with valid credentials', function () {
+it('allows HR to login with valid credentials', function (): void {
     $hr = Employee::create([
         'firstName' => 'HR',
         'lastName' => 'User',
@@ -114,7 +115,7 @@ it('allows HR to login with valid credentials', function () {
     $this->assertAuthenticatedAs($hr, 'employee');
 });
 
-it('allows manager to login with valid credentials', function () {
+it('allows manager to login with valid credentials', function (): void {
     $manager = Employee::create([
         'firstName' => 'Manager',
         'lastName' => 'User',
@@ -137,7 +138,7 @@ it('allows manager to login with valid credentials', function () {
     $this->assertAuthenticatedAs($manager, 'employee');
 });
 
-it('rejects login with invalid credentials', function () {
+it('rejects login with invalid credentials', function (): void {
     Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -155,7 +156,7 @@ it('rejects login with invalid credentials', function () {
     $this->assertGuest('employee');
 });
 
-it('requires phone and password fields', function () {
+it('requires phone and password fields', function (): void {
     $response = $this->post(route('login'), []);
 
     $response->assertSessionHasErrors([
@@ -164,7 +165,7 @@ it('requires phone and password fields', function () {
     ]);
 });
 
-it('logs out authenticated users', function () {
+it('logs out authenticated users', function (): void {
     $employee = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -188,7 +189,7 @@ it('logs out authenticated users', function () {
     $this->assertGuest('employee');
 });
 
-it('redirects to proper dashboard based on role', function () {
+it('redirects to proper dashboard based on role', function (): void {
     // Test employee
     $employee = Employee::create([
         'firstName' => 'John',
@@ -223,4 +224,3 @@ it('redirects to proper dashboard based on role', function () {
     $response = $this->get(route('dashboard'));
     $response->assertRedirect(route('admin.dashboard'));
 });
-

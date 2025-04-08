@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddParamArrayDocblockBasedOnCallableNativeFuncCallRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnArrayDocblockBasedOnArrayMapRector;
 use RectorLaravel\Set\LaravelLevelSetList;
 use RectorLaravel\Set\LaravelSetList;
 
@@ -19,7 +21,6 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_CODE_QUALITY,
         LaravelSetList::LARAVEL_COLLECTION,
         /* LaravelSetList::LARAVEL_STATIC_TO_INJECTION, */
-        LaravelSetList::LARAVEL_COLLECTION,
     ])
     ->withPreparedSets(
         deadCode: true,
@@ -37,6 +38,9 @@ return RectorConfig::configure()
         \RectorLaravel\Rector\MethodCall\RedirectBackToBackHelperRector::class,
         \RectorLaravel\Rector\If_\ThrowIfRector::class,
         \RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector::class,
+        \RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector::class,
+        \RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector::class,
+        \RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector::class,
 
         /* STRICT RETURN TYPES */
         \Rector\TypeDeclaration\Rector\Class_\ReturnTypeFromStrictTernaryRector::class,
@@ -49,4 +53,7 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictFluentReturnRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictConstantReturnRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedCallRector::class,
+
+        AddParamArrayDocblockBasedOnCallableNativeFuncCallRector::class,
+        AddReturnArrayDocblockBasedOnArrayMapRector::class,
     ]);

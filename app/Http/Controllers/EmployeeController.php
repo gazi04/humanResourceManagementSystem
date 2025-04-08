@@ -5,23 +5,28 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Employeers\CreateEmployeeRequest;
 use App\Http\Requests\Employeers\DeleteEmployeeRequest;
 use App\Http\Requests\Employeers\SearchEmployeeRequest;
+use App\Http\Requests\Employeers\ShowEmployeeProfileRequest;
 use App\Http\Requests\Employeers\UpdateEmployeeRequest;
 use App\Models\Employee;
 use App\Models\Role;
+use App\Services\ContractService;
 use App\Services\EmployeeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class EmployeeController extends Controller
 {
-    public function __construct(protected EmployeeService $employeeService) {}
+    public function __construct(protected EmployeeService $employeeService, protected ContractService $contractService) {}
 
     public function index(): View
     {
         $result = $this->employeeService->getEmployees();
 
-        return view('Admin.employee', ['employees' => $result]);
+        $view = request()->is('admin/*') ? 'Admin.employee' : 'Hr.employee';
+
+        return view($view, ['employees' => $result]);
     }
 
     public function create(CreateEmployeeRequest $request): RedirectResponse
@@ -76,6 +81,23 @@ class EmployeeController extends Controller
         $validated = $request->only('searchingTerm');
         $result = $this->employeeService->searchEmployees($validated['searchingTerm']);
 
-        return view('Admin.employee', ['employees' => $result]);
+        $view = request()->is('admin/*') ? 'Admin.employee' : 'Hr.employee';
+        return view($view, ['employees' => $result]);
+    }
+
+    public function show(ShowEmployeeProfileRequest $request)
+    {
+        $validated = $request->only('employeeID');
+
+        try {
+            $result = $this->employeeService->getEmployee($validated['employeeID']);
+            $contracts = $this->contractService->getEmployeeContracts($validated['employeeID']);
+
+            return view('Employee.profile', ['employee' => $result[0], 'contracts' => $contracts]);
+        } catch (\Exception $e) {
+            Log::error('Gjatë përditësimit të kontratës ndodhi ky gabim: ', [$e->getMessage()]);
+
+            return back()->with('error', 'Ndodhi një gabim në sistem me përditësimit të kontratës, provoni përsëri më vonë.');
+        }
     }
 }
