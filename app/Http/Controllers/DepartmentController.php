@@ -6,6 +6,7 @@ use App\Http\Requests\Department\CreateDepartmentRequest;
 use App\Http\Requests\Department\DeleteDepartmentRequest;
 use App\Http\Requests\Department\UpdateDepartmentRequest;
 use App\Models\Department;
+use App\Models\Employee;
 use App\Services\DepartmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -17,7 +18,9 @@ class DepartmentController extends Controller
 
     public function index(): View
     {
-        return view('Admin.departments');
+        $result = $this->departmentServices->showDepartments();
+
+        return view('Admin.departments', ['departments' => $result]);
     }
 
     public function store(CreateDepartmentRequest $request): RedirectResponse
@@ -25,7 +28,7 @@ class DepartmentController extends Controller
         $validated = $request->only('departmentName', 'supervisorID');
         $this->departmentServices->createDepartment($validated);
 
-        return $this->redirector->route('admin.dashboard')->with('message', 'Departamenti është krijuar me sukses.');
+        return $this->redirector->route('admin.department.index')->with('success', 'Departamenti është krijuar me sukses.');
     }
 
     public function destroy(DeleteDepartmentRequest $request): RedirectResponse
@@ -33,13 +36,13 @@ class DepartmentController extends Controller
         $validated = $request->only('departmentID');
         $department = Department::query()->where('departmentID', $validated['departmentID'])->first();
 
-        if (!$department) {
-            return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
+        if (! $department) {
+            return $this->redirector->route('admin.department.index')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
         }
 
         $this->departmentServices->deleteDepartment($department);
 
-        return $this->redirector->route('admin.dashboard')->with('message', 'Departamenti është fshirë me sukses.');
+        return $this->redirector->route('admin.department.index')->with('success', 'Departamenti është fshirë me sukses.');
     }
 
     public function update(UpdateDepartmentRequest $request): RedirectResponse
@@ -47,12 +50,31 @@ class DepartmentController extends Controller
         $validated = $request->only('departmentID', 'newDepartmentName');
         $department = Department::query()->where('departmentID', $validated['departmentID'])->first();
 
-        if (!$department) {
-            return $this->redirector->route('admin.dashboard')->with('error', 'Departamenti nuk u gjet në bazën e të dhënave.');
+        if (! $department) {
+            return $this->redirector->route('admin.department.index')->with('error', 'Departamenti me'.$validated['departmentID'].' nuk u gjet në bazën e të dhënave.');
         }
 
-        $this->departmentServices->updateDepartment($department, ['departmentName' => $validated['newDepartmentName']]);
+        if ($request->has('newSupervisorID')) {
+            $validatedSupervisorID = $request->only('newSupervisorID');
+            /** @var Employee $employee */
+            $employee = Employee::where('employeeID', $validatedSupervisorID['newSupervisorID'])->first();
 
-        return $this->redirector->route('admin.dashboard');
+            if (! $employee) {
+                return $this->redirector->route('admin.department.index')->with('error', 'Nuk ka asnjë punonjës me ID '.$validatedSupervisorID['newSupervisorID'].' në bazën e të dhënave.');
+            }
+
+            if ($employee->getRoleName() != 'manager') {
+                return $this->redirector->route('admin.department.index')->with('error', 'Punonjësi i përzgjedhur nuk është menaxher.');
+            }
+
+            $this->departmentServices->updateDepartment($department, [
+                'departmentName' => $validated['newDepartmentName'],
+                'supervisorID' => $validatedSupervisorID['newSupervisorID'],
+            ]);
+        } else {
+            $this->departmentServices->updateDepartment($department, ['departmentName' => $validated['newDepartmentName']]);
+        }
+
+        return $this->redirector->route('admin.department.index')->with('success', 'Të dhënat e departamentit janë përditësuar me sukses.');
     }
 }

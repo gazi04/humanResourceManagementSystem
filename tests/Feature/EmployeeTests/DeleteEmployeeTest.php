@@ -38,6 +38,8 @@ it('delete employee with valid data', function (): void {
         'departmentName' => 'IT Department',
     ]);
 
+    $role = Role::create(['roleName' => 'manager']);
+
     $employee = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -50,9 +52,19 @@ it('delete employee with valid data', function (): void {
         'departmentID' => $department->departmentID,
     ]);
 
+    $employeRole = EmployeeRole::create([
+        'employeeID' => $employee->employeeID,
+        'roleID' => $role->roleID,
+    ]);
+
     $response = $this->delete(route('admin.employee.destroy'), [
         'employeeID' => $employee->employeeID,
         'email' => $employee->email,
+    ]);
+
+    $this->assertDatabaseMissing('employee_roles', [
+        'employeeID' => $employee->employeeID,
+        'roleID' => $role->roleID,
     ]);
 
     $response->assertRedirect(route('admin.employee.index'));
@@ -61,16 +73,15 @@ it('delete employee with valid data', function (): void {
 
 it('delete employee with invalid data', function (): void {
     $department = Department::create([
-        'departmentID' => 1,
         'departmentName' => 'IT Department',
     ]);
 
     $employee = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
-        'email' => 'john.doe@example.com',
+        'email' => 'john1.doe@example.com',
         'password' => 'password123',
-        'phone' => '045123456',
+        'phone' => '045193456',
         'hireDate' => '2023-10-01',
         'jobTitle' => 'Software Engineer',
         'status' => 'Active',

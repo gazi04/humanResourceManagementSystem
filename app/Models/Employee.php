@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employee extends Model implements AuthenticatableContract
 {
-    use Authenticatable;
+    use Authenticatable, HasFactory;
 
     protected $table = 'employees';
 
@@ -43,14 +44,6 @@ class Employee extends Model implements AuthenticatableContract
     public function employeeRole(): BelongsTo
     {
         return $this->belongsTo(EmployeeRole::class, 'employeeID', 'employeeID');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Role, $this>
-     */
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class, 'roleID', 'roleID');
     }
 
     /**

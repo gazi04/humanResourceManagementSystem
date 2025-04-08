@@ -320,12 +320,12 @@
           <div class="page-header">
             <div class="row align-items-center">
               <div class="col">
-                <h3 class="page-title">Department</h3>
+                <h3 class="page-title">Departamentet</h3>
                 <ul class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="{{ asset('index.html') }}">Dashboard</a>
+                    <a href="{{ asset('index.html') }}">Dashboardi</a>
                   </li>
-                  <li class="breadcrumb-item active">Department</li>
+                  <li class="breadcrumb-item active">Departamentet</li>
                 </ul>
               </div>
               <div class="col-auto float-right ml-auto">
@@ -347,199 +347,41 @@
                 <table class="table table-striped custom-table mb-0 datatable">
                   <thead>
                     <tr>
-                      <th style="width: 30px">#</th>
-                      <th>Emri i Departamentit</th>
-                      <th class="text-right">Action</th>
-                    </tr>
+											<th style="width: 30px;">#</th>
+											<th>Emri i Departamentit</th>
+											<th>Menaxheri</th>
+											<th class="text-right">Veprimet</th>
+										</tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Web Development</td>
-                      <td class="text-right">
-                        <div class="dropdown dropdown-action">
-                          <a
-                            href="{{ asset('#') }}"
-                            class="action-icon dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                            ><i class="material-icons">more_vert</i></a
-                          >
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#edit_department"
-                              ><i class="fa fa-pencil m-r-5"></i> Edit</a
-                            >
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#delete_department"
-                              ><i class="fa fa-trash-o m-r-5"></i> Delete</a
-                            >
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Application Development</td>
-                      <td class="text-right">
-                        <div class="dropdown dropdown-action">
-                          <a
-                            href="{{ asset('#') }}"
-                            class="action-icon dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                            ><i class="material-icons">more_vert</i></a
-                          >
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#edit_department"
-                              ><i class="fa fa-pencil m-r-5"></i> Edit</a
-                            >
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#delete_department"
-                              ><i class="fa fa-trash-o m-r-5"></i> Delete</a
-                            >
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>IT Management</td>
-                      <td class="text-right">
-                        <div class="dropdown dropdown-action">
-                          <a
-                            href="{{ asset('#') }}"
-                            class="action-icon dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                            ><i class="material-icons">more_vert</i></a
-                          >
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#edit_department"
-                              ><i class="fa fa-pencil m-r-5"></i> Edit</a
-                            >
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#delete_department"
-                              ><i class="fa fa-trash-o m-r-5"></i> Delete</a
-                            >
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td>Accounts Management</td>
-                      <td class="text-right">
-                        <div class="dropdown dropdown-action">
-                          <a
-                            href="{{ asset('#') }}"
-                            class="action-icon dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                            ><i class="material-icons">more_vert</i></a
-                          >
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#edit_department"
-                              ><i class="fa fa-pencil m-r-5"></i> Edit</a
-                            >
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#delete_department"
-                              ><i class="fa fa-trash-o m-r-5"></i> Delete</a
-                            >
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>5</td>
-                      <td>Support Management</td>
-                      <td class="text-right">
-                        <div class="dropdown dropdown-action">
-                          <a
-                            href="{{ asset('#') }}"
-                            class="action-icon dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                            ><i class="material-icons">more_vert</i></a
-                          >
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#edit_department"
-                              ><i class="fa fa-pencil m-r-5"></i> Edit</a
-                            >
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#delete_department"
-                              ><i class="fa fa-trash-o m-r-5"></i> Delete</a
-                            >
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>6</td>
-                      <td>Marketing</td>
-                      <td class="text-right">
-                        <div class="dropdown dropdown-action">
-                          <a
-                            href="{{ asset('#') }}"
-                            class="action-icon dropdown-toggle"
-                            data-toggle="dropdown"
-                            aria-expanded="false"
-                            ><i class="material-icons">more_vert</i></a
-                          >
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#edit_department"
-                              ><i class="fa fa-pencil m-r-5"></i> Edit</a
-                            >
-                            <a
-                              class="dropdown-item"
-                              href="{{ asset('#') }}"
-                              data-toggle="modal"
-                              data-target="#delete_department"
-                              ><i class="fa fa-trash-o m-r-5"></i> Delete</a
-                            >
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
+                    @foreach ($departments as $department)
+                        <tr>
+                            <td>{{ $department->departmentID }}</td>
+                            <td>{{ $department->departmentName }}</td>
+                            <td>
+                                @if ($department->supervisor_firstName && $department->supervisor_lastName)
+                                    {{ $department->supervisor_firstName }} {{ $department->supervisor_lastName }}
+                                @else
+                                    Nuk ka menaxher
+                                @endif
+                            </td>
+                            <td class="text-right">
+                                <div class="action-buttons">
+                                    <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#edit_department" data-id="{{ $department->departmentID }}">
+                                        <i class="fa fa-pencil"></i> Modifiko
+                                    </a>
+                                    <form action="{{ route('admin.department.destroy', $department->departmentID) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('A jeni i sigurt qe doni ta fshini?')">
+                                            <i class="fa fa-trash-o"></i> Fshij
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
                 </table>
               </div>
             </div>

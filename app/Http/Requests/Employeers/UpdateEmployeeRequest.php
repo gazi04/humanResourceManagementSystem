@@ -30,17 +30,15 @@ class UpdateEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employeeID' => 'required|integer|min:1|exists:employees,employeeID',
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email|max:255',
-            'password' => 'require|string|min:6',
-            /* TODO- IN PRODOCUTION REMOVE THE LINE ABOVE AND DECOMENT THE LINE BELOW */
-            /* 'password' => ['require', Password::default(), 'string'], */
+            'employeeID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
+            'firstName' => ['required', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
+            'email' => 'required|email|unique:employees,email,'.$this->employeeID.',employeeID|max:255',
+            'password' => ['sometimes', Password::default(), 'string'],
             'phone' => ['required', 'regex:/^(\+?383|0)?[4-6][0-9]{7}$/'],
-            'jobTitle' => 'required|string|max:255',
-            'status' => 'required|in:Active,Inactive,On Leave',
-            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
+            'jobTitle' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'in:Active,Inactive,On Leave'],
+            'departmentID' => ['required', 'integer', 'min:1', 'exists:departments,departmentID'],
         ];
     }
 
@@ -52,6 +50,11 @@ class UpdateEmployeeRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'employeeID.required' => 'ID e punonjësit është e detyrueshme.',
+            'employeeID.integer' => 'ID e punonjësit duhet të jetë një numër i plotë.',
+            'employeeID.min' => 'ID e punonjësit duhet të jetë më e madhe se 0.',
+            'employeeID.exists' => 'Punonjësi me këtë ID nuk egziston.',
+
             'firstName.required' => 'Emri është i detyrueshëm.',
             'firstName.string' => 'Emri duhet të jetë një varg tekstual.',
             'firstName.max' => 'Emri nuk mund të jetë më i gjatë se 255 karaktere.',
@@ -65,9 +68,11 @@ class UpdateEmployeeRequest extends FormRequest
             'email.unique' => 'Kjo adresë email është tashmë e përdorur.',
             'email.max' => 'Adresa email nuk mund të jetë më e gjatë se 255 karaktere.',
 
-            'password.required' => 'Fjalëkalimi është i detyrueshëm.',
             'password.string' => 'Fjalëkalimi duhet të jetë një varg tekstual.',
-            'password.min' => 'Fjalëkalimi duhet të ketë të paktën 6 karaktere.',
+            'password.min' => 'Fjalëkalimi duhet të ketë të paktën 8 karaktere.',
+            'password.mixed' => 'Fjalëkalimi duhet të përmbajë të paktën një shkronjë të madhe dhe një të vogël.',
+            'password.numbers' => 'Fjalëkalimi duhet të përmbajë të paktën një numër.',
+            'password.symbols' => 'Fjalëkalimi duhet të përmbajë të paktën një karakter special.',
 
             'phone.required' => 'Fusha e numrit të telefonit është e detyrueshme.',
             'phone.regex' => 'Numri i telefonit nuk është i vlefshëm. Duhet të fillojë me +383 ose 0 dhe të përmbajë 7 shifra pas prefiksit.',

@@ -19,9 +19,7 @@ class IsUserAdminMiddleware
     {
         /** @var Employee $user */
         $user = Auth::guard('employee')->user();
-        if ($user->getRoleName() !== 'admin') {
-            abort(403);
-        }
+        abort_if($user->getRoleName() !== 'admin', 403);
 
         return $next($request);
     }

@@ -29,8 +29,9 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departmentID' => 'required|integer|min:1|exists:departments,departmentID',
-            'newDepartmentName' => 'required|string|unique:departments,departmentName',
+            'departmentID' => ['required', 'integer', 'min:1', 'exists:departments,departmentID'],
+            'newDepartmentName' => ['required', 'string', 'unique:departments,departmentName'],
+            'newSupervisorID' => ['nullable', 'integer', 'min:1', 'exists:employees,employeeID'],
         ];
     }
 
@@ -50,6 +51,10 @@ class UpdateDepartmentRequest extends FormRequest
             'newDepartmentName.required' => 'Emri i ri i departamentit është i detyrueshëm.',
             'newDepartmentName.string' => 'Emri i ri i departamentit duhet të jetë një varg tekstual.',
             'newDepartmentName.unique' => 'Ekziston tashmë një departament me këtë emër.',
+
+            'newSupervisorID.integer' => 'ID e menaxherit duhet të jetë një numër i plotë.',
+            'newSupervisorID.min' => 'ID e menaxherit duhet të jetë më e madhe se 0.',
+            'newSupervisorID.exists' => 'Menaxheri me këtë ID nuk egziston.',
         ];
     }
 }

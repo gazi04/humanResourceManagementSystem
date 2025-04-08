@@ -19,9 +19,7 @@ class IsUserEmployeeMiddleware
     {
         /** @var Employee $user */
         $user = Auth::guard('employee')->user();
-        if ($user->getRoleName() !== 'employee') {
-            abort(403);
-        }
+        abort_if($user->getRoleName() !== 'employee', 403);
 
         return $next($request);
     }

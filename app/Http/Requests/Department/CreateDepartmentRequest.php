@@ -29,8 +29,8 @@ class CreateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'departmentName' => 'required|string|unique:departments,departmentName',
-            'supervisorID' => 'required|integer|min:1|exists:employees,employeeID',
+            'departmentName' => ['required', 'string', 'unique:departments,departmentName'],
+            'supervisorID' => ['required', 'integer', 'min:1', 'exists:employees,employeeID'],
         ];
     }
 
