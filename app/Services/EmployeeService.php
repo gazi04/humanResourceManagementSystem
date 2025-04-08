@@ -180,4 +180,28 @@ class EmployeeService implements EmployeeServiceInterface
                 'r.roleName',
             ])->get()->toArray());
     }
+
+    public function searchManagers(string $searchTerm)
+    {
+        return DB::transaction(fn () => DB::table('employees as e')
+            ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
+            ->join('roles as r', 'er.roleID', '=', 'r.roleID')
+            ->leftJoin('departments as d', 'e.departmentID', '=', 'd.departmentID')
+            ->select([
+                'e.employeeID',
+                'e.firstName',
+                'e.lastName',
+            ])
+            ->where('r.roleID', '=', '4')
+            ->where(function ($query) use ($searchTerm): void {
+                $query->where('e.firstName', 'like', "%$searchTerm%")
+                    ->orWhere('e.lastName', 'like', "%$searchTerm%")
+                    ->orWhere('e.email', 'like', "%$searchTerm%")
+                    ->orWhere('e.phone', 'like', "%$searchTerm%")
+                    ->orWhere('e.jobTitle', 'like', "%$searchTerm%")
+                    ->orWhere('d.departmentName', 'like', "%$searchTerm%");
+            })
+            ->get()
+            ->toJson());
+    }
 }

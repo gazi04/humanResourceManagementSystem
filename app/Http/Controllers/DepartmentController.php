@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Department\CreateDepartmentRequest;
 use App\Http\Requests\Department\DeleteDepartmentRequest;
 use App\Http\Requests\Department\SearchDepartmentRequest;
+use App\Http\Requests\Department\SearchManagerRequest;
 use App\Http\Requests\Department\UpdateDepartmentRequest;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Services\DepartmentService;
+use App\Services\EmployeeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\View\View;
 
 class DepartmentController extends Controller
 {
-    public function __construct(protected DepartmentService $departmentServices, private readonly Redirector $redirector) {}
+    public function __construct(protected DepartmentService $departmentServices, protected EmployeeService $employeeService, private readonly Redirector $redirector) {}
 
     public function index(): View
     {
@@ -85,5 +87,14 @@ class DepartmentController extends Controller
         $result = $this->departmentServices->searchDepartment($validated['searchingTerm']);
 
         return view('Admin.departments', ['departments' => $result]);
+    }
+
+    public function searchManager(SearchManagerRequest $request)
+    {
+        /* TODO- DONAT QIKJO TI KTHEN TE MANAXHERAT E GJETUR NE DATABAZE */
+        $validated = $request->only('searchingTerm');
+        $result = $this->employeeService->searchManagers($validated['searchingTerm']);
+        /* HINT: SA PER INFORMACION RESULTATI QE E KTHEN ESHTE JSON */
+        dd($result);
     }
 }
