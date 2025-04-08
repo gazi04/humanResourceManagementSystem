@@ -22,6 +22,7 @@ use App\Models\EmployeeRole;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
+/* TODO- NEED TO TEST THE MIDDLEWARE */
 Route::middleware([EnsureUserIsLoggedInMiddleware::class])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -41,6 +42,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::delete('/destroy', [DepartmentController::class, 'destroy'])->name('destroy');
         Route::patch('/update', [DepartmentController::class, 'update'])->name('update');
         Route::get('/search', [DepartmentController::class, 'search'])->name('search');
+        Route::get('/search/manager', [DepartmentController::class, 'searchManager'])->name('search.manager');
     });
 
     Route::prefix('employees')->name('employee.')->group(function () {
@@ -91,13 +93,27 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {
-    Route::get('/human-resources', [HumanResourceController::class, 'index'])->name('dashboard');
+    Route::get('/', [HumanResourceController::class, 'index'])->name('dashboard');
+
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', function () {
+            return view('Manager.createTicket');
+        })->name('index');
+        Route::post('/create', [TicketController::class, 'create'])->name('create');
+    });
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserEmployeeMiddleware::class])->prefix('employee')->name('employee.')->group(function () {
     Route::get('/dashboard', function () {
         return 'admin web page';
     })->name('dashboard');
+
+    Route::prefix('tickets')->name('ticket.')->group(function () {
+        Route::get('/', function () {
+            return view('Employee.createTicket');
+        })->name('index');
+        Route::post('/create', [TicketController::class, 'create'])->name('create');
+    });
 });
 
 Route::get('/dummy-data', function () {
