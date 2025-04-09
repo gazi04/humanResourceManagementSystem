@@ -49,6 +49,8 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
         Route::get('/', [EmployeeController::class, 'index'])->name('index');
         Route::get('/administrators', [AdminController::class, 'index'])->name('administrators');
         Route::get('/managers', [ManagerController::class, 'index'])->name('managers');
+        /* TODO- DIMAL QIT ROUTE POSHT PERDORE SI API EDHE BONI FETCH KSHYRE A PO MUNDESH ME NDREQ */
+        Route::get('/hrs', [HumanResourceController::class, 'getHrs'])->name('hrs');
 
         Route::post('/create', [EmployeeController::class, 'create'])->name('create');
         Route::delete('/delete', [EmployeeController::class, 'destroy'])->name('destroy');
@@ -61,6 +63,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserAdminMiddleware:
     Route::prefix('tickets')->name('ticket.')->group(function () {
         Route::get('/', [TicketController::class, 'index'])->name('index');
         Route::get('/show', [TicketController::class, 'show'])->name('show');
+        Route::post('/finish', [TicketController::class, 'finish'])->name('finish');
     });
 });
 

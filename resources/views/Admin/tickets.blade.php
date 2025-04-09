@@ -457,6 +457,8 @@
                             <div class="modal-btn delete-action">
                                 <div class="row">
                                     <div class="col-6">
+                                        {{--TODO- DIMAL QITU PER ME KRY NJE TICKET NEVOJITET ID TICKETS SI ME FORM E NDREQ EDHE ID E TICKETS E VENDOS ME NJE HIDDEN INPUT--}}
+                                        {{--HINT- DIMAL ROUTE PER ME KRY NJE TICKET ESHTE ADMIN.TICKET.FINISH--}}
                                         <a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
                                     </div>
                                     <div class="col-6">

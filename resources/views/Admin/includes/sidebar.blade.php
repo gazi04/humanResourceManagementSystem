@@ -6,7 +6,7 @@
                     <span>Main</span>
                 </li>
                 <li class="submenu">
-                    <a href="{{ url('admin') }}><i class=" la la-dashboard"></i> <span> Paneli i Admin</span>
+                    <a href="{{ url('admin') }}"><i class=" la la-dashboard"></i> <span> Paneli i Admin</span>
                         <span class="menu-arrow"></span></a>
                 </li>
 
