@@ -38,21 +38,7 @@ return RectorConfig::configure()
         \RectorLaravel\Rector\MethodCall\RedirectBackToBackHelperRector::class,
         \RectorLaravel\Rector\If_\ThrowIfRector::class,
         \RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector::class,
-        \RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector::class,
-        \RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector::class,
         \RectorLaravel\Rector\FuncCall\RemoveDumpDataDeadCodeRector::class,
-
-        /* STRICT RETURN TYPES */
-        \Rector\TypeDeclaration\Rector\Class_\ReturnTypeFromStrictTernaryRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNewArrayRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeCallRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\NumericReturnTypeFromStrictReturnsRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\NumericReturnTypeFromStrictScalarReturnsRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\BoolReturnTypeFromBooleanStrictReturnsRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedPropertyRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictFluentReturnRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictConstantReturnRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedCallRector::class,
 
         AddParamArrayDocblockBasedOnCallableNativeFuncCallRector::class,
         AddReturnArrayDocblockBasedOnArrayMapRector::class,
