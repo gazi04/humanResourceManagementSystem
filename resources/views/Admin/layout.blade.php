@@ -43,7 +43,6 @@
         @include('admin.includes.sidebar')
 
         <div class="page-wrapper">
-            @yield('title', 'K.R.U Hidromorava')
             @yield('content')
         </div>
     </div>
