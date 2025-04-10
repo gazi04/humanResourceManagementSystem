@@ -6,7 +6,8 @@
                     <span>Main</span>
                 </li>
                 <li class="submenu">
-                    <a href="{{ url('admin') }}><i class=" la la-dashboard"></i> <span> Paneli i Admin</span>
+                    <a href="{{ route('admin.dashboard') }}"><i class=" la la-dashboard"></i> <span> Paneli i
+                            Admin</span>
                         <span class="menu-arrow"></span></a>
                 </li>
 
@@ -16,21 +17,20 @@
                         <span class="menu-arrow"></span>
                     </a>
                     <ul style="display: none">
-                        <li><a href="{{ url('admin') }}">Administratoret</a></li>
-                        <li><a href="{{ url('hrEmploye') }}">Hr</a></li>
-                        <li><a href="{{ url('depMenager') }}">Menaxheri i Departamenteve</a></li>
-                        <li><a href="{{ url('employee') }}">Puntoret</a></li>
+                        <li><a href="{{ route('admin.employee.administrators') }}">Administratoret</a></li>
+                        <li><a href="{{ route('admin.employee.managers') }}">Menaxheri i Departamenteve</a></li>
+                        <li><a href="{{ route('admin.employee.index') }}">Puntoret</a></li>
                     </ul>
                 </li>
 
                 <li>
-                    <a href="{{ url('departments') }}">
+                    <a href="{{ route('admin.department.index') }}">
                         <i class="la la-users"></i> <span>Departamentet</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="{{ url('tickets') }}">
+                    <a href="{{ route('admin.employee.index') }}">
                         <i class="la la-ticket"></i> <span>Tickets</span>
                     </a>
                 </li>
@@ -41,13 +41,13 @@
                         <span class="menu-arrow"></span>
                     </a>
                     <ul style="display: none">
-                        <li><a href="{{ url('expense-reports') }}">Expense Report</a></li>
-                        <li><a href="{{ url('invoice-reports') }}">Invoice Report</a></li>
+                        <li><a href="{{ route('admin.expenseReports') }}">Expense Report</a></li>
+                        <li><a href="{{ route('admin.invoiceReports') }}">Invoice Report</a></li>
                     </ul>
                 </li>
 
                 <li>
-                    <a href="{{ url('settings') }}">
+                    <a href="{{ route('admin.settings') }}">
                         <i class="la la-cog"></i> <span>Settings</span>
                     </a>
                 </li>
