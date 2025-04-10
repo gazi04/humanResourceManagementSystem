@@ -6,8 +6,10 @@
                     <span>Main</span>
                 </li>
                 <li class="submenu">
+
                     <a href="{{ route('admin.dashboard') }}"><i class=" la la-dashboard"></i> <span> Paneli i
                             Admin</span>
+
                         <span class="menu-arrow"></span></a>
                 </li>
 

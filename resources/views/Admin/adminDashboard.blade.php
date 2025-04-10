@@ -235,8 +235,7 @@
             <div class="dropdown-menu">
               <a class="dropdown-item" href="profile.html">Profili</a>
               <a class="dropdown-item" href="settings.html">Settings</a>
-              <form method="POST" action="{{ route('logout') }}">
-                  @csrf
+              <form method="GET" action="{{ route('logout') }}">
                   <input type='submit' value='Çkyçu' class="dropdown-item" />
               </form>
             </div>
@@ -256,7 +255,7 @@
           <div class="dropdown-menu dropdown-menu-right">
             <a class="dropdown-item" href="profile.html">Profili</a>
             <a class="dropdown-item" href="settings.html">Settings</a>
-            <a class="dropdown-item" href="login.html">Çkyçu</a>
+            <a class="dropdown-item" href="{{ route('logout') }}">Çkyçu</a>
           </div>
         </div>
         <!-- /Mobile Menu -->
@@ -272,31 +271,32 @@
                 <span>Main</span>
               </li>
               <li class="submenu">
-                <a href="#">Paneli i Adminit</a>
+                <a href="{{ route('admin.dashboard') }}">Paneli i Adminit</a>
               </li>
 
               <li class="submenu">
-                <a href="#"
+                <a href=""
                   ><i class="la la-user"></i> <span> Puntoret</span>
                   <span class="menu-arrow"></span
                 ></a>
                 <ul style="display: none">
-                  <li><a href="admin.html">Administratoret</a></li>
-                  <li><a href="hrEmploye.html">Hr</a></li>
+                    {{--TODO- DIMAL QITO JANE ROUTE--}}
+                  <li><a href="{{ route('admin.employee.administrators') }}">Administratoret</a></li>
+                  <li><a href="{{ route('admin.employee.hrs') }}">Hr</a></li>
                   <li>
-                    <a href="depMenager.html">Menaxheri i Departamenteve</a>
+                    <a href="{{ route('admin.employee.managers') }}">Menaxheri i Departamenteve</a>
                   </li>
-                  <li><a href="employee.html">Puntoret</a></li>
+                  <li><a href="{{ route('admin.employee.index') }}">Puntoret</a></li>
                 </ul>
               </li>
               <li>
-                <a href="departments.html"
+                <a href="{{ route('admin.department.index') }}"
                   ><i class="la la-users"></i> <span>Departamentet</span></a
                 >
               </li>
 
               <li>
-                <a href="tickets.html"
+                <a href="{{ route('admin.ticket.index') }}"
                   ><i class="la la-ticket"></i> <span>Tickets</span></a
                 >
               </li>

@@ -2,14 +2,17 @@
 
 namespace App\Services;
 
+use App\Exceptions\EmployeeRetrievalException;
 use App\Http\Requests\Employeers\UpdateEmployeeRequest;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
 use App\Services\Interfaces\EmployeeServiceInterface;
+use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class EmployeeService implements EmployeeServiceInterface
 {
@@ -118,6 +121,32 @@ class EmployeeService implements EmployeeServiceInterface
                 'r.roleName',
             ])
             ->paginate(10));
+    }
+
+    public function getHrs(): LengthAwarePaginator
+    {
+        try {
+            return DB::transaction(function () {
+                return DB::table('employees as e')
+                    ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
+                    ->join('roles as r', 'er.roleID', '=', 'r.roleID')
+                    ->where('r.roleName', 'hr')
+                    ->select([
+                        'e.employeeID',
+                        'e.firstName',
+                        'e.lastName',
+                        'e.email',
+                        'e.phone',
+                        'e.hireDate',
+                        'e.jobTitle',
+                        'e.status',
+                    ])
+                    ->paginate(15);
+            });
+        } catch (QueryException $e) {
+            Log::error('Failed to fetch HR employees', ['error' => $e->getMessage()]);
+            throw new EmployeeRetrievalException('Could not retrieve HR employees');
+        }
     }
 
     public function searchEmployees(string $searchTerm): LengthAwarePaginator

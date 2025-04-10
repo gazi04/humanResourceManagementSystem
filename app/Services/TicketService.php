@@ -13,7 +13,7 @@ class TicketService implements TicketServiceInterface
 {
     private function gettodaytickets()
     {
-        return db::transaction(fn() => db::table('tickets as t')
+        return db::transaction(fn () => db::table('tickets as t')
             ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
             ->select([
                 't.ticketid',
@@ -34,7 +34,7 @@ class TicketService implements TicketServiceInterface
 
     private function getunfinishedpasttickets()
     {
-        return db::transaction(fn() => db::table('tickets as t')
+        return db::transaction(fn () => db::table('tickets as t')
             ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
             ->select([
                 't.ticketid',
@@ -56,10 +56,11 @@ class TicketService implements TicketServiceInterface
     {
         return DB::transaction(function () use ($data) {
             $ticket = Ticket::create($data);
-            $admins = Employee::whereHas('employeeRole', function($query) {
+            $admins = Employee::whereHas('employeeRole', function ($query) {
                 $query->where('roleID', 1);
             })->get();
-            Notification::send($admins, new NewTicketNotification($ticket));
+
+            // Notification::send($admins, new NewTicketNotification($ticket));
             return $ticket;
         });
     }
@@ -69,34 +70,37 @@ class TicketService implements TicketServiceInterface
         return DB::transaction(function () {
             $todayTickets = $this->getTodayTickets();
             $unfinishedTickets = $this->getUnfinishedPastTickets();
+
             return [
                 'todayTickets' => $todayTickets,
-                'unfinishedTickets' => $unfinishedTickets
+                'unfinishedTickets' => $unfinishedTickets,
             ];
         });
     }
 
     public function finishTicket(int $ticketID): Ticket
     {
-        return DB::transaction(function() use ($ticketID): Ticket {
+        return DB::transaction(function () use ($ticketID): Ticket {
             $ticket = Ticket::where('ticketID', '=', $ticketID)
                 ->update([
-                    'status' => 'finished'
+                    'status' => 'finished',
                 ])
                 ->get();
+
             return $ticket;
         });
     }
 
-    /* TODO- BE CAREFULL WITH THE IMPLEMENTATION OF THIS METHOD IN THE FRONT END PART  */
+    /* TODO- BE CAREFULL WITH THE IMPLEMENTATION OF THIS METHOD IN THE FRONT END PART */
     public function openTicket(int $ticketID): Ticket
     {
-        return DB::transaction(function() use ($ticketID): Ticket {
+        return DB::transaction(function () use ($ticketID): Ticket {
             $ticket = Ticket::where('ticketID', '=', $ticketID)
                 ->update([
-                    'status' => 'open'
+                    'status' => 'open',
                 ])
                 ->get();
+
             return $ticket;
         });
     }

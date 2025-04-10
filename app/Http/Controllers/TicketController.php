@@ -19,12 +19,14 @@ class TicketController extends Controller
         } catch (\Exception $ex) {
             Log::error("Couldn't get the tickets from the database.",
                 ['error' => $ex->getMessage()]);
+
             return redirect()->route('admin.dashboard')->with('error', 'Ndodhi një gabim gjatë procesit të marrjes së biletave nga baza e të dhënave.');
         }
+
         /* dd($tickets); */
         return view('Admin.tickets', [
             'tickets' => $tickets['todayTickets'],
-            'unfinishedTickets' => $tickets['unfinishedTickets']
+            'unfinishedTickets' => $tickets['unfinishedTickets'],
         ]);
     }
 
@@ -32,11 +34,9 @@ class TicketController extends Controller
     {
         if ($request->is('hr/*')) {
             $route = 'hr.dashboard';
-        }
-        else if ($request->is('employee/*')) {
+        } elseif ($request->is('employee/*')) {
             $route = 'employee.dashboard';
-        }
-        else if ($request->is('manager/*')) {
+        } elseif ($request->is('manager/*')) {
             $route = 'manager.dashboard';
         }
 
@@ -57,11 +57,13 @@ class TicketController extends Controller
         } catch (\PDOException $e) {
             Log::error('Problemi i lidhjes me bazën e të dhënave.',
                 ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']);
+
             return redirect()->route($route)
                 ->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
         } catch (\Exception $e) {
             Log::error('Krijimi i biletës dështoi.',
                 ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']);
+
             return redirect()->route($route)
                 ->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
         }
