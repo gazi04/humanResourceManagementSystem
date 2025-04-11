@@ -77,32 +77,6 @@ class TicketController extends Controller
         }
     }
 
-    public function open(ChangeTicketStatusRequest $request)
-    {
-        try {
-            $validated = $request->only('ticketID');
-
-            $this->ticketService->openTicket($validated['ticketID']);
-
-            return redirect()->route('admin.ticket.index');
-        } catch (\Illuminate\Database\QueryException $e) {
-            Log::error(
-                'Krijimi i biletës dështoi për shkak të gabimit të bazës së të dhënave.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'Database error occurred']
-            );
-        } catch (\PDOException $e) {
-            Log::error(
-                'Problemi i lidhjes me bazën e të dhënave.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']
-            );
-        } catch (\Exception $e) {
-            Log::error(
-                'Krijimi i biletës dështoi.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']
-            );
-        }
-    }
-
     public function finish(ChangeTicketStatusRequest $request)
     {
         try {
