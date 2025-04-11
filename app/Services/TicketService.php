@@ -78,27 +78,13 @@ class TicketService implements TicketServiceInterface
         });
     }
 
-    public function finishTicket(int $ticketID)
+    public function finishTicket(int $ticketID): int
     {
-        DB::transaction(function () use ($ticketID): Ticket {
-            $ticket = Ticket::where('ticketID', '=', $ticketID)
+        return DB::transaction(function () use ($ticketID): int {
+            return Ticket::where('ticketID', '=', $ticketID)
                 ->update([
                     'status' => 'finished',
                 ]);
-        });
-    }
-
-    /* TODO- BE CAREFULL WITH THE IMPLEMENTATION OF THIS METHOD IN THE FRONT END PART */
-    public function openTicket(int $ticketID): Ticket
-    {
-        return DB::transaction(function () use ($ticketID): Ticket {
-            $ticket = Ticket::where('ticketID', '=', $ticketID)
-                ->update([
-                    'status' => 'open',
-                ])
-                ->get();
-
-            return $ticket;
         });
     }
 }

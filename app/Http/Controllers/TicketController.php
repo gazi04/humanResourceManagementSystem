@@ -107,9 +107,7 @@ class TicketController extends Controller
     {
         try {
             $validated = $request->only('ticketID');
-
             $this->ticketService->finishTicket($validated['ticketID']);
-
             return redirect()->route('admin.ticket.index');
         } catch (\Illuminate\Database\QueryException $e) {
             Log::error(

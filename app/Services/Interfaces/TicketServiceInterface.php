@@ -10,7 +10,5 @@ interface TicketServiceInterface
 
     public function getTickets();
 
-    public function finishTicket(int $ticketID);
-
-    public function openTicket(int $ticketID): Ticket;
+    public function finishTicket(int $ticketID): int;
 }
