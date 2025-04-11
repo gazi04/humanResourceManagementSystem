@@ -13,7 +13,7 @@ class TicketService implements TicketServiceInterface
 {
     private function gettodaytickets()
     {
-        return db::transaction(fn() => db::table('tickets as t')
+        return DB::transaction(fn () => DB::table('tickets as t')
             ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
             ->select([
                 't.ticketid',
@@ -34,7 +34,7 @@ class TicketService implements TicketServiceInterface
 
     private function getunfinishedpasttickets()
     {
-        return db::transaction(fn() => db::table('tickets as t')
+        return DB::transaction(fn () => DB::table('tickets as t')
             ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
             ->select([
                 't.ticketid',
@@ -74,6 +74,7 @@ class TicketService implements TicketServiceInterface
             return [
                 'todayTickets' => $todayTickets,
                 'unfinishedTickets' => $unfinishedTickets,
+                'summary' => $this->getTicketSummary(),
             ];
         });
     }
@@ -85,6 +86,26 @@ class TicketService implements TicketServiceInterface
                 ->update([
                     'status' => 'finished',
                 ]);
+        });
+    }
+
+    public function getTicketSummary(): array
+    {
+        return DB::transaction(function (): array {
+            return [
+                'total_tickets' => DB::table('tickets')->count(),
+                'new_today' => DB::table('tickets')
+                    ->whereDate('created_at', today())
+                    ->where('status', 'closed')
+                    ->count(),
+                'finished_today' => DB::table('tickets')
+                    ->where('status', 'finished')
+                    ->whereDate('created_at', today())
+                    ->count(),
+                'finished_tickets' => DB::table('tickets')
+                    ->where('status', 'finished')
+                    ->count(),
+            ];
         });
     }
 }

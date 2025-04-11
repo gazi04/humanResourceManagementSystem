@@ -11,4 +11,6 @@ interface TicketServiceInterface
     public function getTickets();
 
     public function finishTicket(int $ticketID): int;
+
+    public function getTicketSummary(): array;
 }
