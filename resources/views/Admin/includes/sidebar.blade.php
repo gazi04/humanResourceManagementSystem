@@ -33,7 +33,9 @@
                 </li>
 
                 <li>
+
                     <a href="{{ route('admin.ticket.index') }}">
+
                         <i class="la la-ticket"></i> <span>Tickets</span>
                     </a>
                 </li>
