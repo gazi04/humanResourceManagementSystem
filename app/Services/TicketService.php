@@ -13,7 +13,7 @@ class TicketService implements TicketServiceInterface
 {
     private function gettodaytickets()
     {
-        return db::transaction(fn () => db::table('tickets as t')
+        return db::transaction(fn() => db::table('tickets as t')
             ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
             ->select([
                 't.ticketid',
@@ -34,7 +34,7 @@ class TicketService implements TicketServiceInterface
 
     private function getunfinishedpasttickets()
     {
-        return db::transaction(fn () => db::table('tickets as t')
+        return db::transaction(fn() => db::table('tickets as t')
             ->join('employees as e', 't.employeeid', '=', 'e.employeeid')
             ->select([
                 't.ticketid',
@@ -78,16 +78,13 @@ class TicketService implements TicketServiceInterface
         });
     }
 
-    public function finishTicket(int $ticketID): Ticket
+    public function finishTicket(int $ticketID)
     {
-        return DB::transaction(function () use ($ticketID): Ticket {
+        DB::transaction(function () use ($ticketID): Ticket {
             $ticket = Ticket::where('ticketID', '=', $ticketID)
                 ->update([
                     'status' => 'finished',
-                ])
-                ->get();
-
-            return $ticket;
+                ]);
         });
     }
 

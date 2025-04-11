@@ -10,15 +10,19 @@ use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
 {
-    public function __construct(protected TicketService $ticketService) {}
+    public function __construct(protected TicketService $ticketService)
+    {
+    }
 
     public function index()
     {
         try {
             $tickets = $this->ticketService->getTickets();
         } catch (\Exception $ex) {
-            Log::error("Couldn't get the tickets from the database.",
-                ['error' => $ex->getMessage()]);
+            Log::error(
+                "Couldn't get the tickets from the database.",
+                ['error' => $ex->getMessage()]
+            );
 
             return redirect()->route('admin.dashboard')->with('error', 'Ndodhi një gabim gjatë procesit të marrjes së biletave nga baza e të dhënave.');
         }
@@ -55,14 +59,18 @@ class TicketController extends Controller
             return redirect()->route($route)
                 ->with('success', 'Bileta u krijua me sukses.');
         } catch (\PDOException $e) {
-            Log::error('Problemi i lidhjes me bazën e të dhënave.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']);
+            Log::error(
+                'Problemi i lidhjes me bazën e të dhënave.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']
+            );
 
             return redirect()->route($route)
                 ->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
         } catch (\Exception $e) {
-            Log::error('Krijimi i biletës dështoi.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']);
+            Log::error(
+                'Krijimi i biletës dështoi.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']
+            );
 
             return redirect()->route($route)
                 ->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
@@ -78,14 +86,20 @@ class TicketController extends Controller
 
             return redirect()->route('admin.ticket.index');
         } catch (\Illuminate\Database\QueryException $e) {
-            Log::error('Krijimi i biletës dështoi për shkak të gabimit të bazës së të dhënave.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'Database error occurred']);
+            Log::error(
+                'Krijimi i biletës dështoi për shkak të gabimit të bazës së të dhënave.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'Database error occurred']
+            );
         } catch (\PDOException $e) {
-            Log::error('Problemi i lidhjes me bazën e të dhënave.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']);
+            Log::error(
+                'Problemi i lidhjes me bazën e të dhënave.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']
+            );
         } catch (\Exception $e) {
-            Log::error('Krijimi i biletës dështoi.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']);
+            Log::error(
+                'Krijimi i biletës dështoi.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']
+            );
         }
     }
 
@@ -98,14 +112,20 @@ class TicketController extends Controller
 
             return redirect()->route('admin.ticket.index');
         } catch (\Illuminate\Database\QueryException $e) {
-            Log::error('Krijimi i biletës dështoi për shkak të gabimit të bazës së të dhënave.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'Database error occurred']);
+            Log::error(
+                'Krijimi i biletës dështoi për shkak të gabimit të bazës së të dhënave.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'Database error occurred']
+            );
         } catch (\PDOException $e) {
-            Log::error('Problemi i lidhjes me bazën e të dhënave.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']);
+            Log::error(
+                'Problemi i lidhjes me bazën e të dhënave.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']
+            );
         } catch (\Exception $e) {
-            Log::error('Krijimi i biletës dështoi.',
-                ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']);
+            Log::error(
+                'Krijimi i biletës dështoi.',
+                ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']
+            );
         }
     }
 }

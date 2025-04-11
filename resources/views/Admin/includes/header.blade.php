@@ -1,5 +1,3 @@
-<!-- resources/views/layouts/header.blade.php -->
-
 <!-- Header -->
 <div class="header">
     <!-- User Dropdown -->
