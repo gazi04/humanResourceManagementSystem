@@ -56,7 +56,7 @@ class TicketService implements TicketServiceInterface
     {
         return DB::transaction(function () use ($data) {
             $ticket = Ticket::create($data);
-            $admins = Employee::whereHas('employeeRole', function ($query) {
+            $admins = Employee::whereHas('employeeRole', function ($query): void {
                 $query->where('roleID', 1);
             })->get();
 
@@ -67,7 +67,7 @@ class TicketService implements TicketServiceInterface
 
     public function getTickets()
     {
-        return DB::transaction(function () {
+        return DB::transaction(function (): array {
             $todayTickets = $this->getTodayTickets();
             $unfinishedTickets = $this->getUnfinishedPastTickets();
 
@@ -81,31 +81,27 @@ class TicketService implements TicketServiceInterface
 
     public function finishTicket(int $ticketID): int
     {
-        return DB::transaction(function () use ($ticketID): int {
-            return Ticket::where('ticketID', '=', $ticketID)
-                ->update([
-                    'status' => 'finished',
-                ]);
-        });
+        return DB::transaction(fn(): int => Ticket::where('ticketID', '=', $ticketID)
+            ->update([
+                'status' => 'finished',
+            ]));
     }
 
     public function getTicketSummary(): array
     {
-        return DB::transaction(function (): array {
-            return [
-                'total_tickets' => DB::table('tickets')->count(),
-                'new_today' => DB::table('tickets')
-                    ->whereDate('created_at', today())
-                    ->where('status', 'closed')
-                    ->count(),
-                'finished_today' => DB::table('tickets')
-                    ->where('status', 'finished')
-                    ->whereDate('created_at', today())
-                    ->count(),
-                'finished_tickets' => DB::table('tickets')
-                    ->where('status', 'finished')
-                    ->count(),
-            ];
-        });
+        return DB::transaction(fn(): array => [
+            'total_tickets' => DB::table('tickets')->count(),
+            'new_today' => DB::table('tickets')
+                ->whereDate('created_at', today())
+                ->where('status', 'closed')
+                ->count(),
+            'finished_today' => DB::table('tickets')
+                ->where('status', 'finished')
+                ->whereDate('created_at', today())
+                ->count(),
+            'finished_tickets' => DB::table('tickets')
+                ->where('status', 'finished')
+                ->count(),
+        ]);
     }
 }

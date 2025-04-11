@@ -126,23 +126,21 @@ class EmployeeService implements EmployeeServiceInterface
     public function getHrs(): LengthAwarePaginator
     {
         try {
-            return DB::transaction(function () {
-                return DB::table('employees as e')
-                    ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
-                    ->join('roles as r', 'er.roleID', '=', 'r.roleID')
-                    ->where('r.roleName', 'hr')
-                    ->select([
-                        'e.employeeID',
-                        'e.firstName',
-                        'e.lastName',
-                        'e.email',
-                        'e.phone',
-                        'e.hireDate',
-                        'e.jobTitle',
-                        'e.status',
-                    ])
-                    ->paginate(15);
-            });
+            return DB::transaction(fn() => DB::table('employees as e')
+                ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
+                ->join('roles as r', 'er.roleID', '=', 'r.roleID')
+                ->where('r.roleName', 'hr')
+                ->select([
+                    'e.employeeID',
+                    'e.firstName',
+                    'e.lastName',
+                    'e.email',
+                    'e.phone',
+                    'e.hireDate',
+                    'e.jobTitle',
+                    'e.status',
+                ])
+                ->paginate(15));
         } catch (QueryException $e) {
             Log::error('Failed to fetch HR employees', ['error' => $e->getMessage()]);
             throw new EmployeeRetrievalException('Could not retrieve HR employees');

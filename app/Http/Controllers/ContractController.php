@@ -71,6 +71,7 @@ class ContractController extends Controller
 
         try {
             $this->contractService->updateContract($contract, $employee, $validated);
+
             return redirect()->back()->with('success', 'Kontrata u përditësua me sukses.');
         } catch (\Exception $e) {
             Log::error('Gjatë përditësimit të kontratës ndodhi ky gabim: ', [$e->getMessage()]);
@@ -86,6 +87,7 @@ class ContractController extends Controller
 
         try {
             $this->contractService->deleteContract($contract);
+
             return redirect()->back()->with('success', 'Kontrata u fshi me sukses.');
         } catch (\Exception $e) {
             Log::error('Gjatë fshirjes së kontratës ndodhi ky gabim: ', [$e->getMessage()]);

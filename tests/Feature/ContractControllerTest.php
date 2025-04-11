@@ -195,7 +195,7 @@ it('handles download errors when file missing', function (): void {
     $response->assertSessionHas('error', 'Skedari i kontratës nuk gjendet në sistem.');
 });
 
-it('updates contract with invalid data', function() {
+it('updates contract with invalid data', function (): void {
     $response = $this->patch(route('hr.employee.contract.update'), []);
     $response->assertSessionHasErrors([
         'employeeID' => 'ID e punonjësit është e detyrueshme.',
@@ -237,7 +237,7 @@ it('updates contract with invalid data', function() {
     ]);
 });
 
-it('update contract with valid data', function() {
+it('update contract with valid data', function (): void {
     Storage::disk('contracts')->put('old_contract.pdf', 'dummy content');
     $contract = Contract::create([
         'employeeID' => $this->employee->employeeID,
@@ -272,7 +272,7 @@ it('update contract with valid data', function() {
         ->toMatch('/^contract_\d+\.pdf$/');
 });
 
-it('deletes contract with invalid data', function() {
+it('deletes contract with invalid data', function (): void {
     $response = $this->delete(route('hr.employee.contract.delete'), []);
     $response->assertSessionHasErrors(['contractID' => 'ID e kontratës është e detyrueshme.']);
 
@@ -292,7 +292,7 @@ it('deletes contract with invalid data', function() {
     $response->assertSessionHasErrors(['contractID' => 'Kontrata me këtë ID nuk egziston.']);
 });
 
-it('deletes contract with valid data', function() {
+it('deletes contract with valid data', function (): void {
     $contract = Contract::create([
         'employeeID' => $this->employee->employeeID,
         'contractPath' => 'contract_to_delete.pdf',
@@ -312,7 +312,7 @@ it('deletes contract with valid data', function() {
     ]);
 });
 
-it('lists employee contracts paginated', function () {
+it('lists employee contracts paginated', function (): void {
     for ($i = 0; $i < 15; $i++) {
         Contract::create([
             'employeeID' => $this->employee->employeeID,
@@ -329,7 +329,7 @@ it('lists employee contracts paginated', function () {
         ->and($response->json('total'))->toBe(15);
 });
 
-it('updates contract successfully', function () {
+it('updates contract successfully', function (): void {
     $newFile = UploadedFile::fake()->create('new_contract.pdf', 1000);
 
     $contract = Contract::create([

@@ -82,6 +82,7 @@ class EmployeeController extends Controller
         $result = $this->employeeService->searchEmployees($validated['searchingTerm']);
 
         $view = request()->is('admin/*') ? 'Admin.employee' : 'Hr.employee';
+
         return view($view, ['employees' => $result]);
     }
 

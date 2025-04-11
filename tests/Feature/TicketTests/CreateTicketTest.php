@@ -3,15 +3,15 @@
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Ticket;
-use Illuminate\Support\Facades\Auth;
 use App\Services\TicketService;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->artisan('migrate');
 
     $this->employee = Employee::create([
@@ -30,7 +30,7 @@ beforeEach(function () {
     Auth::guard('employee')->login($this->employee);
 });
 
-it('successfully creates a ticket with valid data', function () {
+it('successfully creates a ticket with valid data', function (): void {
     $response = $this->post(route('hr.ticket.create'), [
         'subject' => 'Test Subject',
         'description' => 'This is a test ticket description',
@@ -46,7 +46,7 @@ it('successfully creates a ticket with valid data', function () {
     ]);
 });
 
-it('successfully creates a ticket without subject', function () {
+it('successfully creates a ticket without subject', function (): void {
     $response = $this->post(route('hr.ticket.create'), [
         'description' => 'Ticket with no subject',
     ]);
@@ -61,7 +61,7 @@ it('successfully creates a ticket without subject', function () {
     ]);
 });
 
-it('successfully creates a ticket as an HR, Manager and Employee', function () {
+it('successfully creates a ticket as an HR, Manager and Employee', function (): void {
     $manager = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',
@@ -116,7 +116,7 @@ it('successfully creates a ticket as an HR, Manager and Employee', function () {
     ]);
 });
 
-it('fails when description is missing', function () {
+it('fails when description is missing', function (): void {
     $response = $this->post(route('hr.ticket.create'), [
         'subject' => 'Missing description',
     ]);
@@ -124,7 +124,7 @@ it('fails when description is missing', function () {
     $response->assertInvalid(['description' => 'Përshkrimi është i detyrueshëm.']);
 });
 
-it('fails when description is not a string', function () {
+it('fails when description is not a string', function (): void {
     $response = $this->post(route('hr.ticket.create'), [
         'description' => 12345,
     ]);
@@ -132,7 +132,7 @@ it('fails when description is not a string', function () {
     $response->assertInvalid(['description' => 'Përshkrimi duhet të jetë një varg tekstual.']);
 });
 
-it('fails when subject exceeds 255 characters', function () {
+it('fails when subject exceeds 255 characters', function (): void {
     $response = $this->post(route('hr.ticket.create'), [
         'subject' => str_repeat('a', 256),
         'description' => 'Valid description',
@@ -141,7 +141,7 @@ it('fails when subject exceeds 255 characters', function () {
     $response->assertInvalid(['subject' => 'Subjekti nuk mund të jetë më i gjatë se 255 karaktere.']);
 });
 
-it('handles database query exception errors during ticket creation', function () {
+it('handles database query exception errors during ticket creation', function (): void {
     Log::shouldReceive('error')
         ->once();
 
@@ -166,7 +166,7 @@ it('handles database query exception errors during ticket creation', function ()
         ->assertSessionHas('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
 });
 
-it('handles pdo exception errors during ticket creation', function () {
+it('handles pdo exception errors during ticket creation', function (): void {
     Log::shouldReceive('error')
         ->once();
 
@@ -185,7 +185,7 @@ it('handles pdo exception errors during ticket creation', function () {
         ->assertSessionHas('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
 });
 
-it('assigns the authenticated employee ID to the ticket', function () {
+it('assigns the authenticated employee ID to the ticket', function (): void {
     $this->post(route('hr.ticket.create'), [
         'description' => 'Test employee assignment',
     ]);
@@ -194,7 +194,7 @@ it('assigns the authenticated employee ID to the ticket', function () {
     expect($ticket->employeeID)->toBe($this->employee->employeeID);
 });
 
-it('requires authentication', function () {
+it('requires authentication', function (): void {
     Auth::guard('employee')->logout();
 
     $response = $this->post(route('hr.ticket.create'), [
@@ -204,7 +204,7 @@ it('requires authentication', function () {
     $response->assertRedirect('/login'); // Or your login route
 });
 
-it('requires HR, Manager or Employee role', function () {
+it('requires HR, Manager or Employee role', function (): void {
     $admin = Employee::create([
         'firstName' => 'John',
         'lastName' => 'Doe',

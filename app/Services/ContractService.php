@@ -44,7 +44,7 @@ class ContractService implements ContractServiceInterface
 
     public function updateContract(Contract $contract, Employee $employee, array $data): void
     {
-        DB::transaction(function () use ($contract, $employee, $data) {
+        DB::transaction(function () use ($contract, $employee, $data): void {
             throw_unless($contract->employeeID === $employee->employeeID, new \InvalidArgumentException('The specified contract does not belong to this employee.'));
 
             $file = $data['contract_file'] ?? null;
@@ -73,7 +73,7 @@ class ContractService implements ContractServiceInterface
 
     public function deleteContract(Contract $contract): void
     {
-        DB::transaction(function () use ($contract) {
+        DB::transaction(function () use ($contract): void {
             if (Storage::disk('contracts')->exists($contract->contractPath)) {
                 Storage::disk('contracts')->delete($contract->contractPath);
             }
