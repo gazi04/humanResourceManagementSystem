@@ -308,6 +308,7 @@
                 </div>
                 <!-- /Page Header -->
 
+
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show">
                         {{ session('success') }}
@@ -317,19 +318,76 @@
                     </div>
                 @endif
 
-                <!-- Stats Cards -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card-group m-b-30">
-                            <!-- Cards remain unchanged -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div>
+                                            <span class="d-block">Tickets tani</span>
+                                        </div>
+                                    </div>
+                                    <h3 class="mb-3">112</h3>
+                                    <div class="progress mb-2" style="height: 5px">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 70%"
+                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div>
+                                            <span class="d-block">Tickets të kryera</span>
+                                        </div>
+                                    </div>
+                                    <h3 class="mb-3">70</h3>
+                                    <div class="progress mb-2" style="height: 5px">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 70%"
+                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div>
+                                            <span class="d-block">Tickets në pritje</span>
+                                        </div>
+                                        <div></div>
+                                    </div>
+                                    <h3 class="mb-3">100</h3>
+                                    <div class="progress mb-2" style="height: 5px">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 70%"
+                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Search Filter -->
                 <div class="row filter-row">
-                    <!-- Filter content remains unchanged -->
+                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6 col-12">
+                        <div class="form-group form-focus select-focus">
+                            <select class="select floating">
+                                <option>-- Zgjedh --</option>
+                                <option>Të reja</option>
+                                <option>Në pritje</option>
+                                <option>Të kryera</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                        <a href="#" class="btn btn-success btn-block"> Kërko </a>
+                    </div>
                 </div>
+                <!-- /Search Filter -->
 
                 <!-- Ticket Table -->
                 <div class="row">

@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
 {
-    public function __construct(protected TicketService $ticketService) {}
+    public function __construct(protected TicketService $ticketService)
+    {
+    }
 
     public function index()
     {
@@ -24,8 +26,6 @@ class TicketController extends Controller
 
             return redirect()->route('admin.dashboard')->with('error', 'Ndodhi një gabim gjatë procesit të marrjes së biletave nga baza e të dhënave.');
         }
-
-        dd($tickets);
 
         return view('Admin.tickets', [
             'tickets' => $tickets['todayTickets'],
