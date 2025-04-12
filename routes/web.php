@@ -22,6 +22,9 @@ use App\Models\EmployeeRole;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/get/hrs', [HumanResourceController::class, 'getHrs']);
+Route::view('/test/api/view', 'testapi');
+
 /* TODO- NEED TO TEST THE MIDDLEWARE */
 Route::middleware([EnsureUserIsLoggedInMiddleware::class])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('dashboard');
