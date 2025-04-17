@@ -81,7 +81,7 @@ class TicketService implements TicketServiceInterface
 
     public function finishTicket(int $ticketID): int
     {
-        return DB::transaction(fn(): int => Ticket::where('ticketID', '=', $ticketID)
+        return DB::transaction(fn (): int => Ticket::where('ticketID', '=', $ticketID)
             ->update([
                 'status' => 'finished',
             ]));
@@ -89,7 +89,7 @@ class TicketService implements TicketServiceInterface
 
     public function getTicketSummary(): array
     {
-        return DB::transaction(fn(): array => [
+        return DB::transaction(fn (): array => [
             'total_tickets' => DB::table('tickets')->count(),
             'new_today' => DB::table('tickets')
                 ->whereDate('created_at', today())

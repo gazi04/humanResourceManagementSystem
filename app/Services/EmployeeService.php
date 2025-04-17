@@ -126,7 +126,7 @@ class EmployeeService implements EmployeeServiceInterface
     public function getHrs(): LengthAwarePaginator
     {
         try {
-            return DB::transaction(fn() => DB::table('employees as e')
+            return DB::transaction(fn () => DB::table('employees as e')
                 ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
                 ->join('roles as r', 'er.roleID', '=', 'r.roleID')
                 ->where('r.roleName', 'hr')

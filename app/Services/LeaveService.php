@@ -17,13 +17,13 @@ class LeaveService implements LeaveServiceInterface
             return LeaveType::create($data);
         } catch (MassAssignmentException $e) {
             Log::error('MassAssignmentException in createLeaveType: '.$e->getMessage());
-            throw new \RuntimeException('Ofrohen fusha të pavlefshme.', 500);
+            throw new \RuntimeException('Ofrohen fusha të pavlefshme.', 500, $e);
         } catch (QueryException $e) {
             Log::error('QueryException in createLeaveType: '.$e->getMessage());
-            throw new \RuntimeException('Gabim në bazën e të dhënave.', 500);
+            throw new \RuntimeException('Gabim në bazën e të dhënave.', 500, $e);
         } catch (\Exception $e) {
             Log::error('Unexpected error in createLeaveType: '.$e->getMessage());
-            throw new \RuntimeException('Krijimi i llojit të lejes dështoi.', 500);
+            throw new \RuntimeException('Krijimi i llojit të lejes dështoi.', 500, $e);
         }
     }
 
@@ -39,13 +39,13 @@ class LeaveService implements LeaveServiceInterface
             return $leaveType;
         } catch (ModelNotFoundException $e) {
             Log::error('LeaveType not found: '.$e->getMessage());
-            throw new \RuntimeException('LeaveType not found.', 404);
+            throw new \RuntimeException('LeaveType not found.', 404, $e);
         } catch (QueryException $e) {
             Log::error('Database error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('Failed to update LeaveType status.', 500);
+            throw new \RuntimeException('Failed to update LeaveType status.', 500, $e);
         } catch (\Exception $e) {
             Log::error('Unexpected error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('An error occurred.', 500);
+            throw new \RuntimeException('An error occurred.', 500, $e);
         }
     }
 
@@ -60,13 +60,13 @@ class LeaveService implements LeaveServiceInterface
             return $leaveType;
         } catch (ModelNotFoundException $e) {
             Log::error('LeaveType not found: '.$e->getMessage());
-            throw new \RuntimeException('LeaveType not found.', 404);
+            throw new \RuntimeException('LeaveType not found.', 404, $e);
         } catch (QueryException $e) {
             Log::error('Database error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('Failed to update LeaveType status.', 500);
+            throw new \RuntimeException('Failed to update LeaveType status.', 500, $e);
         } catch (\Exception $e) {
             Log::error('Unexpected error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('An error occurred.', 500);
+            throw new \RuntimeException('An error occurred.', 500, $e);
         }
 
     }
