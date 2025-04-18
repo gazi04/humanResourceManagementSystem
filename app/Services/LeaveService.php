@@ -7,10 +7,25 @@ use App\Services\Interfaces\LeaveServiceInterface;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class LeaveService implements LeaveServiceInterface
 {
+    public function getLeaveTypes(): LengthAwarePaginator
+    {
+        return DB::transaction(fn(): LengthAwarePaginator => DB::table('leave_types')
+            ->select([
+                'name',
+                'description',
+                'isPaid',
+                'requiresApproval',
+                'isActive',
+            ])
+            ->paginate(10));
+    }
+
     public function createLeaveType(array $data): LeaveType
     {
         try {
