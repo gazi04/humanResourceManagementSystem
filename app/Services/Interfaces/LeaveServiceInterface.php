@@ -10,6 +10,8 @@ interface LeaveServiceInterface
     /**
      * 1. LEAVE TYPE FEATURES
      */
+    public function getLeaveType(int $leaveTypeID): LeaveType;
+
     public function getLeaveTypes(): LengthAwarePaginator;
 
     public function createLeaveType(array $data): LeaveType;

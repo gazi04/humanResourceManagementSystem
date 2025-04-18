@@ -8,6 +8,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRoleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HumanResourceController;
+use App\Http\Controllers\Leave\LeaveTypeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\TicketController;
 use App\Http\Middleware\EnsureUserIsLoggedInMiddleware;
@@ -96,6 +97,14 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         Route::post('/create', [TicketController::class, 'create'])->name('create');
     });
 
+    Route::prefix('leave-types')->name('leave-type.')->controller(LeaveTypeController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/edit', 'edit')->name('edit');
+        Route::post('/update', 'update')->name('update');
+        Route::get('/is-active', 'toggleIsActive')->name('is-active');
+    });
 });
 
 Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserManagerMiddleware::class])->prefix('manager')->name('manager.')->group(function () {

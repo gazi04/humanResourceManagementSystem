@@ -14,6 +14,22 @@ use PDOException;
 
 class LeaveService implements LeaveServiceInterface
 {
+    public function getLeaveType(int $leaveTypeID): LeaveType
+    {
+        try {
+            return LeaveType::where('leaveTypeID', $leaveTypeID)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            Log::error("LeaveType not found: ID {$leaveTypeID}");
+            throw new \RuntimeException('Lloji i pushimit nuk u gjet.', 404, $e);
+        } catch (QueryException $e) {
+            Log::error('Database error fetching LeaveType: '.$e->getMessage());
+            throw new \RuntimeException('Gabim në bazën e të dhënave.', 500, $e);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error: '.$e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim.', 500, $e);
+        }
+    }
+
     public function getLeaveTypes(): LengthAwarePaginator
     {
         try {
@@ -87,13 +103,13 @@ class LeaveService implements LeaveServiceInterface
             return $leaveType;
         } catch (ModelNotFoundException $e) {
             Log::error('LeaveType not found: '.$e->getMessage());
-            throw new \RuntimeException('LeaveType not found.', 404, $e);
+            throw new \RuntimeException('Lloji i pushimit nuk u gjet.', 404, $e);
         } catch (QueryException $e) {
             Log::error('Database error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('Failed to update LeaveType status.', 500, $e);
+            throw new \RuntimeException('Dështoi përditësimi i statusit të llojit të pushimit.', 500, $e);
         } catch (\Exception $e) {
             Log::error('Unexpected error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('An error occurred.', 500, $e);
+            throw new \RuntimeException('Ndodhi një gabim.', 500, $e);
         }
 
     }
