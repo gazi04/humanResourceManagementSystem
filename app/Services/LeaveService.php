@@ -10,20 +10,32 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PDOException;
 
 class LeaveService implements LeaveServiceInterface
 {
     public function getLeaveTypes(): LengthAwarePaginator
     {
-        return DB::transaction(fn(): LengthAwarePaginator => DB::table('leave_types')
-            ->select([
-                'name',
-                'description',
-                'isPaid',
-                'requiresApproval',
-                'isActive',
-            ])
-            ->paginate(10));
+        try {
+            return DB::transaction(fn (): LengthAwarePaginator => DB::table('leave_types')
+                ->select([
+                    'name',
+                    'description',
+                    'isPaid',
+                    'requiresApproval',
+                    'isActive',
+                ])
+                ->paginate(10));
+        } catch (QueryException $e) {
+            Log::error('Database error in getLeaveTypes: '.$e->getMessage());
+            throw new \RuntimeException('Marrja e llojeve të pushimeve dështoi për shkak të një gabimi në bazën e të dhënave.', 500, $e);
+        } catch (PDOException $e) {
+            Log::error('PDO error in getLeaveTypes: '.$e->getMessage());
+            throw new \RuntimeException('Lidhja me bazën e të dhënave dështoi.', 503, $e);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in getLeaveTypes: '.$e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim i papritur.', 500, $e);
+        }
     }
 
     public function createLeaveType(array $data): LeaveType
