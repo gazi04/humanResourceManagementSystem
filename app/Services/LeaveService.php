@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Leave\LeavePolicy;
 use App\Models\Leave\LeaveType;
 use App\Services\Interfaces\LeaveServiceInterface;
 use Illuminate\Database\Eloquent\MassAssignmentException;
@@ -33,14 +34,18 @@ class LeaveService implements LeaveServiceInterface
     public function getLeaveTypes(): LengthAwarePaginator
     {
         try {
-            return DB::transaction(fn (): LengthAwarePaginator => DB::table('leave_types')
+            return DB::transaction(fn (): LengthAwarePaginator => DB::table('leave_types as lt')
+                ->leftJoin('leave_policies as lp', 'lt.leaveTypeID', '=', 'lp.leaveTypeID')
                 ->select([
-                    'name',
-                    'description',
-                    'isPaid',
-                    'requiresApproval',
-                    'isActive',
+                    'lt.leaveTypeID',
+                    'lt.name',
+                    'lt.description',
+                    'lt.isPaid',
+                    'lt.requiresApproval',
+                    'lt.isActive',
+                    'lp.leavePolicyID',
                 ])
+                ->orderBy('lt.create_at', 'desc')
                 ->paginate(10));
         } catch (QueryException $e) {
             Log::error('Database error in getLeaveTypes: '.$e->getMessage());
@@ -54,10 +59,15 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
-    public function createLeaveType(array $data): LeaveType
+    public function createLeaveTypeWithPolicy(array $leaveTypeData, array $leavePolicyData): LeaveType
     {
         try {
-            return LeaveType::create($data);
+            return DB::transaction(function () use ($leaveTypeData, $leavePolicyData): LeaveType {
+                $leaveType = LeaveType::create($leaveTypeData);
+                $this->createLeavePolicy($leavePolicyData);
+
+                return $leaveType;
+            });
         } catch (MassAssignmentException $e) {
             Log::error('MassAssignmentException in createLeaveType: '.$e->getMessage());
             throw new \RuntimeException('Ofrohen fusha të pavlefshme.', 500, $e);
@@ -82,13 +92,13 @@ class LeaveService implements LeaveServiceInterface
             return $leaveType;
         } catch (ModelNotFoundException $e) {
             Log::error('LeaveType not found: '.$e->getMessage());
-            throw new \RuntimeException('LeaveType not found.', 404, $e);
+            throw new \RuntimeException('Lloji i pushimit nuk u gjet.', 404, $e);
         } catch (QueryException $e) {
             Log::error('Database error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('Failed to update LeaveType status.', 500, $e);
+            throw new \RuntimeException('Dështoi përditësimi i statusit të llojit të pushimit.', 500, $e);
         } catch (\Exception $e) {
             Log::error('Unexpected error in toggleIsActive: '.$e->getMessage());
-            throw new \RuntimeException('An error occurred.', 500, $e);
+            throw new \RuntimeException('Ndodhi një gabim.', 500, $e);
         }
     }
 
@@ -105,12 +115,65 @@ class LeaveService implements LeaveServiceInterface
             Log::error('LeaveType not found: '.$e->getMessage());
             throw new \RuntimeException('Lloji i pushimit nuk u gjet.', 404, $e);
         } catch (QueryException $e) {
-            Log::error('Database error in toggleIsActive: '.$e->getMessage());
+            Log::error('Database error in updateLeaveType: '.$e->getMessage());
             throw new \RuntimeException('Dështoi përditësimi i statusit të llojit të pushimit.', 500, $e);
         } catch (\Exception $e) {
-            Log::error('Unexpected error in toggleIsActive: '.$e->getMessage());
+            Log::error('Unexpected error in updateLeaveType: '.$e->getMessage());
             throw new \RuntimeException('Ndodhi një gabim.', 500, $e);
         }
 
+    }
+
+    public function getLeavePolicy(int $leavePolicyID): LeavePolicy
+    {
+        try {
+            return LeavePolicy::where('leavePolicyID', $leavePolicyID)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            Log::error("LeavePolicy not found: ID {$leavePolicyID}");
+            throw new \RuntimeException('Politika e lënies nuk u gjet.', 404, $e);
+        } catch (QueryException $e) {
+            Log::error('Database error fetching LeavePolicy: '.$e->getMessage());
+            throw new \RuntimeException('Gabim në bazën e të dhënave.', 500, $e);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error: '.$e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim.', 500, $e);
+        }
+    }
+
+    public function updateLeavePolicy(int $leavePolicyID, array $data): LeavePolicy
+    {
+        try {
+            /** @var LeavePolicy $leavePolicy */
+            $leavePolicy = LeavePolicy::where('leavePolicyID', $leavePolicyID)->firstOrFail();
+
+            $leavePolicy->update($data);
+
+            return $leavePolicy;
+        } catch (ModelNotFoundException $e) {
+            Log::error('LeavePolicy not found: '.$e->getMessage());
+            throw new \RuntimeException('Leave policy not found.', 404, $e);
+        } catch (QueryException $e) {
+            Log::error('Database error in updateLeavePolicy: '.$e->getMessage());
+            throw new \RuntimeException('Dështoi përditësimi i rregullave të llojit të pushimit.', 500, $e);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in updateLeavePolicy: '.$e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim.', 500, $e);
+        }
+    }
+
+    private function createLeavePolicy(array $data): LeavePolicy
+    {
+        try {
+            return LeavePolicy::create($data);
+        } catch (MassAssignmentException $e) {
+            Log::error('MassAssignmentException in createLeavePolicy: '.$e->getMessage());
+            throw new \RuntimeException('Ofrohen fusha të pavlefshme.', 500, $e);
+        } catch (QueryException $e) {
+            Log::error('QueryException in createLeavePolicy: '.$e->getMessage());
+            throw new \RuntimeException('Gabim në bazën e të dhënave.', 500, $e);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in createLeavePolicy: '.$e->getMessage());
+            throw new \RuntimeException('Krijimi i llojit të lejes dështoi.', 500, $e);
+        }
     }
 }
