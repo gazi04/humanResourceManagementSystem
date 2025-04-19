@@ -41,10 +41,26 @@ class LeaveTypeController extends Controller
      */
     public function store(CreateLeaveTypeRequest $request): RedirectResponse
     {
-        $id = $request->only('leaveTypeID');
-        $data = $request->only(['name', 'description', 'isPaid', 'requiresApproval', 'isActive']);
+        $leaveTypeData = $request->only([
+            'name',
+            'description',
+            'isPaid',
+            'requiresApproval',
+            'isActive',
+        ]);
+
+        $leavePolicyData = $request->only([
+            'annualQuota',
+            'maxConsecutiveDays',
+            'allowHalfDay',
+            'probationPeriodDays',
+            'carryOverLimit',
+            'restricedDays',
+            'requirenments',
+        ]);
+
         try {
-            $this->leaveService->updateLeaveType($id['leaveTypeID'], $data);
+            $this->leaveService->createLeaveTypeWithPolicy($leaveTypeData, $leavePolicyData);
 
             return redirect()->route('hr.leave-type.index')->with('success', 'Lloji i pushimit u krijua me sukses.');
         } catch (\RuntimeException $e) {
@@ -87,10 +103,10 @@ class LeaveTypeController extends Controller
 
     public function toggleIsActive(IdValidationLeaveTypeRequest $request)
     {
-        try {
-            $validated = $request->only('leaveTypeID');
-            $leaveType = $this->leaveService->toggleIsActive($validated['leaveTypeID']);
+        $validated = $request->only('leaveTypeID');
+        $leaveType = $this->leaveService->toggleIsActive($validated['leaveTypeID']);
 
+        try {
             return response()->json($leaveType, 200);
         } catch (\RuntimeException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());

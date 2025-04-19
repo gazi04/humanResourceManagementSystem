@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\LeaveType;
+namespace App\Http\Requests\LeavePolicy;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateLeaveTypeRequest extends FormRequest
+class UpdateLeavePoliciesRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,14 +14,7 @@ class CreateLeaveTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            /* VALIDATION RULES TO CREATE LEAVE TYPES */
-            'name' => ['required', 'string', 'max:255', 'unique:leave_types,name'],
-            'description' => ['nullable', 'string', 'max:500'],
-            'isPaid' => ['required', 'boolean'],
-            'requiresApproval' => ['required', 'boolean'],
-            'isActive' => ['required', 'boolean'],
-
-            /* VALIDATION RULES TO CREATE THE LEAVE POLICY */
+            'leavePolicyID' => ['required', 'integer', 'min:1', 'exists:leave_policies,leavePolicyID'],
             'annualQuota' => ['required', 'integer', 'min:0'],
             'maxConsecutiveDays' => ['nullable', 'integer', 'min:1'],
             'allowHalfDay' => ['required', 'boolean'],
@@ -40,25 +33,11 @@ class CreateLeaveTypeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            /* VALIDATION MESSAGES FOR LEAVE TYPE */
-            'name.required' => 'Emri i llojit të lejes është i detyrueshëm.',
-            'name.string' => 'Emri i llojit të lejes duhet të jetë një varg tekstual.',
-            'name.max' => 'Emri i llojit të lejes nuk mund të jetë më i gjatë se 255 karaktere.',
-            'name.unique' => 'Ekziston tashmë një lloj leje me këtë emër.',
+            'leavePolicyID.required' => 'ID e politikës së lejes është e detyrueshme.',
+            'leavePolicyID.integer' => 'ID e politikës së lejes duhet të jetë një numër i plotë.',
+            'leavePolicyID.min' => 'ID e politikës së lejes duhet të jetë më e madhe se 0.',
+            'leavePolicyID.exists' => 'Politika e lejes me këtë ID nuk egziston.',
 
-            'description.string' => 'Përshkrimi duhet të jetë një varg tekstual.',
-            'description.max' => 'Përshkrimi nuk mund të jetë më i gjatë se 500 karaktere.',
-
-            'isPaid.required' => 'Statusi i pagesës është i detyrueshëm.',
-            'isPaid.boolean' => 'Statusi i pagesës duhet të jetë \'true\' ose \'false\'.',
-
-            'requiresApproval.required' => 'Kërkohet aprovim është i detyrueshëm.',
-            'requiresApproval.boolean' => 'Kërkohet aprovim duhet të jetë \'true\' ose \'false\'.',
-
-            'isActive.required' => 'Statusi aktiv është i detyrueshëm.',
-            'isActive.boolean' => 'Statusi aktiv duhet të jetë \'true\' ose \'false\'.',
-
-            /* VALIDATION MESSAGES FOR LEAVE POLICY */
             'annualQuota.required' => 'Kuota vjetore është e detyrueshme.',
             'annualQuota.integer' => 'Kuota vjetore duhet të jetë një numër i plotë.',
             'annualQuota.min' => 'Kuota vjetore nuk mund të jetë negative.',
