@@ -62,7 +62,7 @@ class LeaveTypeController extends Controller
         $roles = $request->only(['roles']);
 
         try {
-            $this->leaveService->createLeaveTypeWithPolicy($leaveTypeData, $leavePolicyData, $roles);
+            $this->leaveService->createLeaveTypeWithPolicy($leaveTypeData, $leavePolicyData, $roles['roles']);
 
             return redirect()->route('hr.leave-type.index')->with('success', 'Lloji i pushimit u krijua me sukses.');
         } catch (\RuntimeException $e) {

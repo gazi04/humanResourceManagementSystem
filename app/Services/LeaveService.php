@@ -73,6 +73,7 @@ class LeaveService implements LeaveServiceInterface
             return DB::transaction(function () use ($leaveTypeData, $leavePolicyData, $roles): LeaveType {
                 /** @var LeaveType $leaveType */
                 $leaveType = LeaveType::create($leaveTypeData);
+                $leavePolicyData['leaveTypeID'] = $leaveType->leaveTypeID;
                 $this->createLeavePolicy($leavePolicyData);
 
                 foreach ($roles as $role) {
