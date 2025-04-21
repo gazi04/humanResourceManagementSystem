@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Employee extends Model implements AuthenticatableContract
 {
@@ -37,6 +38,10 @@ class Employee extends Model implements AuthenticatableContract
         'remember_token',
     ];
 
+    protected $casts = [
+        'hireDate' => 'date',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\EmployeeRole, $this>
      */
@@ -59,6 +64,18 @@ class Employee extends Model implements AuthenticatableContract
     public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class);
+    }
+
+    public function role(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Role::class,               // The target model we want to access (Role)
+            EmployeeRole::class,       // The intermediate model (pivot table)
+            'employeeID',              // Foreign key on the intermediate table
+            'roleID',                  // Foreign key on the target table
+            'employeeID',              // Local key on this model
+            'roleID'                   // Local key on intermediate table
+        );
     }
 
     public function getRoleName(): string

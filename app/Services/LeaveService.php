@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Models\Employee;
+use App\Models\Leave\LeaveBalance;
 use App\Models\Leave\LeavePolicy;
 use App\Models\Leave\LeaveType;
 use App\Models\Leave\LeaveTypeRole;
 use App\Services\Interfaces\LeaveServiceInterface;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -17,6 +20,9 @@ use PDOException;
 
 class LeaveService implements LeaveServiceInterface
 {
+    /**
+     * 1. LEAVE TYPE FEATURES
+     */
     public function getLeaveType(int $leaveTypeID): LeaveType
     {
         try {
@@ -134,6 +140,9 @@ class LeaveService implements LeaveServiceInterface
 
     }
 
+    /**
+     * 2. LEAVE POLICY FEATURES
+     */
     public function getLeavePolicy(int $leavePolicyID): LeavePolicy
     {
         try {
@@ -187,7 +196,126 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
-    private function createBalanceForEmployee(Employee $employee, int $year) {}
+    /**
+     * 3. LEAVE BALANCE FEATURES
+     */
+    public function initializeYearlyBalances(int $year): void
+    {
+        try {
+            DB::transaction(function () use ($year) {
+                $employees = Employee::where('status', 'Active')->get();
 
-    private function calculateInitialBalance() {}
+                $leaveTypes = LeaveType::with(['policy', 'roles'])
+                    ->where('isActive', true)
+                    ->get();
+
+                foreach ($employees as $employee) {
+                    $this->createBalanceForEmployee($employee, $leaveTypes, $year);
+                }
+            });
+        } catch (\Exception $e) {
+            Log::error('Error initializing yearly balances: '.$e->getMessage());
+            throw new \RuntimeException('Inicializimi i bilanceve vjetore të pushimeve dështoi.', 500, $e);
+        }
+    }
+
+    public function deductDays(LeaveBalance $leaveBalance, float $days): LeaveBalance {}
+
+    public function addDays(LeaveBalance $leaveBalance, float $days): LeaveBalance {}
+
+    public function getBalance(int $employeeID, int $leaveTypeID, int $year): LeaveBalance {}
+
+    public function createBalanceForEmployee(Employee $employee, Collection $leaveTypes, int $year): void
+    {
+        // Skip if employee has no role assigned
+        if (! $employee->employeeRole) {
+            Log::warning("Employee {$employee->employeeID} has no role assigned");
+            throw new \RuntimeException('Ka një punonjës pa rol.');
+        }
+
+        foreach ($leaveTypes as $leaveType) {
+            // Check if employee's role has access to this leave type
+            if (! $leaveType->roles->contains('roleID', $employee->employeeRole->roleID)) {
+                continue;
+            }
+
+            // Check if employee has completed probation period
+            if ($this->isOnProbation($employee, $leaveType)) {
+                Log::info("Employee {$employee->employeeID} is on probation for leave type {$leaveType->leaveTypeID}");
+
+                continue;
+            }
+
+            // Create or update the balance
+            $this->createOrUpdateBalance($employee, $leaveType, $year);
+        }
+    }
+
+    private function isOnProbation(Employee $employee, LeaveType $leaveType): bool
+    {
+        // Skip probation check if no policy or probation period defined
+        if (! $leaveType->relationLoaded('policy') || ! $leaveType->policy || ! $leaveType->policy->probationPeriodDays) {
+            return false;
+        }
+
+        // Skip if employee has no hire date
+        if (! $employee->hireDate) {
+            Log::warning("Employee {$employee->employeeID} has no hire date");
+
+            return true; // Treat as on probation
+        }
+
+        // Convert string to Carbon instance if needed
+        $hireDate = is_string($employee->hireDate) ? Carbon::parse($employee->hireDate) : $employee->hireDate;
+        $probationEndDate = $hireDate->addDays(
+            $leaveType->policy->probationPeriodDays
+        );
+
+        return now()->lt($probationEndDate);
+    }
+
+    private function createOrUpdateBalance(Employee $employee, LeaveType $leaveType, int $year): void
+    {
+        $previousYear = $year - 1;
+
+        // Find previous year's balance for carry-over calculation
+        $previousBalance = LeaveBalance::where([
+            'employeeID' => $employee->employeeID,
+            'leaveTypeID' => $leaveType->leaveTypeID,
+            'year' => $previousYear,
+        ])->first();
+
+        // Calculate new balance
+        $annualQuota = $leaveType->policy->annualQuota ?? 0;
+        $carryOverDays = $this->calculateCarryOver($previousBalance, $leaveType);
+        $remainingDays = $annualQuota + $carryOverDays;
+
+        LeaveBalance::updateOrCreate(
+            [
+                'employeeID' => $employee->employeeID,
+                'leaveTypeID' => $leaveType->leaveTypeID,
+                'year' => $year,
+            ],
+            [
+                'remainingDays' => $remainingDays,
+                'usedDays' => 0,
+                'carriedOverDays' => $carryOverDays,
+            ]
+        );
+
+        Log::debug("Created balance for employee {$employee->employeeID}, leave type {$leaveType->leaveTypeID}, year {$year}");
+    }
+
+    private function calculateCarryOver(?LeaveBalance $previousBalance, LeaveType $leaveType): float
+    {
+        // No carry-over if no previous balance or policy doesn't allow it
+        if (! $previousBalance || ! $leaveType->policy || $leaveType->policy->carryOverLimit <= 0) {
+            return 0;
+        }
+
+        return min(
+            $previousBalance->remainingDays,
+            $leaveType->policy->carryOverLimit
+        );
+    }
 }

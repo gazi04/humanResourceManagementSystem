@@ -2,9 +2,11 @@
 
 namespace App\Services\Interfaces;
 
+use App\Models\Employee;
 use App\Models\Leave\LeaveBalance;
 use App\Models\Leave\LeavePolicy;
 use App\Models\Leave\LeaveType;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface LeaveServiceInterface
@@ -39,4 +41,6 @@ interface LeaveServiceInterface
     public function addDays(LeaveBalance $leaveBalance, float $days): LeaveBalance;
 
     public function getBalance(int $employeeID, int $leaveTypeID, int $year): LeaveBalance;
+
+    public function createBalanceForEmployee(Employee $employee, Collection $leaveTypes, int $year): void;
 }
