@@ -29,6 +29,10 @@ class CreateLeaveTypeRequest extends FormRequest
             'carryOverLimit' => ['required', 'numeric', 'min:0'],
             'restricedDays' => ['nullable', 'json'],
             'requirenments' => ['nullable', 'json'],
+
+            /* VALIDATION FOR THE SELECTED ROLES */
+            'roles' => 'required|array',
+            'roles.*' => 'exists:roles,roleID',
         ];
     }
 
@@ -80,6 +84,11 @@ class CreateLeaveTypeRequest extends FormRequest
             'restricedDays.json' => 'Ditët e kufizuara duhet të jenë në format JSON.',
 
             'requirenments.json' => 'Kërkesat duhet të jenë në format JSON.',
+
+            /* VALIDATION MESSAGES FOR ROLE SELECTION */
+            'roles.required' => 'Ju lutemi, zgjidhni të paktën një rol.',
+            'roles.array' => 'Të dhënat e roleve duhet të jenë në formatin e një liste.',
+            'roles.*.exists' => 'Një ose më shumë role të zgjedhura nuk janë të vlefshme.',
         ];
     }
 }

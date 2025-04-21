@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Leave\LeaveType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
@@ -33,5 +35,15 @@ class Role extends Model
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class, 'roleID', 'roleID');
+    }
+
+    public function leaveTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            LeaveType::class,           // Related model
+            'leave_type_role',          // Pivot table name
+            'roleID',                   // Foreign key on pivot table (refers to Role)
+            'leaveTypeID'               // Related key on pivot table (refers to LeaveType)
+        );
     }
 }

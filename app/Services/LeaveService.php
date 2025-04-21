@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Employee;
 use App\Models\Leave\LeavePolicy;
 use App\Models\Leave\LeaveType;
+use App\Models\Leave\LeaveTypeRole;
 use App\Services\Interfaces\LeaveServiceInterface;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -59,12 +61,20 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
-    public function createLeaveTypeWithPolicy(array $leaveTypeData, array $leavePolicyData): LeaveType
+    public function createLeaveTypeWithPolicy(array $leaveTypeData, array $leavePolicyData, array $roles): LeaveType
     {
         try {
-            return DB::transaction(function () use ($leaveTypeData, $leavePolicyData): LeaveType {
+            return DB::transaction(function () use ($leaveTypeData, $leavePolicyData, $roles): LeaveType {
+                /** @var LeaveType $leaveType */
                 $leaveType = LeaveType::create($leaveTypeData);
                 $this->createLeavePolicy($leavePolicyData);
+
+                foreach ($roles as $role) {
+                    LeaveTypeRole::create([
+                        'leaveTypeID' => $leaveType->leaveTypeID,
+                        'roleID' => $role,
+                    ]);
+                }
 
                 return $leaveType;
             });
@@ -176,4 +186,8 @@ class LeaveService implements LeaveServiceInterface
             throw new \RuntimeException('Krijimi i llojit të lejes dështoi.', 500, $e);
         }
     }
+
+    private function createBalanceForEmployee(Employee $employee, int $year) {}
+
+    private function calculateInitialBalance() {}
 }

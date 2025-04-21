@@ -2,7 +2,9 @@
 
 namespace App\Models\Leave;
 
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LeaveType extends Model
@@ -25,5 +27,15 @@ class LeaveType extends Model
     public function policy(): HasOne
     {
         return $this->hasOne(LeavePolicy::class);
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Role::class,           // Related model
+            'leave_type_role',     // Pivot table name
+            'leaveTypeID',         // Foreign key on pivot table (refers to LeaveType)
+            'roleID'               // Related key on pivot table (refers to Role)
+        );
     }
 }
