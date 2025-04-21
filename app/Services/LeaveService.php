@@ -219,11 +219,74 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
-    public function deductDays(LeaveBalance $leaveBalance, float $days): LeaveBalance {}
+    public function deductDays(LeaveBalance $leaveBalance, float $days): LeaveBalance
+    {
+        try {
+            return DB::transaction(function () use ($leaveBalance, $days): LeaveBalance {
+                if ($leaveBalance->remainingDays < $days) {
+                    throw new \RuntimeException(
+                        "Insufficient leave balance. Available: {$leaveBalance->remainingDays}, Requested: {$days}"
+                    );
+                }
 
-    public function addDays(LeaveBalance $leaveBalance, float $days): LeaveBalance {}
+                $leaveBalance->remainingDays -= $days;
+                $leaveBalance->usedDays += $days;
+                $leaveBalance->save();
 
-    public function getBalance(int $employeeID, int $leaveTypeID, int $year): LeaveBalance {}
+                return $leaveBalance;
+            });
+        } catch (\Exception $e) {
+            Log::error('Failed to deduct leave days: '.$e->getMessage());
+            throw new \RuntimeException('Failed to deduct leave days: '.$e->getMessage(), 0, $e);
+        }
+    }
+
+    public function addDays(LeaveBalance $leaveBalance, float $days): LeaveBalance
+    {
+        try {
+            return DB::transaction(function () use ($leaveBalance, $days): LeaveBalance {
+                if ($days <= 0) {
+                    throw new \RuntimeException('Days to add must be positive');
+                }
+
+                // Prevent adding more days than were used
+                $maxAddable = $leaveBalance->usedDays;
+                $daysToAdd = min($days, $maxAddable);
+
+                $leaveBalance->remainingDays += $daysToAdd;
+                $leaveBalance->usedDays -= $daysToAdd;
+                $leaveBalance->save();
+
+                return $leaveBalance;
+            });
+        } catch (\Exception $e) {
+            Log::error('Failed to add leave days: '.$e->getMessage());
+            throw new \RuntimeException('Failed to add leave days: '.$e->getMessage(), 0, $e);
+        }
+    }
+
+    public function getBalance(int $employeeID, int $leaveTypeID, int $year): LeaveBalance
+    {
+        try {
+            $balance = LeaveBalance::where([
+                'employeeID' => $employeeID,
+                'leaveTypeID' => $leaveTypeID,
+                'year' => $year,
+            ])->firstOrFail();
+
+            if (! $balance) {
+                throw new ModelNotFoundException('Leave balance not found');
+            }
+
+            return $balance;
+        } catch (ModelNotFoundException $e) {
+            Log::error("Leave balance not found for employee {$employeeID}, leave type {$leaveTypeID}, year {$year}");
+            throw new \RuntimeException('Leave balance record not found', 404, $e);
+        } catch (\Exception $e) {
+            Log::error('Error retrieving leave balance: '.$e->getMessage());
+            throw new \RuntimeException('Failed to retrieve leave balance', 500, $e);
+        }
+    }
 
     public function createBalanceForEmployee(Employee $employee, Collection $leaveTypes, int $year): void
     {
