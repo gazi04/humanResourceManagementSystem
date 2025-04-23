@@ -53,7 +53,7 @@ class LeaveService implements LeaveServiceInterface
                     'lt.isActive',
                     'lp.leavePolicyID',
                 ])
-                ->orderBy('lt.create_at', 'desc')
+                ->orderBy('lt.created_at', 'desc')
                 ->paginate(10));
         } catch (QueryException $e) {
             Log::error('Database error in getLeaveTypes: '.$e->getMessage());
@@ -63,7 +63,7 @@ class LeaveService implements LeaveServiceInterface
             throw new \RuntimeException('Lidhja me bazën e të dhënave dështoi.', 503, $e);
         } catch (\Exception $e) {
             Log::error('Unexpected error in getLeaveTypes: '.$e->getMessage());
-            throw new \RuntimeException('Ndodhi një gabim i papritur.', 500, $e);
+            throw new \RuntimeException('Ndodhi një gabim i papritur në marrjen e llojeve të pushimeve.', 500, $e);
         }
     }
 
