@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leave_type_role', function (Blueprint $table) {
-            $table->id('leavTypeRoleID');
+            $table->id('leaveTypeRoleID');
             $table->unsignedBigInteger('leaveTypeID');
             $table->unsignedBigInteger('roleID');
 
