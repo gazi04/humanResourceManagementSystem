@@ -6,9 +6,12 @@ use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LeaveType extends Model
 {
+    use HasFactory;
+
     protected $table = 'leave_types';
 
     protected $primaryKey = 'leaveTypeID';
@@ -26,7 +29,7 @@ class LeaveType extends Model
      */
     public function policy(): HasOne
     {
-        return $this->hasOne(LeavePolicy::class);
+        return $this->hasOne(LeavePolicy::class, 'leaveTypeID', 'leaveTypeID');
     }
 
     public function roles(): BelongsToMany
