@@ -8,6 +8,13 @@ use Illuminate\Validation\Rule;
 class UpdateLeaveTypeRequest extends FormRequest
 {
     /**
+     * The route that users should be redirected to if validation fails.
+     *
+     * @var string
+     */
+    protected $redirectRoute = 'hr.leave-type.index';
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -16,7 +23,7 @@ class UpdateLeaveTypeRequest extends FormRequest
     {
         return [
             'leaveTypeID' => ['required', 'integer', 'min:1', 'exists:leave_types,leaveTypeID'],
-            'name' => ['required', 'string', 'max:255', Rule::unique('leave_types', 'name')->ignore($this->leaveTypeID)],
+            'name' => ['required', 'string', 'max:255', Rule::unique('leave_types', 'name')->ignore($this->leaveTypeID, 'leaveTypeID')],
             'description' => ['nullable', 'string', 'max:500'],
             'isPaid' => ['required', 'boolean'],
             'requiresApproval' => ['required', 'boolean'],
