@@ -31,8 +31,8 @@ class CreateLeaveTypeRequest extends FormRequest
             'requirenments' => ['nullable', 'json'],
 
             /* VALIDATION FOR THE SELECTED ROLES */
-            'roles' => 'required|array',
-            'roles.*' => 'exists:roles,roleID',
+            'roles' => ['required', 'array'],
+            'roles.*' => ['exists:roles,roleID'],
         ];
     }
 

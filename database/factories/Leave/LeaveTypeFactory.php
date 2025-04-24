@@ -30,7 +30,7 @@ class LeaveTypeFactory extends Factory
         $selectedType = $this->faker->unique()->randomElement($leaveTypes);
 
         // Determine if the leave type is paid based on its name
-        $isPaid = !in_array($selectedType, ['Unpaid Leave']);
+        $isPaid = ! in_array($selectedType, ['Unpaid Leave']);
 
         return [
             'name' => $selectedType,
@@ -61,7 +61,7 @@ class LeaveTypeFactory extends Factory
                     $this->faker->numberBetween(0, 2)
                 )),
                 'requirenments' => json_encode([
-                    'minimumService' => $this->faker->numberBetween(0, 12) . ' months',
+                    'minimumService' => $this->faker->numberBetween(0, 12).' months',
                     'documentation' => $this->faker->randomElement(['None', 'Medical Certificate', 'Manager Approval', 'HR Approval']),
                 ]),
             ]);
@@ -74,4 +74,5 @@ class LeaveTypeFactory extends Factory
 
             $leaveType->roles()->attach($roles);
         });
-    }}
+    }
+}

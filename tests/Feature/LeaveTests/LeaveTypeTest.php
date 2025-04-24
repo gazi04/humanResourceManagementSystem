@@ -25,7 +25,7 @@ beforeEach(function (): void {
 /*
  * INDEX LEAVE TYPE PAGE
  */
-it('displays leave types in index view', function () {
+it('displays leave types in index view', function (): void {
     $response = $this->get(route('hr.leave-type.index'));
 
     $response->assertViewIs('Hr.LeaveType.index');
@@ -33,8 +33,8 @@ it('displays leave types in index view', function () {
     /* TODO- NEED TO ASSERT IF THE LEAVE TYPES ARE IN THE VIEW AFTER THE FRONT-END PART IS DONE */
 });
 
-it('shows error message when leave types cannot be fetched', function () {
-    $this->mock(\App\Services\LeaveService::class, function ($mock) {
+it('shows error message when leave types cannot be fetched', function (): void {
+    $this->mock(\App\Services\LeaveService::class, function ($mock): void {
         $mock->shouldReceive('getLeaveTypes')
             ->andThrow(new \RuntimeException('Database error'));
     });
@@ -45,7 +45,7 @@ it('shows error message when leave types cannot be fetched', function () {
         ->assertViewHas('error', 'Database error');
 });
 
-it('successfully retrieves paginated leave types', function () {
+it('successfully retrieves paginated leave types', function (): void {
     LeaveType::factory()->count(1)->create();
     $result = app(\App\Services\LeaveService::class)->getLeaveTypes();
 
@@ -54,7 +54,7 @@ it('successfully retrieves paginated leave types', function () {
         ->toHaveCount(1);
 });
 
-it('includes leave policy data in results', function () {
+it('includes leave policy data in results', function (): void {
     LeaveType::factory()->count(5)->create();
     $result = app(\App\Services\LeaveService::class)->getLeaveTypes();
 
@@ -70,7 +70,7 @@ it('includes leave policy data in results', function () {
         ]);
 });
 
-it('handles exceptions for getLeaveTypes', function () {
+it('handles exceptions for getLeaveTypes', function (): void {
     DB::shouldReceive('transaction')
         ->andThrow(new \Exception('Bla bla bla'));
 
@@ -78,7 +78,7 @@ it('handles exceptions for getLeaveTypes', function () {
         ->toThrow(\RuntimeException::class, 'Ndodhi një gabim i papritur në marrjen e llojeve të pushimeve.');
 });
 
-it('handles PDO exception for getLeaveTypes', function () {
+it('handles PDO exception for getLeaveTypes', function (): void {
     DB::shouldReceive('transaction')
         ->andThrow(new \PDOException('PDO exception!!'));
 
@@ -86,7 +86,7 @@ it('handles PDO exception for getLeaveTypes', function () {
         ->toThrow(\RuntimeException::class, 'Lidhja me bazën e të dhënave dështoi.');
 });
 
-it('handles query exception for getLeaveTypes', function () {
+it('handles query exception for getLeaveTypes', function (): void {
     $query = 'select `lt`.`leaveTypeID`, `lt`.`name`, `lt`.`description`, '.
              '`lt`.`isPaid`, `lt`.`requiresApproval`, `lt`.`isActive`, '.
              '`lp`.`leavePolicyID` from `leave_types` as `lt` left join '.
@@ -117,13 +117,13 @@ it('handles query exception for getLeaveTypes', function () {
 /*
  * CREATE LEAVE TYPE
  */
-it('opens the create leave type view', function () {
+it('opens the create leave type view', function (): void {
     $response = $this->get(route('hr.leave-type.create'));
     $response->assertOK()
         ->assertViewIs('Hr.LeaveType.create');
 });
 
-it('successfully creates a leave type with valid data', function () {
+it('successfully creates a leave type with valid data', function (): void {
     $response = $this->post(route('hr.leave-type.store'), [
         // Leave type data
         'name' => 'Annual Leave',
@@ -166,7 +166,7 @@ it('successfully creates a leave type with valid data', function () {
     $this->assertCount(4, $leaveType->roles);
 });
 
-it('validates required fields to create a new leave type', function () {
+it('validates required fields to create a new leave type', function (): void {
     $response = $this->post(route('hr.leave-type.store'), []);
 
     $response->assertInvalid([
@@ -177,7 +177,7 @@ it('validates required fields to create a new leave type', function () {
     ]);
 });
 
-it('rejects duplicate leave type names', function () {
+it('rejects duplicate leave type names', function (): void {
     LeaveType::create(['name' => 'Existing Leave']);
 
     $response = $this->post(route('hr.leave-type.store'), [
@@ -226,7 +226,7 @@ it('rejects duplicate leave type names', function () {
 /*         ->assertSessionHas('error', 'Database error'); */
 /* }); */
 
-it('requires HR role to create leave types', function () {
+it('requires HR role to create leave types', function (): void {
     $this->withMiddleware([
         IsUserHRMiddleware::class,
     ]);
@@ -271,7 +271,7 @@ it('requires HR role to create leave types', function () {
     $response->assertForbidden();
 });
 
-it('validates json fields to create a leave type', function () {
+it('validates json fields to create a leave type', function (): void {
     $response = $this->post(route('hr.leave-type.store'), [
         'restricedDays' => 'not-json',
         'requirenments' => 'not-json',
@@ -283,7 +283,7 @@ it('validates json fields to create a leave type', function () {
     ]);
 });
 
-it('validates numeric fields to create a leave type', function () {
+it('validates numeric fields to create a leave type', function (): void {
     $response = $this->post(route('hr.leave-type.store'), [
         'annualQuota' => 'not-a-number',
         'carryOverLimit' => 'not-a-number',
@@ -298,7 +298,7 @@ it('validates numeric fields to create a leave type', function () {
 /*
 * UPDATE LEAVE TYPE
 */
-it('successfully open the edit page with valid id and return leave type data to the view', function () {
+it('successfully open the edit page with valid id and return leave type data to the view', function (): void {
     $leaveType = LeaveType::factory()->create();
 
     $response = $this->get(route('hr.leave-type.edit', [
@@ -310,7 +310,7 @@ it('successfully open the edit page with valid id and return leave type data to 
         ->assertViewHas('leaveType');
 });
 
-it("doesn't open the edit page with invalid id", function () {
+it("doesn't open the edit page with invalid id", function (): void {
     $response = $this->get(route('hr.leave-type.edit', [
         // without the data
     ]));
@@ -344,7 +344,7 @@ it("doesn't open the edit page with invalid id", function () {
         ]);
 });
 
-it('successfully retrieves a leave type by ID', function () {
+it('successfully retrieves a leave type by ID', function (): void {
     $leaveType = LeaveType::factory()->create();
 
     $result = app(\App\Services\LeaveService::class)
@@ -355,7 +355,7 @@ it('successfully retrieves a leave type by ID', function () {
         ->leaveTypeID->toBe($leaveType->leaveTypeID);
 });
 
-it('handles missing leave type gracefully', function () {
+it('handles missing leave type gracefully', function (): void {
     // Arrange: Non-existent ID
     $nonExistentId = 9999;
 
@@ -369,7 +369,7 @@ it('handles missing leave type gracefully', function () {
         ->toThrow(\RuntimeException::class, 'Lloji i pushimit nuk u gjet.');
 });
 
-it('successfully updates a leave type with valid data', function () {
+it('successfully updates a leave type with valid data', function (): void {
     $leaveType = LeaveType::factory()->create();
 
     $response = $this->patch(route('hr.leave-type.update'), [
@@ -402,7 +402,7 @@ it('successfully updates a leave type with valid data', function () {
     expect($leaveType->requiresApproval)->toBe(1);
 });
 
-it('rejects all invalid leave type update attempts', function () {
+it('rejects all invalid leave type update attempts', function (): void {
     // Create test data
     $existingLeaveType = LeaveType::factory()->create(['name' => 'Existing Leave']);
     $leaveType = LeaveType::factory()->create();
@@ -489,7 +489,7 @@ it('rejects all invalid leave type update attempts', function () {
     }
 });
 
-it('handles runtime exceptions during leave type update', function () {
+it('handles runtime exceptions during leave type update', function (): void {
     $leaveType = LeaveType::factory()->create();
 
     $validData = [
@@ -500,7 +500,7 @@ it('handles runtime exceptions during leave type update', function () {
         'requiresApproval' => false,
     ];
 
-    $this->mock(\App\Services\LeaveService::class, function ($mock) {
+    $this->mock(\App\Services\LeaveService::class, function ($mock): void {
         $mock->shouldReceive('updateLeaveType')
             ->andThrow(new \RuntimeException('Update failed due to system error'));
     });

@@ -129,7 +129,7 @@ class LeaveService implements LeaveServiceInterface
 
             return $leaveType;
         } catch (ModelNotFoundException $e) {
-            Log::error('LeaveType not found: '.$e->getMessage());
+            Log::error("LeaveType not found: ID { $leaveTypeID }");
             throw new \RuntimeException('Lloji i pushimit nuk u gjet.', 404, $e);
         } catch (QueryException $e) {
             Log::error('Database error in updateLeaveType: '.$e->getMessage());
@@ -138,7 +138,6 @@ class LeaveService implements LeaveServiceInterface
             Log::error('Unexpected error in updateLeaveType: '.$e->getMessage());
             throw new \RuntimeException('Ndodhi një gabim.', 500, $e);
         }
-
     }
 
     /**
@@ -203,7 +202,7 @@ class LeaveService implements LeaveServiceInterface
     public function initializeYearlyBalances(int $year): void
     {
         try {
-            DB::transaction(function () use ($year) {
+            DB::transaction(function () use ($year): void {
                 $employees = Employee::where('status', 'Active')->get();
 
                 $leaveTypes = LeaveType::with(['policy', 'roles'])
@@ -224,11 +223,9 @@ class LeaveService implements LeaveServiceInterface
     {
         try {
             return DB::transaction(function () use ($leaveBalance, $days): LeaveBalance {
-                if ($leaveBalance->remainingDays < $days) {
-                    throw new \RuntimeException(
-                        "Insufficient leave balance. Available: {$leaveBalance->remainingDays}, Requested: {$days}"
-                    );
-                }
+                throw_if($leaveBalance->remainingDays < $days, new \RuntimeException(
+                    "Insufficient leave balance. Available: {$leaveBalance->remainingDays}, Requested: {$days}"
+                ));
 
                 $leaveBalance->remainingDays -= $days;
                 $leaveBalance->usedDays += $days;
@@ -246,9 +243,7 @@ class LeaveService implements LeaveServiceInterface
     {
         try {
             return DB::transaction(function () use ($leaveBalance, $days): LeaveBalance {
-                if ($days <= 0) {
-                    throw new \RuntimeException('Days to add must be positive');
-                }
+                throw_if($days <= 0, new \RuntimeException('Days to add must be positive'));
 
                 // Prevent adding more days than were used
                 $maxAddable = $leaveBalance->usedDays;
@@ -275,9 +270,7 @@ class LeaveService implements LeaveServiceInterface
                 'year' => $year,
             ])->firstOrFail();
 
-            if (! $balance) {
-                throw new ModelNotFoundException('Leave balance not found');
-            }
+            throw_unless($balance, new ModelNotFoundException('Leave balance not found'));
 
             return $balance;
         } catch (ModelNotFoundException $e) {
@@ -373,7 +366,7 @@ class LeaveService implements LeaveServiceInterface
     private function calculateCarryOver(?LeaveBalance $previousBalance, LeaveType $leaveType): float
     {
         // No carry-over if no previous balance or policy doesn't allow it
-        if (! $previousBalance || ! $leaveType->policy || $leaveType->policy->carryOverLimit <= 0) {
+        if (!$previousBalance instanceof \App\Models\Leave\LeaveBalance || ! $leaveType->policy || $leaveType->policy->carryOverLimit <= 0) {
             return 0;
         }
 

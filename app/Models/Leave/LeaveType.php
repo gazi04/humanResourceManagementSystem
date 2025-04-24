@@ -3,10 +3,10 @@
 namespace App\Models\Leave;
 
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LeaveType extends Model
 {
@@ -32,6 +32,9 @@ class LeaveType extends Model
         return $this->hasOne(LeavePolicy::class, 'leaveTypeID', 'leaveTypeID');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Role, $this, \Illuminate\Database\Eloquent\Relations\Pivot>
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(

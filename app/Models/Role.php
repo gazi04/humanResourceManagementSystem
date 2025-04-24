@@ -37,6 +37,9 @@ class Role extends Model
         return $this->hasMany(Employee::class, 'roleID', 'roleID');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\Leave\LeaveType, $this, \Illuminate\Database\Eloquent\Relations\Pivot>
+     */
     public function leaveTypes(): BelongsToMany
     {
         return $this->belongsToMany(

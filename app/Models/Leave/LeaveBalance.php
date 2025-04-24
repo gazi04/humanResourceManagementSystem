@@ -22,16 +22,25 @@ class LeaveBalance extends Model
         'year',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Employee, $this>
+     */
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'employeeID', 'employeeID');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Leave\LeaveType, $this>
+     */
     public function leaveType(): BelongsTo
     {
         return $this->belongsTo(LeaveType::class, 'leaveTypeID', 'leaveTypeID');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough<\App\Models\Leave\LeavePolicy, \App\Models\Leave\LeaveType, $this>
+     */
     public function policy(): HasOneThrough
     {
         return $this->hasOneThrough(
