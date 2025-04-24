@@ -20,7 +20,6 @@ class UpdateLeaveTypeRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:500'],
             'isPaid' => ['required', 'boolean'],
             'requiresApproval' => ['required', 'boolean'],
-            'isActive' => ['required', 'boolean'],
         ];
     }
 
@@ -50,9 +49,6 @@ class UpdateLeaveTypeRequest extends FormRequest
 
             'requiresApproval.required' => 'Kërkohet aprovim është i detyrueshëm.',
             'requiresApproval.boolean' => 'Kërkohet aprovim duhet të jetë \'true\' ose \'false\'.',
-
-            'isActive.required' => 'Statusi aktiv është i detyrueshëm.',
-            'isActive.boolean' => 'Statusi aktiv duhet të jetë \'true\' ose \'false\'.',
         ];
     }
 }

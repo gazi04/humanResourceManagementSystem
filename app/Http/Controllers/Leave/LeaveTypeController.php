@@ -92,7 +92,7 @@ class LeaveTypeController extends Controller
     public function update(UpdateLeaveTypeRequest $request): RedirectResponse
     {
         $id = $request->only('leaveTypeID');
-        $data = $request->only(['name', 'description', 'isPaid', 'requiresApproval', 'isActive']);
+        $data = $request->only(['name', 'description', 'isPaid', 'requiresApproval']);
 
         try {
             $this->leaveService->updateLeaveType($id['leaveTypeID'], $data);

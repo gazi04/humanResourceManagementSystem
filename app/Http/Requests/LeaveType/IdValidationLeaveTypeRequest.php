@@ -7,6 +7,13 @@ use Illuminate\Foundation\Http\FormRequest;
 class IdValidationLeaveTypeRequest extends FormRequest
 {
     /**
+     * The route that users should be redirected to if validation fails.
+     *
+     * @var string
+     */
+    protected $redirectRoute = 'hr.leave-type.index';
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
