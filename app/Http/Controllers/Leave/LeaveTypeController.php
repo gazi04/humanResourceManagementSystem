@@ -106,9 +106,9 @@ class LeaveTypeController extends Controller
     public function toggleIsActive(IdValidationLeaveTypeRequest $request)
     {
         $validated = $request->only('leaveTypeID');
-        $leaveType = $this->leaveService->toggleIsActive($validated['leaveTypeID']);
 
         try {
+            $leaveType = $this->leaveService->toggleIsActive($validated['leaveTypeID']);
             return response()->json($leaveType, 200);
         } catch (\RuntimeException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
