@@ -510,3 +510,55 @@ it('handles runtime exceptions during leave type update', function (): void {
     $response->assertRedirect(route('hr.leave-type.index'))
         ->assertSessionHas('error', 'Update failed due to system error');
 });
+
+/*
+* TOGGLE IS ACTIVE LEAVE TYPE
+*/
+test('toggle is-active requires valid leaveTypeID', function () {
+    // Test missing leaveTypeID
+    $response = $this->get(route('hr.leave-type.is-active'));
+    $response->assertRedirect(route('hr.leave-type.index'));
+    $response->assertSessionHasErrors(['leaveTypeID' => 'ID e llojit të lejes është e detyrueshme.']);
+
+    // Test invalid leaveTypeID (string)
+    $response = $this->get(route('hr.leave-type.is-active', ['leaveTypeID' => 'invalid']));
+    $response->assertRedirect(route('hr.leave-type.index'));
+    $response->assertSessionHasErrors(['leaveTypeID' => 'ID e llojit të lejes duhet të jetë një numër i plotë.']);
+
+    // Test invalid leaveTypeID (zero)
+    $response = $this->get(route('hr.leave-type.is-active', ['leaveTypeID' => 0]));
+    $response->assertRedirect(route('hr.leave-type.index'));
+    $response->assertSessionHasErrors(['leaveTypeID' => 'ID e llojit të lejes duhet të jetë më e madhe se 0.']);
+
+    // Test non-existent leaveTypeID
+    $response = $this->get(route('hr.leave-type.is-active', ['leaveTypeID' => 9999]));
+    $response->assertRedirect(route('hr.leave-type.index'));
+    $response->assertSessionHasErrors(['leaveTypeID' => 'Lloji i lejes me këtë ID nuk egziston.']);
+});
+
+test('can toggle isActive status of leave type', function () {
+    $leaveType = LeaveType::factory()->create(['isActive' => true]);
+
+    // Initial state is active
+    expect($leaveType->isActive)->toBeTrue();
+
+    // First toggle - should set to inactive
+    $response = $this->get(route('hr.leave-type.is-active', ['leaveTypeID' => $leaveType->leaveTypeID]));
+    $response->assertOk();
+    $response->assertJson(['isActive' => false]);
+    $this->assertDatabaseHas('leave_types', [
+        'leaveTypeID' => $leaveType->leaveTypeID,
+        'isActive' => false
+    ]);
+
+    // Second toggle - should set back to active
+    $response = $this->get(route('hr.leave-type.is-active', ['leaveTypeID' => $leaveType->leaveTypeID]));
+    $response->assertOk();
+    $response->assertJson(['isActive' => true]);
+    $this->assertDatabaseHas('leave_types', [
+        'leaveTypeID' => $leaveType->leaveTypeID,
+        'isActive' => true
+    ]);
+});
+
+/* TODO- AFTER THE VIEWS(FRON-END PART) IS READY NEEDS TO TESTS ALSO IF A ISACTIVE LEAVE TYPE WITH FALSE SHOULDN'T DISPLAY TO THE EMPLOYEES */
