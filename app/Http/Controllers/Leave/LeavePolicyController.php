@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Leave;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeavePolicy\IdValidationLeavePolicyRequest;
-use App\Http\Requests\LeaveType\UpdateLeaveTypeRequest;
+use App\Http\Requests\LeavePolicy\UpdateLeavePoliciesRequest;
 use App\Services\LeaveService;
 
 class LeavePolicyController extends Controller
@@ -32,11 +32,11 @@ class LeavePolicyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateLeaveTypeRequest $request)
+    public function update(UpdateLeavePoliciesRequest $request)
     {
         $validated = $request->only('leavePolicyID');
         $data = $request->only([
-            'annualQouta',
+            'annualQuota',
             'maxConsecutiveDays',
             'allowHalfDay',
             'probationPeriodDays',
