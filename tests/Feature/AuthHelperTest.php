@@ -2,8 +2,8 @@
 
 use App\Models\Employee;
 use App\Models\EmployeeRole;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class);
 
@@ -26,9 +26,10 @@ beforeEach(function (): void {
     Auth::guard('employee')->login($this->hrUser);
 });
 
-it('gets the id of the logged in user', function() {
+it('gets the id of the logged in user', function () {
     // Create a class that uses the trait for testing
-    $testClass = new class {
+    $testClass = new class
+    {
         use \App\Traits\AuthHelper;
     };
 
@@ -39,15 +40,16 @@ it('gets the id of the logged in user', function() {
     expect($loggedUserId)->toBe($this->hrUser->employeeID);
 });
 
-it('throws exception when no user is logged in', function() {
+it('throws exception when no user is logged in', function () {
     // Ensure no user is logged in
     Auth::guard('employee')->logout();
 
     // Create a class that uses the trait for testing
-    $testClass = new class {
+    $testClass = new class
+    {
         use \App\Traits\AuthHelper;
     };
 
     // Assert that it throws an exception
-    expect(fn() => $testClass->getLoggedUserID())->toThrow(Exception::class);
+    expect(fn () => $testClass->getLoggedUserID())->toThrow(Exception::class);
 });

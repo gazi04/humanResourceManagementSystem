@@ -548,7 +548,7 @@ test('can toggle isActive status of leave type', function () {
     $response->assertJson(['isActive' => false]);
     $this->assertDatabaseHas('leave_types', [
         'leaveTypeID' => $leaveType->leaveTypeID,
-        'isActive' => false
+        'isActive' => false,
     ]);
 
     // Second toggle - should set back to active
@@ -557,7 +557,7 @@ test('can toggle isActive status of leave type', function () {
     $response->assertJson(['isActive' => true]);
     $this->assertDatabaseHas('leave_types', [
         'leaveTypeID' => $leaveType->leaveTypeID,
-        'isActive' => true
+        'isActive' => true,
     ]);
 });
 

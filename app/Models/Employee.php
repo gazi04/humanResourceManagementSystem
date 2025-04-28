@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Leave\LeaveBalance;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,10 +39,6 @@ class Employee extends Model implements AuthenticatableContract
         'remember_token',
     ];
 
-    protected $casts = [
-        'hireDate' => 'date',
-    ];
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\EmployeeRole, $this>
      */
@@ -66,6 +63,9 @@ class Employee extends Model implements AuthenticatableContract
         return $this->hasMany(Contract::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough<\App\Models\Role, \App\Models\EmployeeRole, $this>
+     */
     public function role(): HasOneThrough
     {
         return $this->hasOneThrough(
@@ -78,8 +78,23 @@ class Employee extends Model implements AuthenticatableContract
         );
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Leave\LeaveBalance, $this>
+     */
+    public function leaveBalances(): HasMany
+    {
+        return $this->hasMany(LeaveBalance::class, 'employeeID', 'employeeID');
+    }
+
     public function getRoleName(): string
     {
         return $this->employeeRole()->first()->role()->first()['roleName'];
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'hireDate' => 'date',
+        ];
     }
 }

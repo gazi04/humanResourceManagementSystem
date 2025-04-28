@@ -239,13 +239,12 @@ it('rolls back all changes if an error occurs during creation', function () {
     expect(DB::table('leave_type_role')->count())->toBe($pivotCountBefore);
 });
 
-
 /*
 * UPDATE LEAVE POLICY TESTS
 */
 it('shows the edit form for existing leave policy', function () {
     $response = $this->get(route('hr.leave-policy.edit', [
-        'leavePolicyID' => $this->leavePolicy->leavePolicyID
+        'leavePolicyID' => $this->leavePolicy->leavePolicyID,
     ]));
 
     $response->assertOk()
@@ -255,7 +254,7 @@ it('shows the edit form for existing leave policy', function () {
 it('returns 404 when trying to edit non-existent leave policy', function () {
     $invalidId = 9999;
     $response = $this->get(route('hr.leave-policy.edit', [
-        'leavePolicyID' => $invalidId
+        'leavePolicyID' => $invalidId,
     ]));
 
     $response->assertRedirect(route('hr.leave-type.index'))

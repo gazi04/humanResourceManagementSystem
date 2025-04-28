@@ -109,6 +109,7 @@ class LeaveTypeController extends Controller
 
         try {
             $leaveType = $this->leaveService->toggleIsActive($validated['leaveTypeID']);
+
             return response()->json($leaveType, 200);
         } catch (\RuntimeException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
