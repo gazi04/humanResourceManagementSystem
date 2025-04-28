@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leave_requests', function (Blueprint $table) {
-            $table->id();
+            $table->id('leaveRequestID');
             $table->unsignedBigInteger('employeeID');
             $table->unsignedBigInteger('leaveTypeID');
             $table->date('startDate');

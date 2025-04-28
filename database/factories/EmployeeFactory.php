@@ -23,7 +23,6 @@ class EmployeeFactory extends Factory
             'status' => $this->faker->randomElement(['Active', 'Inactive']),
             'departmentID' => $this->faker->numberBetween(1, 4),
             'supervisorID' => null, // Initially set to null
-            'contractID' => $this->faker->numberBetween(1, 10), // Assuming 10 contracts exist
         ];
     }
 
