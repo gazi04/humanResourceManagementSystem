@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Models\Employee;
 use App\Models\Leave\LeaveBalance;
 use App\Models\Leave\LeavePolicy;
+use App\Models\Leave\LeaveRequest;
 use App\Models\Leave\LeaveType;
 use App\Models\Leave\LeaveTypeRole;
 use App\Services\Interfaces\LeaveServiceInterface;
+use App\Traits\AuthHelper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\MassAssignmentException;
@@ -20,6 +22,8 @@ use PDOException;
 
 class LeaveService implements LeaveServiceInterface
 {
+    use AuthHelper;
+
     /**
      * 1. LEAVE TYPE FEATURES
      */
@@ -183,7 +187,9 @@ class LeaveService implements LeaveServiceInterface
     private function createLeavePolicy(array $data): LeavePolicy
     {
         try {
-            return LeavePolicy::create($data);
+            return DB::transaction(function () use ($data): LeavePolicy {
+                return LeavePolicy::create($data);
+            });
         } catch (MassAssignmentException $e) {
             Log::error('MassAssignmentException in createLeavePolicy: '.$e->getMessage());
             throw new \RuntimeException('Ofrohen fusha të pavlefshme.', 500, $e);
@@ -308,6 +314,78 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
+    /*
+    * 4. LEAVE REQUEST FEATURES
+    */
+    public function createLeaveRequest(array $data): LeaveRequest
+    {
+        try {
+            return DB::transaction(function () use ($data): LeaveRequest {
+                return LeaveRequest::create($data);
+            });
+        } catch (MassAssignmentException $e) {
+            Log::error('MassAssignmentException in createLeaveRequest: '.$e->getMessage());
+            throw new \RuntimeException('Ofrohen fusha të pavlefshme.', 500, $e);
+        } catch (QueryException $e) {
+            Log::error('QueryException in createLeaveRequest: '.$e->getMessage());
+            throw new \RuntimeException('Gabim në bazën e të dhënave.', 500, $e);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in createLeaveRequest: '.$e->getMessage());
+            throw new \RuntimeException('Kërkesa për leje nuk u krijua.', 500, $e);
+        }
+    }
+
+    public function approveLeaveRequest(int $leaveRequestID): LeaveRequest
+    {
+        return DB::transaction(function () use ($leaveRequestID): LeaveRequest {
+            /** @var LeaveRequest $user */
+            $leaveRequest = LeaveRequest::where('leaveRequestID', $leaveRequestID)
+                ->with('leaveBalance')
+                ->firstOrFail();
+
+            $loggedUserID = $this->getLoggedUserID();
+
+            // FIRST NEED TO APPROVE THE LEAVE REQUEST
+            $leaveRequest->update([
+                'status' => 'approved',
+                'approvedBy' => $loggedUserID,
+                'approvedAt' => now(),
+            ]);
+
+            // SECOND NEEDS TO DEDUCT THE REQUESTED DAYS FROM THE LEAVE BALANCE
+            /** @var LeaveBalance $leaveBalance */
+            $requestedDays = $this->calculateRequestedDays($leaveRequest);
+            $remainingDays = $leaveBalance->remainingDays;
+            $usedDays = $leaveBalance->usedDays;
+
+            $leaveBalance->remainingDays = $remainingDays - $requestedDays;
+            $leaveBalance->usedDays = $usedDays + $requestedDays;
+
+            $leaveBalance->save();
+
+            // THIRD STEP IS TO LOG THE INFORMATION WHO WHICH LEAVE REQUEST APPROVED
+            Log::info("The HR with ID { $loggedUserID } approved the leave request with ID { $leaveRequest->leaveRequestID }");
+
+            return $leaveRequest;
+        });
+    }
+
+    public function rejectRequest(int $leaveRequestID, string $reason): LeaveRequest
+    {
+        return DB::transaction(function () use ($leaveRequestID, $reason): LeaveRequest {
+            $loggedUserID = $this->getLoggedUserID();
+            $leaveRequest = LeaveRequest::where('leaveRequestID', $leaveRequestID)->firstOrFail();
+            $leaveRequest->update([
+                'status' => 'rejected',
+                'approvedBy' => $loggedUserID,
+                'approvedAt' => now(),
+                'rejectionReason' => $reason,
+            ]);
+
+            return $leaveRequest;
+        });
+    }
+
     private function isOnProbation(Employee $employee, LeaveType $leaveType): bool
     {
         // Skip probation check if no policy or probation period defined
@@ -366,7 +444,7 @@ class LeaveService implements LeaveServiceInterface
     private function calculateCarryOver(?LeaveBalance $previousBalance, LeaveType $leaveType): float
     {
         // No carry-over if no previous balance or policy doesn't allow it
-        if (!$previousBalance instanceof \App\Models\Leave\LeaveBalance || ! $leaveType->policy || $leaveType->policy->carryOverLimit <= 0) {
+        if (! $previousBalance instanceof \App\Models\Leave\LeaveBalance || ! $leaveType->policy || $leaveType->policy->carryOverLimit <= 0) {
             return 0;
         }
 
@@ -374,5 +452,35 @@ class LeaveService implements LeaveServiceInterface
             $previousBalance->remainingDays,
             $leaveType->policy->carryOverLimit
         );
+    }
+
+    private function validateLeaveBalance(int $employeeID, int $leaveTypeID, float $requestedDays): void
+    {
+        $balance = LeaveBalance::where([
+            'employeeID' => $employeeID,
+            'leaveTypeID' => $leaveTypeID,
+            'year' => now()->year,
+        ])->firstOrFail();
+
+        if ($balance->remainingDays < $requestedDays) {
+            throw new \Exception('Insufficient leave balance');
+        }
+    }
+
+    private function calculateRequestedDays(LeaveRequest $leaveRequest): float
+    {
+        /** @var LeavePolicy $leavePolicy */
+        /* $leavePolicy = $leaveRequest->policy(); */
+        if ($leaveRequest->durationType === 'halfDay') {
+            return 0.5;
+        }
+
+        $start = Carbon::parse($leaveRequest->startDate);
+        $end = Carbon::parse($leaveRequest->endDate);
+
+        // Exclude weekends
+        return $start->diffInDaysFiltered(function ($date) {
+            return ! $date->isWeekend();
+        }, $end) + 1; // Inclusive of start date
     }
 }

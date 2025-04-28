@@ -5,6 +5,7 @@ namespace App\Services\Interfaces;
 use App\Models\Employee;
 use App\Models\Leave\LeaveBalance;
 use App\Models\Leave\LeavePolicy;
+use App\Models\Leave\LeaveRequest;
 use App\Models\Leave\LeaveType;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -43,4 +44,13 @@ interface LeaveServiceInterface
     public function getBalance(int $employeeID, int $leaveTypeID, int $year): LeaveBalance;
 
     public function createBalanceForEmployee(Employee $employee, Collection $leaveTypes, int $year): void;
+
+    /*
+    * 4. LEAVE REQUEST FEATURES
+    */
+    public function createLeaveRequest(array $data): LeaveRequest;
+
+    public function approveLeaveRequest(int $leaveRequestID): LeaveRequest;
+
+    public function rejectRequest(int $leaveRequestID, string $reason): LeaveRequest;
 }
