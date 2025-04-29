@@ -37,9 +37,9 @@ interface LeaveServiceInterface
      */
     public function initializeYearlyBalances(int $year): void;
 
-    public function deductDays(LeaveBalance $leaveBalance, float $days): LeaveBalance;
+    public function deductDays(int $leaveBalanceID, float $days): LeaveBalance;
 
-    public function addDays(LeaveBalance $leaveBalance, float $days): LeaveBalance;
+    public function addDays(int $leaveBalanceID, float $days): LeaveBalance;
 
     public function getBalance(int $employeeID, int $leaveTypeID, int $year): LeaveBalance;
 

@@ -229,6 +229,8 @@ class LeaveService implements LeaveServiceInterface
      */
     public function initializeYearlyBalances(int $year): void
     {
+        throw_if($this->isYearInitialized($year), new \RuntimeException("Bilancet e pushimeve për vitin {$year} janë inicializuar tashmë."));
+
         try {
             DB::transaction(function () use ($year): void {
                 $employees = Employee::where('status', 'Active')->get();
@@ -240,6 +242,8 @@ class LeaveService implements LeaveServiceInterface
                 foreach ($employees as $employee) {
                     $this->createBalanceForEmployee($employee, $leaveTypes, $year);
                 }
+
+                $this->markYearAsInitialized($year, $this->getLoggedUserID());
             });
         } catch (\Exception $e) {
             Log::error('Error initializing yearly balances: '.$e->getMessage());
@@ -247,12 +251,13 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
-    public function deductDays(LeaveBalance $leaveBalance, float $days): LeaveBalance
+    public function deductDays(int $leaveBalanceID, float $days): LeaveBalance
     {
         try {
-            return DB::transaction(function () use ($leaveBalance, $days): LeaveBalance {
+            return DB::transaction(function () use ($leaveBalanceID, $days): LeaveBalance {
+                $leaveBalance = LeaveBalance::where('leaveBalanceID', $leaveBalanceID)->firstOrFail();
                 throw_if($leaveBalance->remainingDays < $days, new \RuntimeException(
-                    "Insufficient leave balance. Available: {$leaveBalance->remainingDays}, Requested: {$days}"
+                    "Bilanc i pamjaftueshëm pushimesh. Në dispozicion: {$leaveBalance->remainingDays}, Kërkuar: {$days}"
                 ));
 
                 $leaveBalance->remainingDays -= $days;
@@ -261,17 +266,22 @@ class LeaveService implements LeaveServiceInterface
 
                 return $leaveBalance;
             });
+        } catch (ModelNotFoundException $e) {
+            Log::error('LeaveBalance not found: '.$e->getMessage());
+            throw new \RuntimeException('Bilanci i pushimeve nuk u gjet.', 404, $e);
         } catch (\Exception $e) {
             Log::error('Failed to deduct leave days: '.$e->getMessage());
-            throw new \RuntimeException('Failed to deduct leave days: '.$e->getMessage(), 0, $e);
+            throw new \RuntimeException('Dështoi zbritja e ditëve të pushimit.', $e->getCode(), $e);
         }
     }
 
-    public function addDays(LeaveBalance $leaveBalance, float $days): LeaveBalance
+    public function addDays(int $leaveBalanceID, float $days): LeaveBalance
     {
         try {
-            return DB::transaction(function () use ($leaveBalance, $days): LeaveBalance {
+            return DB::transaction(function () use ($leaveBalanceID, $days): LeaveBalance {
                 throw_if($days <= 0, new \RuntimeException('Days to add must be positive'));
+
+                $leaveBalance = LeaveBalance::where('leaveBalanceID', $leaveBalanceID)->firstOrFail();
 
                 // Prevent adding more days than were used
                 $maxAddable = $leaveBalance->usedDays;
@@ -283,9 +293,12 @@ class LeaveService implements LeaveServiceInterface
 
                 return $leaveBalance;
             });
+        } catch (ModelNotFoundException $e) {
+            Log::error('LeaveBalance not found: '.$e->getMessage());
+            throw new \RuntimeException('Bilanci i pushimeve nuk u gjet.', 404, $e);
         } catch (\Exception $e) {
             Log::error('Failed to add leave days: '.$e->getMessage());
-            throw new \RuntimeException('Failed to add leave days: '.$e->getMessage(), 0, $e);
+            throw new \RuntimeException('Dështoi shtimi i ditëve të pushimit.', $e->getCode(), $e);
         }
     }
 
@@ -381,7 +394,7 @@ class LeaveService implements LeaveServiceInterface
     public function approveLeaveRequest(int $leaveRequestID): LeaveRequest
     {
         return DB::transaction(function () use ($leaveRequestID): LeaveRequest {
-            /** @var LeaveRequest $user */
+            /** @var LeaveRequest $leaveRequest */
             $leaveRequest = LeaveRequest::where('leaveRequestID', $leaveRequestID)
                 ->with('leaveBalance')
                 ->firstOrFail();
@@ -431,9 +444,7 @@ class LeaveService implements LeaveServiceInterface
 
     public function getTodaysLeaveRequests(): Collection
     {
-        $todaysLeaveRequests = LeaveRequest::where('created_at', Carbon::now()->year)->get();
-
-        return $todaysLeaveRequests;
+        return LeaveRequest::where('created_at', Carbon::now()->year)->get();
     }
 
     private function isOnProbation(Employee $employee, LeaveType $leaveType): bool
@@ -529,8 +540,27 @@ class LeaveService implements LeaveServiceInterface
         $end = Carbon::parse($leaveRequest->endDate);
 
         // Exclude weekends
-        return $start->diffInDaysFiltered(function ($date) {
-            return ! $date->isWeekend();
-        }, $end) + 1; // Inclusive of start date
+        return $start->diffInDaysFiltered(fn ($date): bool => ! $date->isWeekend(), $end) + 1; // Inclusive of start date
+    }
+
+    private function isYearInitialized(int $year): bool
+    {
+        return DB::table('leave_balance_initializations')
+            ->where('year', $year)
+            ->where('is_initialized', true)
+            ->exists();
+    }
+
+    private function markYearAsInitialized(int $year, ?int $initiatorId): void
+    {
+        DB::table('leave_balance_initializations')->updateOrInsert(
+            ['year' => $year],
+            [
+                'is_initialized' => true,
+                'initialized_at' => now(),
+                'initialized_by' => $initiatorId,
+                'updated_at' => now(),
+            ]
+        );
     }
 }
