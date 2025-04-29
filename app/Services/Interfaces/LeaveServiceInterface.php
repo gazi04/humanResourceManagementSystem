@@ -43,6 +43,8 @@ interface LeaveServiceInterface
 
     public function getBalance(int $employeeID, int $leaveTypeID, int $year): LeaveBalance;
 
+    public function getBalances(int $employeeID): Collection;
+
     public function createBalanceForEmployee(Employee $employee, Collection $leaveTypes, int $year): void;
 
     /*
@@ -53,4 +55,6 @@ interface LeaveServiceInterface
     public function approveLeaveRequest(int $leaveRequestID): LeaveRequest;
 
     public function rejectRequest(int $leaveRequestID, string $reason): LeaveRequest;
+
+    public function getTodaysLeaveRequests(): Collection;
 }

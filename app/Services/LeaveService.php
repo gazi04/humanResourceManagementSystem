@@ -30,7 +30,29 @@ class LeaveService implements LeaveServiceInterface
     public function getLeaveType(int $leaveTypeID): LeaveType
     {
         try {
-            return LeaveType::where('leaveTypeID', $leaveTypeID)->firstOrFail();
+            return LeaveType::with(['policy' => function ($query) {
+                $query->select([
+                    'leavePolicyID',
+                    'leaveTypeID',
+                    'annualQuota',
+                    'maxConsecutiveDays',
+                    'allowHalfDay',
+                    'probationPeriodDays',
+                    'carryOverLimit',
+                    'restricedDays',
+                    'requirenments',
+                ]);
+            }])
+                ->select([
+                    'leaveTypeID',
+                    'name',
+                    'description',
+                    'isPaid',
+                    'requiresApproval',
+                    'isActive',
+                ])
+                ->where('leaveTypeID', $leaveTypeID)
+                ->firstOrFail();
         } catch (ModelNotFoundException $e) {
             Log::error("LeaveType not found: ID {$leaveTypeID}");
             throw new \RuntimeException('Lloji i pushimit nuk u gjet.', 404, $e);
@@ -280,7 +302,27 @@ class LeaveService implements LeaveServiceInterface
 
             return $balance;
         } catch (ModelNotFoundException $e) {
-            Log::error("Leave balance not found for employee {$employeeID}, leave type {$leaveTypeID}, year {$year}");
+            Log::error("Leave balance not found for employee {$employeeID}, leave type {$leaveTypeID}, year {$year}\nThis is the error message:".$e->getMessage());
+            throw new \RuntimeException('Leave balance record not found', 404, $e);
+        } catch (\Exception $e) {
+            Log::error('Error retrieving leave balance: '.$e->getMessage());
+            throw new \RuntimeException('Failed to retrieve leave balance', 500, $e);
+        }
+    }
+
+    public function getBalances(int $employeeID): Collection
+    {
+        try {
+            $balances = LeaveBalance::where([
+                'employeeID' => $employeeID,
+                'year' => Carbon::now()->year,
+            ])->get();
+
+            throw_unless($balances->isEmpty(), new ModelNotFoundException('Leave balance not found'));
+
+            return $balances;
+        } catch (ModelNotFoundException $e) {
+            Log::error("Leave balance not found for employee {$employeeID}. This is the error message:".$e->getMessage());
             throw new \RuntimeException('Leave balance record not found', 404, $e);
         } catch (\Exception $e) {
             Log::error('Error retrieving leave balance: '.$e->getMessage());
@@ -321,6 +363,7 @@ class LeaveService implements LeaveServiceInterface
     {
         try {
             return DB::transaction(function () use ($data): LeaveRequest {
+                /* TODO- NEED TO STORE THE ATTACHMENT IN THE LARAVEL LOCAL STORAGE */
                 return LeaveRequest::create($data);
             });
         } catch (MassAssignmentException $e) {
@@ -384,6 +427,13 @@ class LeaveService implements LeaveServiceInterface
 
             return $leaveRequest;
         });
+    }
+
+    public function getTodaysLeaveRequests(): Collection
+    {
+        $todaysLeaveRequests = LeaveRequest::where('created_at', Carbon::now()->year)->get();
+
+        return $todaysLeaveRequests;
     }
 
     private function isOnProbation(Employee $employee, LeaveType $leaveType): bool
@@ -459,7 +509,7 @@ class LeaveService implements LeaveServiceInterface
         $balance = LeaveBalance::where([
             'employeeID' => $employeeID,
             'leaveTypeID' => $leaveTypeID,
-            'year' => now()->year,
+            'year' => Carbon::now()->year,
         ])->firstOrFail();
 
         if ($balance->remainingDays < $requestedDays) {
