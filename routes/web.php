@@ -8,6 +8,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRoleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HumanResourceController;
+use App\Http\Controllers\Leave\LeaveBalanceController;
 use App\Http\Controllers\Leave\LeaveTypeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\TicketController;
@@ -75,10 +76,12 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
     Route::get('/dashboard', function () {
         return view('test');
     })->name('dashboard');
+    Route::get('/', [HumanResourceController::class, 'index'])->name('dashboard');
 
     Route::prefix('employees')->name('employee.')->group(function () {
         Route::get('/', [EmployeeController::class, 'index'])->name('index');
-        Route::get('/profile', [EmployeeController::class, 'show'])->name('profile');
+
+        Route::get('/profile', [EmployeeController::class, 'profile'])->name('profile');
         Route::get('/search', [EmployeeController::class, 'search'])->name('search');
 
         Route::prefix('contracts')->name('contract.')->group(function () {
@@ -104,6 +107,12 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         Route::get('/edit', 'edit')->name('edit');
         Route::patch('/update', 'update')->name('update');
         Route::get('/is-active', 'toggleIsActive')->name('is-active');
+    });
+
+    Route::prefix('leave-balances')->name('leave-balance')->controller(LeaveBalanceController::class)->group(function () {
+        Route::get('/initialize-yearly-balance', 'initYearlyBalance');
+        Route::patch('/add-days', 'addDaysFromBalance');
+        Route::patch('/deduct-days', 'deductDaysFromBalance');
     });
 });
 

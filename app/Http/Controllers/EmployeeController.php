@@ -11,6 +11,7 @@ use App\Models\Employee;
 use App\Models\Role;
 use App\Services\ContractService;
 use App\Services\EmployeeService;
+use App\Services\LeaveService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,11 @@ use Illuminate\View\View;
 
 class EmployeeController extends Controller
 {
-    public function __construct(protected EmployeeService $employeeService, protected ContractService $contractService) {}
+    public function __construct(
+        protected EmployeeService $employeeService,
+        protected ContractService $contractService,
+        protected LeaveService $leaveService
+    ) {}
 
     public function index(): View
     {
@@ -86,6 +91,7 @@ class EmployeeController extends Controller
         return view($view, ['employees' => $result]);
     }
 
+    /* FOR EMPLOYEE VIEW ONLY */
     public function show(ShowEmployeeProfileRequest $request)
     {
         $validated = $request->only('employeeID');
@@ -96,9 +102,31 @@ class EmployeeController extends Controller
 
             return view('Employee.profile', ['employee' => $result[0], 'contracts' => $contracts]);
         } catch (\Exception $e) {
-            Log::error('Gjatë përditësimit të kontratës ndodhi ky gabim: ', [$e->getMessage()]);
+            Log::error('Error fetching employee data', [$e->getMessage()]);
 
-            return back()->with('error', 'Ndodhi një gabim në sistem me përditësimit të kontratës, provoni përsëri më vonë.');
+            return back()->with('error', 'Ndodhi një gabim gjatë marrjes së të dhënave të profilit, provoni përsëri më vonë.');
+        }
+    }
+
+    /* FOR HR VIEW ONLY */
+    public function profile(ShowEmployeeProfileRequest $request)
+    {
+        $validated = $request->only('employeeID');
+
+        try {
+            $result = $this->employeeService->getEmployee($validated['employeeID']);
+            $contracts = $this->contractService->getEmployeeContracts($validated['employeeID']);
+            $employeeLeaveBalances = $this->leaveService->getBalances($validated['employeeID']);
+
+            return view('Employee.profile', [
+                'employee' => $result[0],
+                'contracts' => $contracts,
+                'balances' => $employeeLeaveBalances,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching employee data', [$e->getMessage()]);
+
+            return back()->with('error', 'Ndodhi një gabim gjatë marrjes së të dhënave të profilit, provoni përsëri më vonë.');
         }
     }
 }

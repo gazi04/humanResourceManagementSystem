@@ -4,16 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\EmployeeRetrievalException;
 use App\Services\EmployeeService;
+use App\Services\LeaveService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 class HumanResourceController extends Controller
 {
-    public function __construct(protected EmployeeService $employeeService) {}
+    public function __construct(
+        protected EmployeeService $employeeService,
+        protected LeaveService $leaveService
+    ) {}
 
     public function index(): View
     {
-        return view('Manager.dashboard');
+        $leaveTypes = $this->leaveService->getLeaveTypes();
+        $todaysLeaveRequests = $this->leaveService->getTodaysLeaveRequests();
+
+        return view('Hr.dashboard', [
+            'leaveTypes' => $leaveTypes,
+            'todaysLeaveRequests' => $todaysLeaveRequests,
+        ]);
     }
 
     public function getHrs(): JsonResponse
