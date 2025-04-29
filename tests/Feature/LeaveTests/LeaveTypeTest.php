@@ -369,15 +369,26 @@ it('handles missing leave type gracefully', function (): void {
         ->toThrow(\RuntimeException::class, 'Lloji i pushimit nuk u gjet.');
 });
 
-it('successfully updates a leave type with valid data', function (): void {
+it('successfully updates a leave type and his policies with valid data', function (): void {
     $leaveType = LeaveType::factory()->create();
 
     $response = $this->patch(route('hr.leave-type.update'), [
+        /* LEAVE TYPE DATA */
         'leaveTypeID' => $leaveType->leaveTypeID,
         'name' => 'changed name',
         'description' => 'no description',
         'isPaid' => false,
         'requiresApproval' => true,
+
+        /* LEAVE POLICY DATA */
+        'leavePolicyID' => $leaveType->policy->leavePolicyID,
+        'annualQuota' => 20,
+        'maxConsecutiveDays' => 10,
+        'allowHalfDay' => true,
+        'probationPeriodDays' => 90,
+        'carryOverLimit' => 5,
+        'restricedDays' => json_encode(['sunday', 'saturday']),
+        'requirenments' => json_encode(['min_service_days' => 30]),
     ]);
 
     $response->assertFound()
@@ -394,6 +405,18 @@ it('successfully updates a leave type with valid data', function (): void {
         'description' => 'no description',
         'isPaid' => false,
         'requiresApproval' => true,
+    ]);
+
+    $this->assertDatabaseHas('leave_policies', [
+        'leavePolicyID' => $leaveType->policy->leavePolicyID,
+        'leaveTypeID' => $leaveType->leaveTypeID,
+        'annualQuota' => 20,
+        'maxConsecutiveDays' => 10,
+        'allowHalfDay' => true,
+        'probationPeriodDays' => 90,
+        'carryOverLimit' => 5,
+        'restricedDays' => json_encode(['sunday', 'saturday']),
+        'requirenments' => json_encode(['min_service_days' => 30]),
     ]);
 
     expect($leaveType->name)->toBe('changed name');
@@ -498,6 +521,15 @@ it('handles runtime exceptions during leave type update', function (): void {
         'description' => 'Test Description',
         'isPaid' => true,
         'requiresApproval' => false,
+
+        'leavePolicyID' => $leaveType->policy->leavePolicyID,
+        'annualQuota' => 20,
+        'maxConsecutiveDays' => 10,
+        'allowHalfDay' => true,
+        'probationPeriodDays' => 90,
+        'carryOverLimit' => 5,
+        'restricedDays' => json_encode(['sunday', 'saturday']),
+        'requirenments' => json_encode(['min_service_days' => 30]),
     ];
 
     $this->mock(\App\Services\LeaveService::class, function ($mock): void {

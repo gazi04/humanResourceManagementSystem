@@ -14,9 +14,6 @@ class LeaveTypeController extends Controller
 {
     public function __construct(protected LeaveService $leaveService) {}
 
-    /**
-     * Display a listing of the leave types.
-     */
     public function index(): View
     {
         try {
@@ -28,17 +25,11 @@ class LeaveTypeController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new leave type.
-     */
     public function create(): View
     {
         return view('Hr.LeaveType.create');
     }
 
-    /**
-     * Store a newly created leave type in storage.
-     */
     public function store(CreateLeaveTypeRequest $request): RedirectResponse
     {
         $leaveTypeData = $request->only([
@@ -70,9 +61,6 @@ class LeaveTypeController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified leave type.
-     */
     public function edit(IdValidationLeaveTypeRequest $request): View
     {
         $id = $request->only('leaveTypeID');
@@ -86,18 +74,27 @@ class LeaveTypeController extends Controller
         }
     }
 
-    /**
-     * Update the specified leave type in storage.
-     */
     public function update(UpdateLeaveTypeRequest $request): RedirectResponse
     {
-        $id = $request->only('leaveTypeID');
-        $data = $request->only(['name', 'description', 'isPaid', 'requiresApproval']);
+        $leaveTypeID = $request->only('leaveTypeID');
+        $leaveTypeData = $request->only(['name', 'description', 'isPaid', 'requiresApproval']);
+
+        $leavePolicyID = $request->only('leavePolicyID');
+        $leavePolicyData = $request->only([
+            'annualQuota',
+            'maxConsecutiveDays',
+            'allowHalfDay',
+            'probationPeriodDays',
+            'carryOverLimit',
+            'restricedDays',
+            'requirenments',
+        ]);
 
         try {
-            $this->leaveService->updateLeaveType($id['leaveTypeID'], $data);
+            $this->leaveService->updateLeaveType($leaveTypeID['leaveTypeID'], $leaveTypeData);
+            $this->leaveService->updateLeavePolicy($leavePolicyID['leavePolicyID'], $leavePolicyData);
 
-            return redirect()->route('hr.leave-type.index')->with('success', 'Lloji i pushimit përditësohet me sukses.');
+            return redirect()->route('hr.leave-type.index')->with('success', 'Lloji i lejes me politikat e tij u përditësua me sukses.');
         } catch (\RuntimeException $e) {
             return redirect()->route('hr.leave-type.index')->with('error', $e->getMessage());
         }

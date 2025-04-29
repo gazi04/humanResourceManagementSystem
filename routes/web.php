@@ -8,7 +8,6 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRoleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HumanResourceController;
-use App\Http\Controllers\Leave\LeavePolicyController;
 use App\Http\Controllers\Leave\LeaveTypeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\TicketController;
@@ -105,11 +104,6 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         Route::get('/edit', 'edit')->name('edit');
         Route::patch('/update', 'update')->name('update');
         Route::get('/is-active', 'toggleIsActive')->name('is-active');
-    });
-
-    Route::prefix('leave-policies')->name('leave-policy.')->controller(LeavePolicyController::class)->group(function () {
-        Route::get('/edit', 'edit')->name('edit');
-        Route::post('/update', 'update')->name('update');
     });
 });
 
