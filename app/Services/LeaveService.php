@@ -360,7 +360,6 @@ class LeaveService implements LeaveServiceInterface
             // Check if employee has completed probation period
             if ($this->isOnProbation($employee, $leaveType)) {
                 Log::info("Employee {$employee->employeeID} is on probation for leave type {$leaveType->leaveTypeID}");
-
                 continue;
             }
 
@@ -376,7 +375,6 @@ class LeaveService implements LeaveServiceInterface
     {
         try {
             return DB::transaction(function () use ($data): LeaveRequest {
-                /* TODO- NEED TO STORE THE ATTACHMENT IN THE LARAVEL LOCAL STORAGE */
                 return LeaveRequest::create($data);
             });
         } catch (MassAssignmentException $e) {
@@ -393,58 +391,113 @@ class LeaveService implements LeaveServiceInterface
 
     public function approveLeaveRequest(int $leaveRequestID): LeaveRequest
     {
-        return DB::transaction(function () use ($leaveRequestID): LeaveRequest {
-            /** @var LeaveRequest $leaveRequest */
-            $leaveRequest = LeaveRequest::where('leaveRequestID', $leaveRequestID)
-                ->with('leaveBalance')
-                ->firstOrFail();
+        try {
+            return DB::transaction(function () use ($leaveRequestID): LeaveRequest {
+                /** @var LeaveRequest $leaveRequest */
+                $leaveRequest = LeaveRequest::where('leaveRequestID', $leaveRequestID)
+                    ->with('leaveBalance')
+                    ->firstOrFail();
 
-            $loggedUserID = $this->getLoggedUserID();
+                // Validate leave balance exists
+                if (!$leaveRequest->leaveBalance) {
+                    throw new \RuntimeException('', 400);
+                }
 
-            // FIRST NEED TO APPROVE THE LEAVE REQUEST
-            $leaveRequest->update([
-                'status' => 'approved',
-                'approvedBy' => $loggedUserID,
-                'approvedAt' => now(),
-            ]);
+                $loggedUserID = $this->getLoggedUserID();
 
-            // SECOND NEEDS TO DEDUCT THE REQUESTED DAYS FROM THE LEAVE BALANCE
-            /** @var LeaveBalance $leaveBalance */
-            $requestedDays = $this->calculateRequestedDays($leaveRequest);
-            $remainingDays = $leaveBalance->remainingDays;
-            $usedDays = $leaveBalance->usedDays;
+                // FIRST NEED TO APPROVE THE LEAVE REQUEST
+                $leaveRequest->update([
+                    'status' => 'approved',
+                    'approvedBy' => $loggedUserID,
+                    'approvedAt' => now(),
+                ]);
 
-            $leaveBalance->remainingDays = $remainingDays - $requestedDays;
-            $leaveBalance->usedDays = $usedDays + $requestedDays;
+                // SECOND NEEDS TO DEDUCT THE REQUESTED DAYS FROM THE LEAVE BALANCE
+                /** @var LeaveBalance $leaveBalance */
+                $requestedDays = $this->calculateRequestedDays($leaveRequest);
+                $remainingDays = $leaveBalance->remainingDays;
+                $usedDays = $leaveBalance->usedDays;
 
-            $leaveBalance->save();
+                $leaveBalance->remainingDays = $remainingDays - $requestedDays;
+                $leaveBalance->usedDays = $usedDays + $requestedDays;
 
-            // THIRD STEP IS TO LOG THE INFORMATION WHO WHICH LEAVE REQUEST APPROVED
-            Log::info("The HR with ID { $loggedUserID } approved the leave request with ID { $leaveRequest->leaveRequestID }");
+                $leaveBalance->save();
 
-            return $leaveRequest;
-        });
+                Log::info("The HR with ID { $loggedUserID } approved the leave request with ID { $leaveRequest->leaveRequestID }");
+
+                return $leaveRequest->refresh();
+            });
+        } catch (ModelNotFoundException $e) {
+            Log::error("LeaveRequest not found: {$leaveRequestID} - " . $e->getMessage());
+            throw new \RuntimeException('Kërkesa për pushimit nuk u gjet.', 404);
+        } catch (QueryException $e) {
+            Log::error("Database error approving leave request {$leaveRequestID}: " . $e->getMessage());
+            throw new \RuntimeException('Dështoi miratimi i kërkesës së pushimit për shkak të një gabimi në bazën e të dhënave.', 500);
+        } catch (\RuntimeException $e) {
+            // Re-throw our custom exceptions with proper codes
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error("Unexpected error approving leave request {$leaveRequestID}: " . $e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim i papritur gjatë miratimit të kërkesës së pushimit.', 500);
+        }
     }
 
     public function rejectRequest(int $leaveRequestID, string $reason): LeaveRequest
     {
-        return DB::transaction(function () use ($leaveRequestID, $reason): LeaveRequest {
-            $loggedUserID = $this->getLoggedUserID();
-            $leaveRequest = LeaveRequest::where('leaveRequestID', $leaveRequestID)->firstOrFail();
-            $leaveRequest->update([
-                'status' => 'rejected',
-                'approvedBy' => $loggedUserID,
-                'approvedAt' => now(),
-                'rejectionReason' => $reason,
-            ]);
+        try {
+            return DB::transaction(function () use ($leaveRequestID, $reason): LeaveRequest {
+                $loggedUserID = $this->getLoggedUserID();
+                $leaveRequest = LeaveRequest::where('leaveRequestID', $leaveRequestID)->firstOrFail();
+                $leaveRequest->update([
+                    'status' => 'rejected',
+                    'approvedBy' => $loggedUserID,
+                    'approvedAt' => now(),
+                    'rejectionReason' => $reason,
+                ]);
 
-            return $leaveRequest;
-        });
+                Log::info("The HR with ID { $loggedUserID } rejected the leave request with ID { $leaveRequest->leaveRequestID }");
+                return $leaveRequest;
+            });
+        } catch (ModelNotFoundException $e) {
+            Log::error("LeaveRequest not found: {$leaveRequestID} - " . $e->getMessage());
+            throw new \RuntimeException('Kërkesa për pushimit nuk u gjet.', 404);
+
+        } catch (QueryException $e) {
+            Log::error("Database error rejecting leave request {$leaveRequestID}: " . $e->getMessage());
+            throw new \RuntimeException('Dështoi refuzimi i kërkesës së pushimit për shkak të një gabimi në bazën e të dhënave.', 500);
+
+        } catch (\Exception $e) {
+            Log::error("Unexpected error rejecting leave request {$leaveRequestID}: " . $e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim i papritur gjatë refuzimit të kërkesës së pushimit.', 500);
+        }
     }
 
     public function getTodaysLeaveRequests(): Collection
     {
-        return LeaveRequest::where('created_at', Carbon::now()->year)->get();
+        try {
+            return LeaveRequest::where('created_at', Carbon::now()->year)->get();
+        } catch (QueryException $e) {
+            Log::error('Database error fetching todays leave requests: ' . $e->getMessage());
+            throw new \RuntimeException('Dështoi marrja e kërkesave të pushimit të sotshëm për shkak të një gabimi në bazën e të dhënave.', 500);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error fetching todays leave requests: ' . $e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim i papritur gjatë marrjes së kërkesave të pushimit.', 500);
+        }
+    }
+
+    public function getPendingLeaveRequests(): LengthAwarePaginator
+    {
+        try {
+            return LeaveRequest::where('status', 'pending')
+                ->orderBy('created_at')
+                ->paginate(10);
+        } catch (QueryException $e) {
+            Log::error('Database error fetching pending leave requests: ' . $e->getMessage());
+            throw new \RuntimeException('Dështoi marrja e kërkesave të pushimit në pritje për shkak të një gabimi në bazën e të dhënave.', 500);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error fetching pending leave requests: ' . $e->getMessage());
+            throw new \RuntimeException('Ndodhi një gabim i papritur gjatë marrjes së kërkesave të pushimit.', 500);
+        }
     }
 
     private function isOnProbation(Employee $employee, LeaveType $leaveType): bool
@@ -528,7 +581,7 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
-    private function calculateRequestedDays(LeaveRequest $leaveRequest): float
+    public function calculateRequestedDays(LeaveRequest $leaveRequest): float
     {
         /** @var LeavePolicy $leavePolicy */
         /* $leavePolicy = $leaveRequest->policy(); */

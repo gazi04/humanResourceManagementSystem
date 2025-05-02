@@ -47,6 +47,8 @@ interface LeaveServiceInterface
 
     public function createBalanceForEmployee(Employee $employee, Collection $leaveTypes, int $year): void;
 
+    public function calculateRequestedDays(LeaveRequest $leaveRequest): float;
+
     /*
     * 4. LEAVE REQUEST FEATURES
     */
@@ -57,4 +59,6 @@ interface LeaveServiceInterface
     public function rejectRequest(int $leaveRequestID, string $reason): LeaveRequest;
 
     public function getTodaysLeaveRequests(): Collection;
+
+    public function getPendingLeaveRequests(): LengthAwarePaginator;
 }
