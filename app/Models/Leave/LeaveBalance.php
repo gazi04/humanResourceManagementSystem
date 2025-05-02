@@ -3,12 +3,15 @@
 namespace App\Models\Leave;
 
 use App\Models\Employee;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class LeaveBalance extends Model
 {
+    use HasFactory;
+
     protected $table = 'leave_balances';
 
     protected $primaryKey = 'leaveBalanceID';

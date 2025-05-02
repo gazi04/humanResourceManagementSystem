@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Department;
 use App\Models\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +22,7 @@ class EmployeeFactory extends Factory
             'hireDate' => $this->faker->date,
             'jobTitle' => $this->faker->jobTitle,
             'status' => $this->faker->randomElement(['Active', 'Inactive']),
-            'departmentID' => $this->faker->numberBetween(1, 4),
+            'departmentID' => Department::factory(),
             'supervisorID' => null, // Initially set to null
         ];
     }
