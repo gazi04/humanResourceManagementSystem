@@ -67,8 +67,8 @@
 
                             <dt class="col-sm-4">Supervisor:</dt>
                             <dd class="col-sm-8">
-                                @if($employee->supervisorFirstName)
-                                    {{ $employee->supervisorFirstName }} {{ $employee->supervisorLastName }}
+                                @if($employee->supervisor->firstName)
+                                    {{ $employee->supervisor->firstName }} {{ $employee->supervisor->lastName }}
                                 @else
                                     N/A
                                 @endif

@@ -39,6 +39,11 @@ class Employee extends Model implements AuthenticatableContract
         'remember_token',
     ];
 
+    public function supervisor()
+    {
+        return $this->belongsTo(Employee::class, 'supervisorID', 'employeeID');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\EmployeeRole, $this>
      */

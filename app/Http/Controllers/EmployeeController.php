@@ -100,7 +100,7 @@ class EmployeeController extends Controller
             $result = $this->employeeService->getEmployee($validated['employeeID']);
             $contracts = $this->contractService->getEmployeeContracts($validated['employeeID']);
 
-            return view('Employee.profile', ['employee' => $result[0], 'contracts' => $contracts]);
+            return view('Employee.profile', ['employee' => $result, 'contracts' => $contracts]);
         } catch (\Exception $e) {
             Log::error('Error fetching employee data', [$e->getMessage()]);
 
@@ -119,7 +119,7 @@ class EmployeeController extends Controller
             $employeeLeaveBalances = $this->leaveService->getBalances($validated['employeeID']);
 
             return view('Employee.profile', [
-                'employee' => $result[0],
+                'employee' => $result,
                 'contracts' => $contracts,
                 'balances' => $employeeLeaveBalances,
             ]);

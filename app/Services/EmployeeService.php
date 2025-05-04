@@ -8,6 +8,8 @@ use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Role;
 use App\Services\Interfaces\EmployeeServiceInterface;
+use Illuminate\Database\Eloquent\MassAssignmentException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -184,28 +186,25 @@ class EmployeeService implements EmployeeServiceInterface
             ->paginate(10));
     }
 
-    public function getEmployee(int $employeeID): array
+    public function getEmployee(int $employeeID): Employee
     {
-        return DB::transaction(fn () => DB::table('employees as e')
-            ->join('employee_roles as er', 'e.employeeID', '=', 'er.employeeID')
-            ->join('roles as r', 'er.roleID', '=', 'r.roleID')
-            ->leftJoin('departments as d', 'e.departmentID', '=', 'd.departmentID')
-            ->leftJoin('employees as s', 'e.supervisorID', '=', 's.employeeID')
-            ->where('e.employeeID', $employeeID)
-            ->select([
-                'e.employeeID',
-                'e.firstName',
-                'e.lastName',
-                'e.email',
-                'e.phone',
-                'e.hireDate',
-                'e.jobTitle',
-                'e.status',
-                'd.departmentName',
-                's.firstName as supervisorFirstName',
-                's.lastName as supervisorLastName',
-                'r.roleName',
-            ])->get()->toArray());
+        try {
+            return Employee::where('employeeID', $employeeID)
+                ->with('role', 'department', 'supervisor')
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            Log::error('Employee model isn\'t found:'.$e->getMessage());
+            throw new \RuntimeException('Punonjësi nuk u gjet në bazën e të dhënave.', 500, $e);
+        } catch (MassAssignmentException $e) {
+            Log::error('getEmployee failed'.$e->getMessage());
+            throw new \RuntimeException('Ofrohen fusha të pavlefshme.', 500, $e);
+        } catch (QueryException $e) {
+            Log::error('Can\'t find or return employee, database error: '.$e->getMessage());
+            throw new \RuntimeException('Gabim në bazën e të dhënave.', 500, $e);
+        } catch (\Exception $e) {
+            Log::error('Can\'t find or return the employee: '.$e->getMessage());
+            throw new \RuntimeException('Diçka shkoi keq.', 500, $e);
+        }
     }
 
     public function searchManagers(string $searchTerm)
