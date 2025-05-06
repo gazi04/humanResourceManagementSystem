@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\EmployeeRole;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,5 +39,56 @@ class EmployeeFactory extends Factory
                 $employee->save();
             }
         });
+    }
+
+    /**
+     * Assign a random role to the employee (or specific role if provided)
+     */
+    public function withRole(?string $roleName = null): static
+    {
+        return $this->afterCreating(function (Employee $employee) use ($roleName) {
+            $role = $roleName
+                ? Role::where('roleName', $roleName)->first()
+                : Role::inRandomOrder()->first();
+
+            if ($role) {
+                EmployeeRole::updateOrCreate(
+                    ['employeeID' => $employee->employeeID],
+                    ['roleID' => $role->roleID]
+                );
+            }
+        });
+    }
+
+    /**
+     * Assign admin role
+     */
+    public function admin(): static
+    {
+        return $this->withRole('admin');
+    }
+
+    /**
+     * Assign HR role
+     */
+    public function hr(): static
+    {
+        return $this->withRole('hr');
+    }
+
+    /**
+     * Assign employee role
+     */
+    public function regularEmployee(): static
+    {
+        return $this->withRole('employee');
+    }
+
+    /**
+     * Assign manager role
+     */
+    public function manager(): static
+    {
+        return $this->withRole('manager');
     }
 }
