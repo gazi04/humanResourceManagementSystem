@@ -233,7 +233,9 @@ class LeaveService implements LeaveServiceInterface
 
         try {
             DB::transaction(function () use ($year): void {
-                $employees = Employee::where('status', 'Active')->get();
+                $employees = Employee::with('employeeRole')
+                    ->where('status', 'Active')
+                    ->get();
 
                 $leaveTypes = LeaveType::with(['policy', 'roles'])
                     ->where('isActive', true)
@@ -326,16 +328,12 @@ class LeaveService implements LeaveServiceInterface
     public function getBalances(int $employeeID): Collection
     {
         try {
-            $balances = LeaveBalance::where([
+            return LeaveBalance::where([
                 'employeeID' => $employeeID,
                 'year' => Carbon::now()->year,
             ])->get();
-
-            throw_unless($balances->isEmpty(), new ModelNotFoundException('Leave balance not found'));
-
-            return $balances;
         } catch (ModelNotFoundException $e) {
-            Log::error("Leave balance not found for employee {$employeeID}. This is the error message:".$e->getMessage());
+            Log::error("Leave balance not found for employee {$employeeID}:".$e->getMessage());
             throw new \RuntimeException('Leave balance record not found', 404, $e);
         } catch (\Exception $e) {
             Log::error('Error retrieving leave balance: '.$e->getMessage());
@@ -552,7 +550,7 @@ class LeaveService implements LeaveServiceInterface
             ]
         );
 
-        Log::debug("Created balance for employee {$employee->employeeID}, leave type {$leaveType->leaveTypeID}, year {$year}");
+        Log::info("Created balance for employee {$employee->employeeID}, leave type {$leaveType->leaveTypeID}, year {$year}");
     }
 
     private function calculateCarryOver(?LeaveBalance $previousBalance, LeaveType $leaveType): float
@@ -600,7 +598,7 @@ class LeaveService implements LeaveServiceInterface
     {
         return DB::table('leave_balance_initializations')
             ->where('year', $year)
-            ->where('is_initialized', true)
+            ->where('isInitialized', true)
             ->exists();
     }
 
@@ -609,9 +607,9 @@ class LeaveService implements LeaveServiceInterface
         DB::table('leave_balance_initializations')->updateOrInsert(
             ['year' => $year],
             [
-                'is_initialized' => true,
-                'initialized_at' => now(),
-                'initialized_by' => $initiatorId,
+                'isInitialized' => true,
+                'initializedAt' => now(),
+                'initializedBy' => $initiatorId,
                 'updated_at' => now(),
             ]
         );

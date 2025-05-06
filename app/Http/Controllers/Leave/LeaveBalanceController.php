@@ -30,7 +30,7 @@ class LeaveBalanceController extends Controller
         try {
             $this->leaveService->addDays($validated['leaveBalanceID'], $validated['days']);
 
-            return redirect()->rout('hr.dashboard')->with('success', 'Bilanci i pushimeve u përditësua me sukses.');
+            return redirect()->route('hr.dashboard')->with('success', 'Bilanci i pushimeve u përditësua me sukses.');
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -43,7 +43,7 @@ class LeaveBalanceController extends Controller
         try {
             $this->leaveService->deductDays($validated['leaveBalanceID'], $validated['days']);
 
-            return redirect()->rout('hr.dashboard')->with('success', 'Bilanci i pushimeve u përditësua me sukses.');
+            return redirect()->route('hr.dashboard')->with('success', 'Bilanci i pushimeve u përditësua me sukses.');
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }

@@ -112,10 +112,10 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         Route::get('/is-active', 'toggleIsActive')->name('is-active');
     });
 
-    Route::prefix('leave-balances')->name('leave-balance')->controller(LeaveBalanceController::class)->group(function () {
-        Route::get('/initialize-yearly-balance', 'initYearlyBalance');
-        Route::patch('/add-days', 'addDaysFromBalance');
-        Route::patch('/deduct-days', 'deductDaysFromBalance');
+    Route::prefix('leave-balances')->name('leave-balance.')->controller(LeaveBalanceController::class)->group(function () {
+        Route::get('/initialize-yearly-balance', 'initYearlyBalance')->name('init');
+        Route::patch('/add-days', 'addDaysFromBalance')->name('add');
+        Route::patch('/deduct-days', 'deductDaysFromBalance')->name('deduct');
     });
 
     Route::prefix('leave-requests')->name('leave-request')->controller(LeaveRequestController::class)->group(function () {
