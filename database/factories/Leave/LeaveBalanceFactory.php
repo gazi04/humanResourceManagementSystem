@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class LeaveBalanceFactory extends Factory
 {
-   /**
+    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
@@ -37,7 +37,7 @@ class LeaveBalanceFactory extends Factory
     {
         return $this->afterCreating(function (\App\Models\Leave\LeaveBalance $balance) {
             // Ensure the leave type has a policy if not already exists
-            if (!$balance->leaveType->policy) {
+            if (! $balance->leaveType->policy) {
                 $balance->leaveType->policy()->create([
                     'annualQuota' => $this->faker->numberBetween(15, 30),
                     'maxConsecutiveDays' => $this->faker->numberBetween(5, 14),

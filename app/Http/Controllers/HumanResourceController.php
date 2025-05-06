@@ -17,13 +17,17 @@ class HumanResourceController extends Controller
 
     public function index(): View
     {
-        $leaveTypes = $this->leaveService->getLeaveTypes();
-        $todaysLeaveRequests = $this->leaveService->getTodaysLeaveRequests();
+        try {
+            $leaveTypes = $this->leaveService->getLeaveTypes();
+            $todaysLeaveRequests = $this->leaveService->getTodaysLeaveRequests();
 
-        return view('Hr.dashboard', [
-            'leaveTypes' => $leaveTypes,
-            'todaysLeaveRequests' => $todaysLeaveRequests,
-        ]);
+            return view('Hr.dashboard', [
+                'leaveTypes' => $leaveTypes,
+                'todaysLeaveRequests' => $todaysLeaveRequests,
+            ]);
+        } catch (\Exception $e) {
+            return view('Hr.dashboard')->with('error', $e->getMessage());
+        }
     }
 
     public function getHrs(): JsonResponse

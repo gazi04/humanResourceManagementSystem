@@ -20,7 +20,7 @@ class ContractFactory extends Factory
     {
         return [
             'employeeID' => Employee::factory(),
-            'contractPath' => 'contracts/' . Str::random(40) . '.pdf',
+            'contractPath' => 'contracts/'.Str::random(40).'.pdf',
         ];
     }
 

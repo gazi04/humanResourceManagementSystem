@@ -237,4 +237,5 @@ it('rolls back all changes if an error occurs during creation', function () {
     expect(LeaveType::count())->toBe($leaveTypeCountBefore);
     expect(DB::table('leave_policies')->count())->toBe($leavePolicyCountBefore);
     expect(DB::table('leave_type_role')->count())->toBe($pivotCountBefore);
+    Mockery::close();
 });

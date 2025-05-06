@@ -318,10 +318,10 @@ class LeaveService implements LeaveServiceInterface
             return $balance;
         } catch (ModelNotFoundException $e) {
             Log::error("Leave balance not found for employee {$employeeID}, leave type {$leaveTypeID}, year {$year}\nThis is the error message:".$e->getMessage());
-            throw new \RuntimeException('Leave balance record not found', 404, $e);
+            throw new \RuntimeException('Regjistri i bilancit të pushimeve nuk u gjet.', 404, $e);
         } catch (\Exception $e) {
             Log::error('Error retrieving leave balance: '.$e->getMessage());
-            throw new \RuntimeException('Failed to retrieve leave balance', 500, $e);
+            throw new \RuntimeException('Dështoi marrja e bilancit të pushimeve.', 500, $e);
         }
     }
 
@@ -358,6 +358,7 @@ class LeaveService implements LeaveServiceInterface
             // Check if employee has completed probation period
             if ($this->isOnProbation($employee, $leaveType)) {
                 Log::info("Employee {$employee->employeeID} is on probation for leave type {$leaveType->leaveTypeID}");
+
                 continue;
             }
 
@@ -397,7 +398,7 @@ class LeaveService implements LeaveServiceInterface
                     ->firstOrFail();
 
                 // Validate leave balance exists
-                if (!$leaveRequest->leaveBalance) {
+                if (! $leaveRequest->leaveBalance) {
                     throw new \RuntimeException('', 400);
                 }
 
@@ -426,16 +427,16 @@ class LeaveService implements LeaveServiceInterface
                 return $leaveRequest->refresh();
             });
         } catch (ModelNotFoundException $e) {
-            Log::error("LeaveRequest not found: {$leaveRequestID} - " . $e->getMessage());
+            Log::error("LeaveRequest not found: {$leaveRequestID} - ".$e->getMessage());
             throw new \RuntimeException('Kërkesa për pushimit nuk u gjet.', 404);
         } catch (QueryException $e) {
-            Log::error("Database error approving leave request {$leaveRequestID}: " . $e->getMessage());
+            Log::error("Database error approving leave request {$leaveRequestID}: ".$e->getMessage());
             throw new \RuntimeException('Dështoi miratimi i kërkesës së pushimit për shkak të një gabimi në bazën e të dhënave.', 500);
         } catch (\RuntimeException $e) {
             // Re-throw our custom exceptions with proper codes
             throw $e;
         } catch (\Exception $e) {
-            Log::error("Unexpected error approving leave request {$leaveRequestID}: " . $e->getMessage());
+            Log::error("Unexpected error approving leave request {$leaveRequestID}: ".$e->getMessage());
             throw new \RuntimeException('Ndodhi një gabim i papritur gjatë miratimit të kërkesës së pushimit.', 500);
         }
     }
@@ -454,18 +455,17 @@ class LeaveService implements LeaveServiceInterface
                 ]);
 
                 Log::info("The HR with ID { $loggedUserID } rejected the leave request with ID { $leaveRequest->leaveRequestID }");
+
                 return $leaveRequest;
             });
         } catch (ModelNotFoundException $e) {
-            Log::error("LeaveRequest not found: {$leaveRequestID} - " . $e->getMessage());
+            Log::error("LeaveRequest not found: {$leaveRequestID} - ".$e->getMessage());
             throw new \RuntimeException('Kërkesa për pushimit nuk u gjet.', 404);
-
         } catch (QueryException $e) {
-            Log::error("Database error rejecting leave request {$leaveRequestID}: " . $e->getMessage());
+            Log::error("Database error rejecting leave request {$leaveRequestID}: ".$e->getMessage());
             throw new \RuntimeException('Dështoi refuzimi i kërkesës së pushimit për shkak të një gabimi në bazën e të dhënave.', 500);
-
         } catch (\Exception $e) {
-            Log::error("Unexpected error rejecting leave request {$leaveRequestID}: " . $e->getMessage());
+            Log::error("Unexpected error rejecting leave request {$leaveRequestID}: ".$e->getMessage());
             throw new \RuntimeException('Ndodhi një gabim i papritur gjatë refuzimit të kërkesës së pushimit.', 500);
         }
     }
@@ -475,10 +475,10 @@ class LeaveService implements LeaveServiceInterface
         try {
             return LeaveRequest::where('created_at', Carbon::now()->year)->get();
         } catch (QueryException $e) {
-            Log::error('Database error fetching todays leave requests: ' . $e->getMessage());
+            Log::error('Database error fetching todays leave requests: '.$e->getMessage());
             throw new \RuntimeException('Dështoi marrja e kërkesave të pushimit të sotshëm për shkak të një gabimi në bazën e të dhënave.', 500);
         } catch (\Exception $e) {
-            Log::error('Unexpected error fetching todays leave requests: ' . $e->getMessage());
+            Log::error('Unexpected error fetching todays leave requests: '.$e->getMessage());
             throw new \RuntimeException('Ndodhi një gabim i papritur gjatë marrjes së kërkesave të pushimit.', 500);
         }
     }
@@ -490,10 +490,10 @@ class LeaveService implements LeaveServiceInterface
                 ->orderBy('created_at')
                 ->paginate(10);
         } catch (QueryException $e) {
-            Log::error('Database error fetching pending leave requests: ' . $e->getMessage());
+            Log::error('Database error fetching pending leave requests: '.$e->getMessage());
             throw new \RuntimeException('Dështoi marrja e kërkesave të pushimit në pritje për shkak të një gabimi në bazën e të dhënave.', 500);
         } catch (\Exception $e) {
-            Log::error('Unexpected error fetching pending leave requests: ' . $e->getMessage());
+            Log::error('Unexpected error fetching pending leave requests: '.$e->getMessage());
             throw new \RuntimeException('Ndodhi një gabim i papritur gjatë marrjes së kërkesave të pushimit.', 500);
         }
     }
