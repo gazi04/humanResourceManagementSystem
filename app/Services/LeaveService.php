@@ -399,7 +399,7 @@ class LeaveService implements LeaveServiceInterface
 
                 // Validate leave balance exists
                 if (! $leaveRequest->leaveBalance) {
-                    throw new \RuntimeException('', 400);
+                    throw new \RuntimeException('Nuk u gjet bilanc pushimi për këtë kërkesë.', 400);
                 }
 
                 $loggedUserID = $this->getLoggedUserID();
@@ -413,6 +413,8 @@ class LeaveService implements LeaveServiceInterface
 
                 // SECOND NEEDS TO DEDUCT THE REQUESTED DAYS FROM THE LEAVE BALANCE
                 /** @var LeaveBalance $leaveBalance */
+                $leaveBalance = $leaveRequest->leaveBalance;
+
                 $requestedDays = $this->calculateRequestedDays($leaveRequest);
                 $remainingDays = $leaveBalance->remainingDays;
                 $usedDays = $leaveBalance->usedDays;
@@ -428,7 +430,7 @@ class LeaveService implements LeaveServiceInterface
             });
         } catch (ModelNotFoundException $e) {
             Log::error("LeaveRequest not found: {$leaveRequestID} - ".$e->getMessage());
-            throw new \RuntimeException('Kërkesa për pushimit nuk u gjet.', 404);
+            throw new \RuntimeException('Kërkesa për pushim nuk u gjet.', 404);
         } catch (QueryException $e) {
             Log::error("Database error approving leave request {$leaveRequestID}: ".$e->getMessage());
             throw new \RuntimeException('Dështoi miratimi i kërkesës së pushimit për shkak të një gabimi në bazën e të dhënave.', 500);
@@ -460,7 +462,7 @@ class LeaveService implements LeaveServiceInterface
             });
         } catch (ModelNotFoundException $e) {
             Log::error("LeaveRequest not found: {$leaveRequestID} - ".$e->getMessage());
-            throw new \RuntimeException('Kërkesa për pushimit nuk u gjet.', 404);
+            throw new \RuntimeException('Kërkesa për pushim nuk u gjet.', 404);
         } catch (QueryException $e) {
             Log::error("Database error rejecting leave request {$leaveRequestID}: ".$e->getMessage());
             throw new \RuntimeException('Dështoi refuzimi i kërkesës së pushimit për shkak të një gabimi në bazën e të dhënave.', 500);

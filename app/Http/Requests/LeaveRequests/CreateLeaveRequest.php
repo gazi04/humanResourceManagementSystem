@@ -14,7 +14,6 @@ class CreateLeaveRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employeeID' => ['required', 'exists:employees,employeeID'],
             'leaveTypeID' => ['required', 'exists:leave_types,leaveTypeID'],
             'startDate' => ['required', 'date', 'after_or_equal:today'],
             'endDate' => ['required', 'date', 'after_or_equal:startDate'],

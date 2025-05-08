@@ -3,6 +3,7 @@
 namespace App\Models\Leave;
 
 use App\Models\Employee;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class LeaveRequest extends Model
 {
+    use HasFactory;
+
     protected $table = 'leave_requests';
 
     protected $primaryKey = 'leaveRequestID';
@@ -55,13 +58,13 @@ class LeaveRequest extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\Leave\LeaveBalance, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\Models\Leave\LeaveBalance>
      */
     public function leaveBalance(): HasOne
     {
-        return $this->hasOne(LeaveBalance::class)
+        return $this->hasOne(LeaveBalance::class, 'leaveTypeID', 'leaveTypeID')
             ->where('employeeID', $this->employeeID)
-            ->where('leaveTypeID', $this->leaveTypeID);
+            ->where('year', now()->year);
     }
 
     /**

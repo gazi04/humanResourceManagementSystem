@@ -118,7 +118,7 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class, IsUserHRMiddleware::cl
         Route::patch('/deduct-days', 'deductDaysFromBalance')->name('deduct');
     });
 
-    Route::prefix('leave-requests')->name('leave-request')->controller(LeaveRequestController::class)->group(function () {
+    Route::prefix('leave-requests')->name('leave-request.')->controller(LeaveRequestController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::patch('/approve', 'approve')->name('approve');
         Route::patch('/reject', 'reject')->name('reject');

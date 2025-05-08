@@ -14,7 +14,7 @@ class ApproveLeaveRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'leaveTypeID' => ['required', 'exists:leave_types,leaveTypeID'],
+            'leaveRequestID' => ['required', 'exists:leave_requests,leaveRequestID'],
         ];
     }
 
@@ -26,8 +26,8 @@ class ApproveLeaveRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'leaveTypeID.required' => 'ID e llojit të lejes është e detyrueshme.',
-            'leaveTypeID.exists' => 'Lloji i lejes me këtë ID nuk egziston.',
+            'leaveRequestID.required' => 'ID e kërkesës së lejes është e detyrueshme.',
+            'leaveRequestID.exists' => 'Kërkesa e lejes me këtë ID nuk egziston.',
         ];
     }
 }

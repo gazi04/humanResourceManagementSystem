@@ -14,7 +14,7 @@ class RejectLeaveRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'leaveTypeID' => ['required', 'exists:leave_types,leaveTypeID'],
+            'leaveRequestID' => ['required', 'exists:leave_requests,leaveRequestID'],
             'reason' => ['nullable', 'string'],
         ];
     }
@@ -27,6 +27,8 @@ class RejectLeaveRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'leaveRequestID.required' => 'ID e kërkesës së lejes është e detyrueshme.',
+            'leaveRequestID.exists' => 'Kërkesa e lejes me këtë ID nuk egziston.',
             'leaveTypeID.required' => 'ID e llojit të lejes është e detyrueshme.',
             'leaveTypeID.exists' => 'Lloji i lejes me këtë ID nuk egziston.',
             'reason.string' => 'Arsyeja duhet të jetë një varg tekstual.',

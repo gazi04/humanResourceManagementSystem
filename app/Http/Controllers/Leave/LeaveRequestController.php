@@ -42,7 +42,6 @@ class LeaveRequestController extends Controller
     {
         try {
             $data = $request->only([
-                'employeeID',
                 'leaveTypeID',
                 'startDate',
                 'endDate',
@@ -79,10 +78,7 @@ class LeaveRequestController extends Controller
 
             return redirect()->route('', $leaveRequest->leaveRequestID)
                 ->with('success', 'Kërkesa për pushim u dorëzua me sukses!');
-
         } catch (\Exception $e) {
-            Log::error('Error creating leave request: '.$e->getMessage());
-
             return back()->withErrors([
                 'error' => 'Ndodhi një gabim gjatë dorëzimit të kërkesës. Ju lutem provoni përsëri.',
             ]);
@@ -91,10 +87,10 @@ class LeaveRequestController extends Controller
 
     public function approve(ApproveLeaveRequest $request)
     {
-        $leaveRequestId = $request->only('leaveTypeID');
+        $leaveRequestId = $request->only('leaveRequestID');
 
         try {
-            $this->leaveService->approveLeaveRequest($leaveRequestId['leaveTypeID']);
+            $this->leaveService->approveLeaveRequest($leaveRequestId['leaveRequestID']);
 
             return redirect()->route('hr.leave-request.index')
                 ->with('success', 'Kërkesa e pushimit u miratua me sukses.');
@@ -106,10 +102,10 @@ class LeaveRequestController extends Controller
 
     public function reject(RejectLeaveRequest $request)
     {
-        $data = $request->only(['leaveTypeID', 'reason']);
+        $data = $request->only(['leaveRequestID', 'reason']);
 
         try {
-            $this->leaveService->rejectRequest($data['leaveTypeID'], $data['reason']);
+            $this->leaveService->rejectRequest($data['leaveRequestID'], $data['reason']);
 
             return redirect()->route('hr.leave-request.index')
                 ->with('success', 'Kërkesa e pushimit u refuzua me sukses.');
