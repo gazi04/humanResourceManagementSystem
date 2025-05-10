@@ -79,7 +79,7 @@ class LeaveRequestController extends Controller
             return redirect()->route('', $leaveRequest->leaveRequestID)
                 ->with('success', 'Kërkesa për pushim u dorëzua me sukses!');
         } catch (\Exception $e) {
-            return back()->withErrors([
+            return back()->with([
                 'error' => 'Ndodhi një gabim gjatë dorëzimit të kërkesës. Ju lutem provoni përsëri.',
             ]);
         }
