@@ -397,9 +397,15 @@ class LeaveService implements LeaveServiceInterface
                     ->with('leaveBalance')
                     ->firstOrFail();
 
-                // Validate leave balance exists
-                if (! $leaveRequest->leaveBalance) {
-                    throw new \RuntimeException('Nuk u gjet bilanc pushimi për këtë kërkesë.', 400);
+                /** @var LeaveBalance $leaveBalance */
+                $leaveBalance = LeaveBalance::where([
+                    'employeeID' => $leaveRequest->employeeID,
+                    'leaveTypeID' => $leaveRequest->leaveTypeID,
+                    'year' => $leaveRequest->startDate->year,
+                ])->first();
+
+                if (! $leaveBalance) {
+                    throw new \RuntimeException('Nuk u gjet bilanci i pushimit për këtë kërkesë.', 400);
                 }
 
                 $loggedUserID = $this->getLoggedUserID();
@@ -412,15 +418,9 @@ class LeaveService implements LeaveServiceInterface
                 ]);
 
                 // SECOND NEEDS TO DEDUCT THE REQUESTED DAYS FROM THE LEAVE BALANCE
-                /** @var LeaveBalance $leaveBalance */
-                $leaveBalance = $leaveRequest->leaveBalance;
-
-                $requestedDays = $this->calculateRequestedDays($leaveRequest);
-                $remainingDays = $leaveBalance->remainingDays;
-                $usedDays = $leaveBalance->usedDays;
-
-                $leaveBalance->remainingDays = $remainingDays - $requestedDays;
-                $leaveBalance->usedDays = $usedDays + $requestedDays;
+                /* $requestedDays = $this->calculateRequestedDays($leaveRequest); */
+                $leaveBalance->remainingDays -= $leaveRequest->requestedDays;
+                $leaveBalance->usedDays += $leaveRequest->requestedDays;
 
                 $leaveBalance->save();
 

@@ -62,9 +62,9 @@ class LeaveRequest extends Model
      */
     public function leaveBalance(): HasOne
     {
-        return $this->hasOne(LeaveBalance::class, 'leaveTypeID', 'leaveTypeID')
-            ->where('employeeID', $this->employeeID)
-            ->where('year', now()->year);
+        return $this->hasOne(LeaveBalance::class, 'employeeID', 'employeeID')
+            ->where('leaveTypeID', $this->leaveTypeID)
+            ->where('year', $this->startDate ? $this->startDate->year : now()->year);
     }
 
     /**
