@@ -26,7 +26,7 @@ beforeEach(function (): void {
     Auth::guard('employee')->login($this->hrUser);
 });
 
-it('gets the id of the logged in user', function () {
+it('gets the id of the logged in user', function (): void {
     // Create a class that uses the trait for testing
     $testClass = new class
     {
@@ -40,7 +40,7 @@ it('gets the id of the logged in user', function () {
     expect($loggedUserId)->toBe($this->hrUser->employeeID);
 });
 
-it('throws exception when no user is logged in', function () {
+it('throws exception when no user is logged in', function (): void {
     // Ensure no user is logged in
     Auth::guard('employee')->logout();
 
@@ -51,5 +51,5 @@ it('throws exception when no user is logged in', function () {
     };
 
     // Assert that it throws an exception
-    expect(fn () => $testClass->getLoggedUserID())->toThrow(Exception::class);
+    expect(fn (): int => $testClass->getLoggedUserID())->toThrow(Exception::class);
 });

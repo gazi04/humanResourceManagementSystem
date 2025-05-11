@@ -14,7 +14,9 @@ trait RedirectHelper
         /** @var Employee $user */
         $user = Auth::guard('employee')->user();
 
-        if ($user === null) { redirect()->route('loginPage'); }
+        if ($user === null) {
+            redirect()->route('loginPage');
+        }
 
         return match ($user->getRoleName()) {
             'admin' => redirect()->route('admin.dashboard'),

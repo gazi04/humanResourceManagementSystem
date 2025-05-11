@@ -33,9 +33,9 @@ Route::middleware([EnsureUserIsLoggedInMiddleware::class])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::prefix('/leave-request')->name('leave-request')->controller(LeaveRequestController::class)->group(function () {
-        Route::get('/', 'create');
-        Route::patch('/store', 'store');
+    Route::prefix('/leave-request')->name('leave-request.')->controller(LeaveRequestController::class)->group(function () {
+        Route::get('/', 'create')->name('create');
+        Route::post('/store', 'store')->name('store');
     });
 });
 

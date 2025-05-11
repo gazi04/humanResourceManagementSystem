@@ -30,19 +30,7 @@ class LoginController extends Controller
         $guard = Auth::guard('employee');
         if ($guard->attempt($credentials)) {
             $request->session()->regenerate();
-
             return $this->toDashboard($request);
-
-            /** @var Employee $user */
-            /* $user = Auth::guard('employee')->user(); */
-            /**/
-            /* return match ($user->getRoleName()) { */
-            /*     'admin' => redirect()->route('admin.dashboard'), */
-            /*     'hr' => redirect()->route('hr.dashboard'), */
-            /*     'manager' => redirect()->route('manager.dashboard'), */
-            /*     'employee' => redirect()->route('employee.dashboard'), */
-            /*     default => abort(403), */
-            /* }; */
         }
 
         return back()->withErrors([

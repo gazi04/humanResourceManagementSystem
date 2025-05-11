@@ -21,7 +21,7 @@ beforeEach(function (): void {
     Mockery::close();
 });
 
-it('can store a new leave type with policies', function () {
+it('can store a new leave type with policies', function (): void {
     // Prepare the request data
     $data = [
         'name' => 'Annual Leave',
@@ -72,7 +72,7 @@ it('can store a new leave type with policies', function () {
     expect($leaveType->roles)->toHaveCount(4);
 });
 
-it('validates required fields when creating leave type with policies', function () {
+it('validates required fields when creating leave type with policies', function (): void {
     $response = $this->post(route('hr.leave-type.store'), []);
 
     $response->assertSessionHasErrors([
@@ -88,7 +88,7 @@ it('validates required fields when creating leave type with policies', function 
     ]);
 });
 
-it('validates name uniqueness when creating leave type', function () {
+it('validates name uniqueness when creating leave type', function (): void {
     $existingLeaveType = LeaveType::factory()->create(['name' => 'Existing Leave']);
 
     $data = [
@@ -109,7 +109,7 @@ it('validates name uniqueness when creating leave type', function () {
     $response->assertSessionHasErrors(['name' => 'Ekziston tashmë një lloj leje me këtë emër.']);
 });
 
-it('validates numeric fields for policy data', function () {
+it('validates numeric fields for policy data', function (): void {
     $data = [
         'name' => 'Invalid Policy Leave',
         'description' => 'Description',
@@ -134,7 +134,7 @@ it('validates numeric fields for policy data', function () {
     ]);
 });
 
-it('validates minimum values for policy numeric fields', function () {
+it('validates minimum values for policy numeric fields', function (): void {
     $data = [
         'name' => 'Negative Policy Leave',
         'description' => 'Description',
@@ -159,7 +159,7 @@ it('validates minimum values for policy numeric fields', function () {
     ]);
 });
 
-it('validates json fields for policy data', function () {
+it('validates json fields for policy data', function (): void {
     $data = [
         'name' => 'Invalid JSON Leave',
         'description' => 'Description',
@@ -183,7 +183,7 @@ it('validates json fields for policy data', function () {
     ]);
 });
 
-it('validates role existence when creating leave type', function () {
+it('validates role existence when creating leave type', function (): void {
     $invalidRoleId = 9999; // Assuming this doesn't exist
 
     $data = [
@@ -205,9 +205,9 @@ it('validates role existence when creating leave type', function () {
     expect($errors->first('roles.*'))->toContain('role të zgjedhura nuk janë të vlefshme');
 });
 
-it('rolls back all changes if an error occurs during creation', function () {
+it('rolls back all changes if an error occurs during creation', function (): void {
     // Mock the service to throw an exception
-    $this->mock(\App\Services\LeaveService::class, function ($mock) {
+    $this->mock(\App\Services\LeaveService::class, function ($mock): void {
         $mock->shouldReceive('createLeaveTypeWithPolicy')
             ->andThrow(new \RuntimeException('Something went wrong'));
     });

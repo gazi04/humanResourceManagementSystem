@@ -20,7 +20,7 @@ beforeEach(function (): void {
     Mockery::close();
 });
 
-it('shows employee profile with all data', function () {
+it('shows employee profile with all data', function (): void {
     // Create test data
     $employee = Employee::factory()->create([
         'employeeID' => 99,
@@ -37,18 +37,19 @@ it('shows employee profile with all data', function () {
 
     $response->assertOK()
         ->assertViewHas('employee', $employee)
-        ->assertViewHas('contracts', function ($viewContracts) use ($contracts) {
+        ->assertViewHas('contracts', function ($viewContracts) use ($contracts): bool {
             // Check if it's either a paginator with the expected items or the raw collection
             if ($viewContracts instanceof \Illuminate\Pagination\LengthAwarePaginator) {
                 return $viewContracts->total() === count($contracts) &&
                        $viewContracts->pluck('id')->toArray() === $contracts->pluck('id')->toArray();
             }
+
             return $viewContracts->pluck('id')->toArray() === $contracts->pluck('id')->toArray();
         })
         ->assertViewHas('balances', $balances);
 });
 
-it('handles missing employee', function () {
+it('handles missing employee', function (): void {
     $invalidId = 9999;
 
     $response = $this->get(route('hr.employee.profile', [
@@ -61,7 +62,7 @@ it('handles missing employee', function () {
         ]);
 });
 
-it('shows empty contracts when none exist', function () {
+it('shows empty contracts when none exist', function (): void {
     $employee = Employee::factory()->create();
 
     $response = $this->get(route('hr.employee.profile', [
@@ -69,24 +70,21 @@ it('shows empty contracts when none exist', function () {
     ]));
 
     $response->assertOk()
-        ->assertViewHas('contracts', function ($contracts) {
+        ->assertViewHas('contracts', fn ($contracts): bool =>
             // Check if it's either a paginator with empty items or an empty collection
-            return ($contracts instanceof \Illuminate\Pagination\LengthAwarePaginator &&
-                    $contracts->isEmpty()) ||
-                   ($contracts instanceof \Illuminate\Support\Collection &&
-                    $contracts->isEmpty());
-        });
+            ($contracts instanceof \Illuminate\Pagination\LengthAwarePaginator &&
+                $contracts->isEmpty()) ||
+               ($contracts instanceof \Illuminate\Support\Collection &&
+                $contracts->isEmpty()));
 });
 
-it('handles database errors gracefully', function () {
+it('handles database errors gracefully', function (): void {
     Log::shouldReceive('error')
         ->once()
-        ->withArgs(function ($message) {
-            return str_contains($message, 'Error fetching employee data');
-        });
+        ->withArgs(fn ($message): bool => str_contains((string) $message, 'Error fetching employee data'));
 
     // Force a database error
-    $this->mock(\App\Services\EmployeeService::class, function ($mock) {
+    $this->mock(\App\Services\EmployeeService::class, function ($mock): void {
         $mock->shouldReceive('getEmployee')
             ->andThrow(new \Exception('Database error'));
     });
@@ -101,7 +99,7 @@ it('handles database errors gracefully', function () {
         ->assertSessionHas('error', 'Ndodhi një gabim gjatë marrjes së të dhënave të profilit, provoni përsëri më vonë.');
 });
 
-it('validates employee ID parameter', function () {
+it('validates employee ID parameter', function (): void {
     // Test invalid ID formats
     $response = $this->get(route('hr.employee.profile', [
         'employeeID' => 'invalid',

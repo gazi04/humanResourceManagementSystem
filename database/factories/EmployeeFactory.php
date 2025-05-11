@@ -20,7 +20,7 @@ class EmployeeFactory extends Factory
             'lastName' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
             'password' => Hash::make('password'), // Default password
-            'phone' => $this->faker->numerify('+###########'),
+            'phone' => $this->faker->regexify('(\+383|0)?[4-6][0-9]{7}'),
             'hireDate' => $this->faker->date,
             'jobTitle' => $this->faker->jobTitle,
             'status' => $this->faker->randomElement(['Active', 'Inactive']),

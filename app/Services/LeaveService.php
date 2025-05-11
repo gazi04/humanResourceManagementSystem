@@ -500,6 +500,21 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
+    public function calculateRequestedDays(LeaveRequest $leaveRequest): float
+    {
+        /** @var LeavePolicy $leavePolicy */
+        /* $leavePolicy = $leaveRequest->policy(); */
+        if ($leaveRequest->durationType === 'halfDay') {
+            return 0.5;
+        }
+
+        $start = Carbon::parse($leaveRequest->startDate);
+        $end = Carbon::parse($leaveRequest->endDate);
+
+        // Exclude weekends
+        return $start->diffInDaysFiltered(fn ($date): bool => ! $date->isWeekend(), $end) + 1; // Inclusive of start date
+    }
+
     private function isOnProbation(Employee $employee, LeaveType $leaveType): bool
     {
         // Skip probation check if no policy or probation period defined
@@ -579,21 +594,6 @@ class LeaveService implements LeaveServiceInterface
         if ($balance->remainingDays < $requestedDays) {
             throw new \Exception('Insufficient leave balance');
         }
-    }
-
-    public function calculateRequestedDays(LeaveRequest $leaveRequest): float
-    {
-        /** @var LeavePolicy $leavePolicy */
-        /* $leavePolicy = $leaveRequest->policy(); */
-        if ($leaveRequest->durationType === 'halfDay') {
-            return 0.5;
-        }
-
-        $start = Carbon::parse($leaveRequest->startDate);
-        $end = Carbon::parse($leaveRequest->endDate);
-
-        // Exclude weekends
-        return $start->diffInDaysFiltered(fn ($date): bool => ! $date->isWeekend(), $end) + 1; // Inclusive of start date
     }
 
     private function isYearInitialized(int $year): bool

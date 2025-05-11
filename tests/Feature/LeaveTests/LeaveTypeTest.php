@@ -546,7 +546,7 @@ it('handles runtime exceptions during leave type update', function (): void {
 /*
 * TOGGLE IS ACTIVE LEAVE TYPE
 */
-test('toggle is-active requires valid leaveTypeID', function () {
+test('toggle is-active requires valid leaveTypeID', function (): void {
     // Test missing leaveTypeID
     $response = $this->get(route('hr.leave-type.is-active'));
     $response->assertRedirect(route('hr.leave-type.index'));
@@ -568,7 +568,7 @@ test('toggle is-active requires valid leaveTypeID', function () {
     $response->assertSessionHasErrors(['leaveTypeID' => 'Lloji i lejes me këtë ID nuk egziston.']);
 });
 
-test('can toggle isActive status of leave type', function () {
+test('can toggle isActive status of leave type', function (): void {
     $leaveType = LeaveType::factory()->create(['isActive' => true]);
 
     // Initial state is active

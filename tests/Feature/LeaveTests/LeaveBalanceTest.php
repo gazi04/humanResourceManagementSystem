@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->artisan('migrate');
     $this->withoutMiddleware([
         \App\Http\Middleware\EnsureUserIsLoggedInMiddleware::class,
@@ -22,7 +22,7 @@ beforeEach(function () {
     Mockery::close();
 });
 
-it('loads the balances in the view', function () {
+it('loads the balances in the view', function (): void {
     $employee = Employee::factory()
         ->withRole()
         ->create(['employeeID' => 99]);
@@ -39,7 +39,7 @@ it('loads the balances in the view', function () {
         ->assertViewHas('balances', $balances);
 });
 
-it('initializes yearly balances successfully', function () {
+it('initializes yearly balances successfully', function (): void {
     $hr = Employee::factory()->hr()->create();
     Auth::guard('employee')->login($hr);
 
@@ -59,7 +59,7 @@ it('initializes yearly balances successfully', function () {
         ->exists())->toBeTrue();
 });
 
-it('handles already initialized year', function () {
+it('handles already initialized year', function (): void {
     $this->mock(\App\Services\LeaveService::class)
         ->shouldReceive('initializeYearlyBalances')
         ->andThrow(new \RuntimeException('Bilancet e pushimeve për vitin 2023 janë inicializuar tashmë.'));
@@ -70,7 +70,7 @@ it('handles already initialized year', function () {
         ->assertSessionHas('error', 'Bilancet e pushimeve për vitin 2023 janë inicializuar tashmë.');
 });
 
-it('adds days to balance successfully', function () {
+it('adds days to balance successfully', function (): void {
     $employee = Employee::factory()
         ->withRole()
         ->create();
@@ -93,7 +93,7 @@ it('adds days to balance successfully', function () {
         ->and($updatedBalance->usedDays)->toBe('3.00');
 });
 
-it('validates add days request', function () {
+it('validates add days request', function (): void {
     // Invalid leaveBalanceID
     $response = $this->patch(route('hr.leave-balance.add'), [
         'leaveBalanceID' => 999,
@@ -115,7 +115,7 @@ it('validates add days request', function () {
         ->assertSessionHasErrors(['days' => 'Numri i ditëve duhet të jetë më i madh se 0.']);
 });
 
-it('deducts days from balance successfully', function () {
+it('deducts days from balance successfully', function (): void {
     $employee = Employee::factory()
         ->withRole()
         ->create();
@@ -138,7 +138,7 @@ it('deducts days from balance successfully', function () {
         ->and($updatedBalance->usedDays)->toBe('3.00');
 });
 
-it('prevents deducting more days than available', function () {
+it('prevents deducting more days than available', function (): void {
     $employee = Employee::factory()
         ->withRole()
         ->create();
@@ -161,7 +161,7 @@ it('prevents deducting more days than available', function () {
         ->assertSessionHas('error', 'Bilanc i pamjaftueshëm pushimesh. Në dispozicion: 5, Kërkuar: 10');
 });
 
-it('validates deduct days request', function () {
+it('validates deduct days request', function (): void {
     // Invalid leaveBalanceID
     $response = $this->patch(route('hr.leave-balance.deduct'), [
         'leaveBalanceID' => 999,
