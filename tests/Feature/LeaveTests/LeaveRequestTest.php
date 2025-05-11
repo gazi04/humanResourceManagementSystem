@@ -55,7 +55,7 @@ test('employee can submit valid leave request', function (): void {
         'attachments' => [$file],
     ];
 
-    $response = $this->post('/leave-request/store', $leaveData);
+    $response = $this->post(route('leave-request.store'), $leaveData);
 
     $response->assertRedirect()
         ->assertSessionHasNoErrors();
@@ -100,6 +100,166 @@ test('employee cannot submit invalid leave request', function (array $invalidDat
         ['halfDayType'],
     ],
 ]);
+
+it('redirect employee user to employee dashboard route after making a leave request', function(): void {
+    Auth::guard('employee')->login($this->employee);
+
+    $file = UploadedFile::fake()->create('document.pdf', 1000);
+
+    $leaveData = [
+        'employeeID' => $this->employee->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'startDate' => now()->addDay()->format('Y-m-d'),
+        'endDate' => now()->addDays(3)->format('Y-m-d'),
+        'durationType' => 'multiDay',
+        'requestedDays' => 3,
+        'reason' => 'Family vacation',
+        'attachments' => [$file],
+    ];
+
+    $response = $this->post(route('leave-request.store'), $leaveData);
+
+    $response->assertRedirect(route('employee.dashboard'))
+        ->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('leave_requests', [
+        'employeeID' => $this->employee->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'reason' => 'Family vacation',
+        'status' => 'pending',
+    ]);
+});
+
+it('redirect hr user to employee dashboard route after making a leave request', function(): void {
+    $this->leaveType = LeaveType::create([
+        'name' => 'Annual Leave',
+        'isActive' => true,
+    ]);
+
+    \App\Models\Leave\LeaveBalance::factory()
+        ->forEmployee($this->hr)
+        ->forLeaveType($this->leaveType)
+        ->forYear(now()->year)
+        ->create([
+            'remainingDays' => 20,
+            'usedDays' => 0,
+        ]);
+
+    Auth::guard('employee')->login($this->hr);
+
+    $file = UploadedFile::fake()->create('document.pdf', 1000);
+
+    $leaveData = [
+        'employeeID' => $this->hr->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'startDate' => now()->addDay()->format('Y-m-d'),
+        'endDate' => now()->addDays(3)->format('Y-m-d'),
+        'durationType' => 'multiDay',
+        'requestedDays' => 3,
+        'reason' => 'Family vacation',
+        'attachments' => [$file],
+    ];
+
+    $response = $this->post(route('leave-request.store'), $leaveData);
+
+    $response->assertRedirect(route('hr.dashboard'))
+        ->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('leave_requests', [
+        'employeeID' => $this->hr->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'reason' => 'Family vacation',
+        'status' => 'pending',
+    ]);
+});
+
+it('redirect manager user to employee dashboard route after making a leave request', function(): void {
+    $manager = Employee::factory()->manager()->create();
+    $this->leaveType = LeaveType::create([
+        'name' => 'Annual Leave',
+        'isActive' => true,
+    ]);
+
+    \App\Models\Leave\LeaveBalance::factory()
+        ->forEmployee($manager)
+        ->forLeaveType($this->leaveType)
+        ->forYear(now()->year)
+        ->create([
+            'remainingDays' => 20,
+            'usedDays' => 0,
+        ]);
+
+    Auth::guard('employee')->login($manager);
+
+    $file = UploadedFile::fake()->create('document.pdf', 1000);
+
+    $leaveData = [
+        'employeeID' => $manager->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'startDate' => now()->addDay()->format('Y-m-d'),
+        'endDate' => now()->addDays(3)->format('Y-m-d'),
+        'durationType' => 'multiDay',
+        'requestedDays' => 3,
+        'reason' => 'Family vacation',
+        'attachments' => [$file],
+    ];
+
+    $response = $this->post(route('leave-request.store'), $leaveData);
+
+    $response->assertRedirect(route('manager.dashboard'))
+        ->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('leave_requests', [
+        'employeeID' => $manager->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'reason' => 'Family vacation',
+        'status' => 'pending',
+    ]);
+});
+
+it('redirect admin user to employee dashboard route after making a leave request', function(): void {
+    $admin = Employee::factory()->admin()->create();
+    $this->leaveType = LeaveType::create([
+        'name' => 'Annual Leave',
+        'isActive' => true,
+    ]);
+
+    \App\Models\Leave\LeaveBalance::factory()
+        ->forEmployee($admin)
+        ->forLeaveType($this->leaveType)
+        ->forYear(now()->year)
+        ->create([
+            'remainingDays' => 20,
+            'usedDays' => 0,
+        ]);
+
+    Auth::guard('employee')->login($admin);
+
+    $file = UploadedFile::fake()->create('document.pdf', 1000);
+
+    $leaveData = [
+        'employeeID' => $admin->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'startDate' => now()->addDay()->format('Y-m-d'),
+        'endDate' => now()->addDays(3)->format('Y-m-d'),
+        'durationType' => 'multiDay',
+        'requestedDays' => 3,
+        'reason' => 'Family vacation',
+        'attachments' => [$file],
+    ];
+
+    $response = $this->post(route('leave-request.store'), $leaveData);
+
+    $response->assertRedirect(route('admin.dashboard'))
+        ->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('leave_requests', [
+        'employeeID' => $admin->employeeID,
+        'leaveTypeID' => $this->leaveType->leaveTypeID,
+        'reason' => 'Family vacation',
+        'status' => 'pending',
+    ]);
+});
 
 test('hr can view leave requests', function (): void {
     $response = $this->get(route('hr.leave-request.index'));

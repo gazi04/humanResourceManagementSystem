@@ -8,11 +8,11 @@ use App\Http\Requests\LeaveRequests\CreateLeaveRequest;
 use App\Http\Requests\LeaveRequests\RejectLeaveRequest;
 use App\Services\LeaveService;
 use App\Traits\AuthHelper;
-use Illuminate\Support\Facades\Log;
+use App\Traits\RedirectHelper;
 
 class LeaveRequestController extends Controller
 {
-    use AuthHelper;
+    use AuthHelper, RedirectHelper;
 
     public function __construct(protected LeaveService $leaveService) {}
 
@@ -47,20 +47,15 @@ class LeaveRequestController extends Controller
                 'endDate',
                 'durationType',
                 'halfDayType',
-                'requestedDays',
                 'reason',
             ]);
 
             $data['employeeID'] = $this->getLoggedUserID();
 
-            // Calculate requested days if not provided
-            if (! isset($data['requestedDays']) || $data['requestedDays'] <= 0) {
-                $data['requestedDays'] = $this->leaveService->calculateRequestedDays(
-                    $data['startDate'],
-                    $data['endDate'],
-                    $data['durationType']
-                );
-            }
+            $startDate = new \DateTime($data['startDate']);
+            $endDate = new \DateTime($data['endDate']);
+            $interval = $startDate->diff($endDate);
+            $data['requestedDays'] = $interval->days + 1;
 
             // Check leave balance
             $balance = $this->leaveService->getBalance(
@@ -76,9 +71,8 @@ class LeaveRequestController extends Controller
             // Create the leave request
             $leaveRequest = $this->leaveService->createLeaveRequest($data);
 
-            return redirect()->route('', $leaveRequest->leaveRequestID)
-                ->with('success', 'Kërkesa për pushim u dorëzua me sukses!');
-        } catch (\Exception $e) {
+            return $this->toDashboard($request)->with('success', 'Kërkesa për pushim u dorëzua me sukses!');
+        } catch (\RuntimeException) {
             return back()->with([
                 'error' => 'Ndodhi një gabim gjatë dorëzimit të kërkesës. Ju lutem provoni përsëri.',
             ]);
