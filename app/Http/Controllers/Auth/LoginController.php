@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Models\Employee;
 use App\Traits\AuthHelper;
+use App\Traits\RedirectHelper;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    use AuthHelper;
+    use AuthHelper, RedirectHelper;
 
     public function showLoginPage(): View
     {
@@ -30,16 +31,18 @@ class LoginController extends Controller
         if ($guard->attempt($credentials)) {
             $request->session()->regenerate();
 
-            /** @var Employee $user */
-            $user = Auth::guard('employee')->user();
+            return $this->toDashboard($request);
 
-            return match ($user->getRoleName()) {
-                'admin' => redirect()->route('admin.dashboard'),
-                'hr' => redirect()->route('hr.dashboard'),
-                'manager' => redirect()->route('manager.dashboard'),
-                'employee' => redirect()->route('employee.dashboard'),
-                default => abort(403),
-            };
+            /** @var Employee $user */
+            /* $user = Auth::guard('employee')->user(); */
+            /**/
+            /* return match ($user->getRoleName()) { */
+            /*     'admin' => redirect()->route('admin.dashboard'), */
+            /*     'hr' => redirect()->route('hr.dashboard'), */
+            /*     'manager' => redirect()->route('manager.dashboard'), */
+            /*     'employee' => redirect()->route('employee.dashboard'), */
+            /*     default => abort(403), */
+            /* }; */
         }
 
         return back()->withErrors([
