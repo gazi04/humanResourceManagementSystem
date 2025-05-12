@@ -52,7 +52,7 @@ test('employee can submit valid leave request', function (): void {
         'durationType' => 'multiDay',
         'requestedDays' => 3,
         'reason' => 'Family vacation',
-        'attachments' => [$file],
+        'attachment' => $file,
     ];
 
     $response = $this->post(route('leave-request.store'), $leaveData);
@@ -101,7 +101,7 @@ test('employee cannot submit invalid leave request', function (array $invalidDat
     ],
 ]);
 
-it('redirect employee user to employee dashboard route after making a leave request', function(): void {
+it('redirect employee user to employee dashboard route after making a leave request', function (): void {
     Auth::guard('employee')->login($this->employee);
 
     $file = UploadedFile::fake()->create('document.pdf', 1000);
@@ -114,7 +114,7 @@ it('redirect employee user to employee dashboard route after making a leave requ
         'durationType' => 'multiDay',
         'requestedDays' => 3,
         'reason' => 'Family vacation',
-        'attachments' => [$file],
+        'attachment' => $file,
     ];
 
     $response = $this->post(route('leave-request.store'), $leaveData);
@@ -130,7 +130,7 @@ it('redirect employee user to employee dashboard route after making a leave requ
     ]);
 });
 
-it('redirect hr user to employee dashboard route after making a leave request', function(): void {
+it('redirect hr user to employee dashboard route after making a leave request', function (): void {
     $this->leaveType = LeaveType::create([
         'name' => 'Annual Leave',
         'isActive' => true,
@@ -157,7 +157,7 @@ it('redirect hr user to employee dashboard route after making a leave request', 
         'durationType' => 'multiDay',
         'requestedDays' => 3,
         'reason' => 'Family vacation',
-        'attachments' => [$file],
+        'attachment' => $file,
     ];
 
     $response = $this->post(route('leave-request.store'), $leaveData);
@@ -173,7 +173,7 @@ it('redirect hr user to employee dashboard route after making a leave request', 
     ]);
 });
 
-it('redirect manager user to employee dashboard route after making a leave request', function(): void {
+it('redirect manager user to employee dashboard route after making a leave request', function (): void {
     $manager = Employee::factory()->manager()->create();
     $this->leaveType = LeaveType::create([
         'name' => 'Annual Leave',
@@ -201,7 +201,7 @@ it('redirect manager user to employee dashboard route after making a leave reque
         'durationType' => 'multiDay',
         'requestedDays' => 3,
         'reason' => 'Family vacation',
-        'attachments' => [$file],
+        'attachment' => $file,
     ];
 
     $response = $this->post(route('leave-request.store'), $leaveData);
@@ -217,7 +217,7 @@ it('redirect manager user to employee dashboard route after making a leave reque
     ]);
 });
 
-it('redirect admin user to employee dashboard route after making a leave request', function(): void {
+it('redirect admin user to employee dashboard route after making a leave request', function (): void {
     $admin = Employee::factory()->admin()->create();
     $this->leaveType = LeaveType::create([
         'name' => 'Annual Leave',
@@ -245,7 +245,7 @@ it('redirect admin user to employee dashboard route after making a leave request
         'durationType' => 'multiDay',
         'requestedDays' => 3,
         'reason' => 'Family vacation',
-        'attachments' => [$file],
+        'attachment' => $file,
     ];
 
     $response = $this->post(route('leave-request.store'), $leaveData);

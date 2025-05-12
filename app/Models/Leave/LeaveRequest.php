@@ -30,7 +30,7 @@ class LeaveRequest extends Model
         'approvedBy',
         'approvedAt',
         'rejectionReason',
-        'attachments',
+        'attachment',
     ];
 
     /**

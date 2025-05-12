@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('approvedBy')->nullable();
             $table->timestamp('approvedAt')->nullable();
             $table->text('rejectionReason')->nullable();
-            $table->json('attachments')->nullable();
+            $table->string('attachment')->nullable();
 
             $table->foreign('employeeID')->references('employeeID')->on('employees');
             $table->foreign('leaveTypeID')->references('leaveTypeID')->on('leave_types');

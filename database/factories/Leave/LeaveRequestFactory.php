@@ -51,7 +51,7 @@ class LeaveRequestFactory extends Factory
             'rejectionReason' => null,
             'approvedBy' => null,
             'approvedAt' => null,
-            'attachments' => null,
+            'attachment' => null,
         ];
     }
 

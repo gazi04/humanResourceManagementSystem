@@ -21,8 +21,7 @@ class CreateLeaveRequest extends FormRequest
             'halfDayType' => ['required_if:durationType,halfDay', 'in:firstHalf,secondHalf'],
             'requestedDays' => ['required', 'numeric', 'min:0.5'],
             'reason' => ['required', 'string', 'max:500'],
-            'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['file', 'max:2048'],
+            'attachment' => ['nullable', 'file', 'max:2048'],
         ];
     }
 
@@ -62,9 +61,8 @@ class CreateLeaveRequest extends FormRequest
             'reason.string' => 'Arsyeja duhet të jetë një varg tekstual.',
             'reason.max' => 'Arsyeja nuk mund të jetë më e gjatë se 500 karaktere.',
 
-            'attachments.array' => 'Bashkëngjitjet duhet të jenë një listë.',
-            'attachments.*.file' => 'Çdo bashkëngjitje duhet të jetë një skedar.',
-            'attachments.*.max' => 'Çdo bashkëngjitje nuk mund të jetë më e madhe se 2048 KB (2MB).',
+            'attachment.file' => 'Çdo bashkëngjitje duhet të jetë një skedar.',
+            'attachment.max' => 'Çdo bashkëngjitje nuk mund të jetë më e madhe se 2048 KB (2MB).',
         ];
     }
 }
