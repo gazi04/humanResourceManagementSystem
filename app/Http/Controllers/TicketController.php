@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Ticket\ChangeTicketStatusRequest;
 use App\Http\Requests\Ticket\CreateTicketRequest;
 use App\Services\TicketService;
+use App\Traits\RedirectHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
 {
+    use RedirectHelper;
+
     public function __construct(protected TicketService $ticketService) {}
 
     public function index()
@@ -25,8 +28,6 @@ class TicketController extends Controller
             return redirect()->route('admin.dashboard')->with('error', 'Ndodhi një gabim gjatë procesit të marrjes së biletave nga baza e të dhënave.');
         }
 
-        dd($tickets);
-
         return view('Admin.tickets', [
             'tickets' => $tickets['todayTickets'],
             'unfinishedTickets' => $tickets['unfinishedTickets'],
@@ -35,14 +36,6 @@ class TicketController extends Controller
 
     public function create(CreateTicketRequest $request)
     {
-        if ($request->is('hr/*')) {
-            $route = 'hr.dashboard';
-        } elseif ($request->is('employee/*')) {
-            $route = 'employee.dashboard';
-        } elseif ($request->is('manager/*')) {
-            $route = 'manager.dashboard';
-        }
-
         try {
             $validated = $request->only('subject', 'description');
             /** @var Employee $user */
@@ -52,10 +45,10 @@ class TicketController extends Controller
             $ticket = $this->ticketService->createTicket($validated);
 
             if (empty($ticket)) {
-                return redirect()->back()->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
+                return back()->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
             }
 
-            return redirect()->route($route)
+            return $this->toDashboard($request)
                 ->with('success', 'Bileta u krijua me sukses.');
         } catch (\PDOException $e) {
             Log::error(
@@ -63,7 +56,7 @@ class TicketController extends Controller
                 ['error' => config('app.debug') ? $e->getMessage() : 'Service unavailable']
             );
 
-            return redirect()->route($route)
+            return $this->toDashboard($request)
                 ->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
         } catch (\Exception $e) {
             Log::error(
@@ -71,7 +64,7 @@ class TicketController extends Controller
                 ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']
             );
 
-            return redirect()->route($route)
+            return $this->toDashboard($request)
                 ->with('error', 'Procesi i krijimit të biletës ka dështuar provo më vonë përsëri.');
         }
     }
@@ -99,5 +92,6 @@ class TicketController extends Controller
                 ['error' => config('app.debug') ? $e->getMessage() : 'An error occurred']
             );
         }
+        return null;
     }
 }
