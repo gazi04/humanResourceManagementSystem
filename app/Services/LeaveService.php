@@ -15,10 +15,13 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use PDOException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LeaveService implements LeaveServiceInterface
 {
@@ -325,6 +328,7 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
+    /* TODO- CHANGE IT TO PAGINATE AND USE DATABASE TRANSACTIONS */
     public function getBalances(int $employeeID): Collection
     {
         try {
@@ -367,12 +371,28 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
+    public function calculateRequestedDays(LeaveRequest $leaveRequest): float
+    {
+        /** @var LeavePolicy $leavePolicy */
+        /* $leavePolicy = $leaveRequest->policy(); */
+        if ($leaveRequest->durationType === 'halfDay') {
+            return 0.5;
+        }
+
+        $start = Carbon::parse($leaveRequest->startDate);
+        $end = Carbon::parse($leaveRequest->endDate);
+
+        // Exclude weekends
+        return $start->diffInDaysFiltered(fn ($date): bool => ! $date->isWeekend(), $end) + 1; // Inclusive of start date
+    }
+
     /*
     * 4. LEAVE REQUEST FEATURES
     */
     public function createLeaveRequest(array $data): LeaveRequest
     {
         try {
+            $data['attachment'] = $this->uploadAttachment($data['attachment']);
             return DB::transaction(function () use ($data): LeaveRequest {
                 return LeaveRequest::create($data);
             });
@@ -500,19 +520,34 @@ class LeaveService implements LeaveServiceInterface
         }
     }
 
-    public function calculateRequestedDays(LeaveRequest $leaveRequest): float
+    public function uploadAttachment($file): string
     {
-        /** @var LeavePolicy $leavePolicy */
-        /* $leavePolicy = $leaveRequest->policy(); */
-        if ($leaveRequest->durationType === 'halfDay') {
-            return 0.5;
-        }
+        throw_unless(
+            $file instanceof UploadedFile,
+            new \InvalidArgumentException('Ngarkimi i skedarit i pavlefshëm.')
+        );
 
-        $start = Carbon::parse($leaveRequest->startDate);
-        $end = Carbon::parse($leaveRequest->endDate);
+        $filename = 'attachment_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
 
-        // Exclude weekends
-        return $start->diffInDaysFiltered(fn ($date): bool => ! $date->isWeekend(), $end) + 1; // Inclusive of start date
+        $path = Storage::disk('leave_attachments')->putFileAs(
+            '',
+            $file,
+            $filename
+        );
+
+        throw_if(
+            $path === false,
+            new \RuntimeException('Dështoi në ruajtjen e skedarit të bashkëngjitjes.')
+        );
+
+        return $path;
+    }
+
+    public function downloadAttachment(LeaveRequest $leaveRequest): StreamedResponse
+    {
+        throw_unless(Storage::disk('leave_attachments')->exists($leaveRequest->attachment), new \Exception('Dosja e bashkëngjitur e kësaj kërkese pushimi nuk u gjet në sistem.'));
+
+        return Storage::disk('leave_attachments')->download($leaveRequest->attachment);
     }
 
     private function isOnProbation(Employee $employee, LeaveType $leaveType): bool

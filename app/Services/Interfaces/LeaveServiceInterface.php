@@ -8,7 +8,9 @@ use App\Models\Leave\LeavePolicy;
 use App\Models\Leave\LeaveRequest;
 use App\Models\Leave\LeaveType;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 interface LeaveServiceInterface
 {
@@ -61,4 +63,8 @@ interface LeaveServiceInterface
     public function getTodaysLeaveRequests(): Collection;
 
     public function getPendingLeaveRequests(): LengthAwarePaginator;
+
+    public function uploadAttachment(UploadedFile $file): string;
+
+    public function downloadAttachment(LeaveRequest $leaveRequest): StreamedResponse;
 }

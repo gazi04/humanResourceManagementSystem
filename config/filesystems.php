@@ -44,6 +44,12 @@ return [
             'visibility' => 'private',
         ],
 
+        'leave_attachments' => [
+            'driver' => 'local',
+            'root' => storage_path('app/leave_attachments'),
+            'visibility' => 'private',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

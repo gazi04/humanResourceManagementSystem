@@ -48,6 +48,7 @@ class LeaveRequestController extends Controller
                 'durationType',
                 'halfDayType',
                 'reason',
+                'attachment',
             ]);
 
             $data['employeeID'] = $this->getLoggedUserID();
