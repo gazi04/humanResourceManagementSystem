@@ -27,17 +27,17 @@ class LeaveTypeFactory extends Factory
             'Compensatory Leave',
         ];
 
-        $selectedType = $this->faker->unique()->randomElement($leaveTypes);
+        $selectedType = array_rand($leaveTypes);
 
         // Determine if the leave type is paid based on its name
         $isPaid = ! in_array($selectedType, ['Unpaid Leave']);
 
         return [
-            'name' => $selectedType,
+            'name' => $leaveTypes[$selectedType],
             'description' => $this->faker->sentence(),
             'isPaid' => $isPaid,
-            'requiresApproval' => $this->faker->boolean(90), // 90% chance of requiring approval
-            'isActive' => $this->faker->boolean(95), // 95% chance of being active
+            'requiresApproval' => $this->faker->boolean(90),
+            'isActive' => $this->faker->boolean(95),
         ];
     }
 

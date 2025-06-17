@@ -19,8 +19,8 @@ class LeaveBalanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'employeeID' => Employee::factory(),
-            'leaveTypeID' => LeaveType::factory(),
+            'employeeID' => Employee::inRandomOrder()->first(),
+            'leaveTypeID' => LeaveType::inRandomOrder()->first(),
             'remainingDays' => $this->faker->numberBetween(0, 30),
             'usedDays' => $this->faker->numberBetween(0, 15),
             'carriedOverDays' => $this->faker->numberBetween(0, 5),

@@ -15,10 +15,11 @@ class EmployeeSeeder extends Seeder
     public function run(): void
     {
         // Step 1: Create employees without a supervisorID
-        $employees = Employee::factory()->count(100)->create();
+        $employees = Employee::factory()->count(40)->create();
+        $roles = Role::all();
 
-        // Step 2: Assign supervisorID to each employee
-        $employees->each(function ($employee) use ($employees) {
+        // Step 2: Assign supervisorID and roles to each employee
+        $employees->each(function ($employee) use ($employees, $roles) {
             // Assign a random supervisor (excluding the employee itself)
             $supervisor = $employees->where('employeeID', '!=', $employee->employeeID)->random();
             if ($supervisor) {
@@ -26,16 +27,13 @@ class EmployeeSeeder extends Seeder
                 $employee->save();
             }
 
-            $roles = Role::all(); // Get all roles from the roles table
-
-            $employees->each(function ($employee) use ($roles) {
-                // Assign a random role to the employee
-                $role = $roles->random();
-                EmployeeRole::create([
-                    'employeeID' => $employee->employeeID,
-                    'roleID' => $role->roleID,
-                ]);
-            });
+            // Assign a random role to the employee
+            $role = $roles->random();
+            EmployeeRole::firstOrCreate([
+                'employeeID' => $employee->employeeID,
+            ], [
+                'roleID' => $role->roleID,
+            ]);
         });
     }
 }
