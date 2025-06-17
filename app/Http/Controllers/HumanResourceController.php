@@ -26,7 +26,11 @@ class HumanResourceController extends Controller
                 'todaysLeaveRequests' => $todaysLeaveRequests,
             ]);
         } catch (\Exception $e) {
-            return view('Hr.dashboard')->with('error', $e->getMessage());
+            return view('Hr.dashboard')->with([
+                'leaveTypes' => null,
+                'todaysLeaveRequests' => null,
+                'error' => $e->getMessage()
+            ]);
         }
     }
 

@@ -5,6 +5,7 @@ use App\Http\Middleware\IsUserHRMiddleware;
 use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\Leave\LeaveBalance;
+use App\Models\Leave\LeaveType;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -26,6 +27,7 @@ it('shows employee profile with all data', function (): void {
         'employeeID' => 99,
     ]);
     $contracts = Contract::factory(2)->create(['employeeID' => $employee->employeeID]);
+    LeaveType::factory()->count(5)->create();
     $balances = LeaveBalance::factory(3)->create([
         'employeeID' => $employee->employeeID,
         'year' => Carbon::now()->year,
