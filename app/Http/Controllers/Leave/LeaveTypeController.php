@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LeaveType\CreateLeaveTypeRequest;
 use App\Http\Requests\LeaveType\IdValidationLeaveTypeRequest;
 use App\Http\Requests\LeaveType\UpdateLeaveTypeRequest;
+use App\Models\Role;
 use App\Services\LeaveService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -27,7 +28,8 @@ class LeaveTypeController extends Controller
 
     public function create(): View
     {
-        return view('Hr.LeaveType.create');
+        $roles = Role::select('roleName')->get();
+        return view('Hr.LeaveType.create', ['roles' => $roles]);
     }
 
     public function store(CreateLeaveTypeRequest $request): RedirectResponse
@@ -55,7 +57,7 @@ class LeaveTypeController extends Controller
         try {
             $this->leaveService->createLeaveTypeWithPolicy($leaveTypeData, $leavePolicyData, $roles['roles']);
 
-            return redirect()->route('hr.leave-type.index')->with('success', 'Lloji i pushimit u krijua me sukses.');
+            return redirect()->route('hr.dashboard')->with('success', 'Lloji i pushimit u krijua me sukses.');
         } catch (\RuntimeException $e) {
             return redirect()->route('hr.leave-type.edit')->with('error', $e->getMessage());
         }

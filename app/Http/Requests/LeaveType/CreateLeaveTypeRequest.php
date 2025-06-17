@@ -7,13 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 class CreateLeaveTypeRequest extends FormRequest
 {
     /**
-     * The route that users should be redirected to if validation fails.
-     *
-     * @var string
-     */
-    protected $redirectRoute = 'hr.leave-type.edit';
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -24,14 +17,14 @@ class CreateLeaveTypeRequest extends FormRequest
             /* VALIDATION RULES TO CREATE LEAVE TYPES */
             'name' => ['required', 'string', 'max:255', 'unique:leave_types,name'],
             'description' => ['nullable', 'string', 'max:500'],
-            'isPaid' => ['required', 'boolean'],
+            'isPaid' => ['nullable', 'boolean'],
             'requiresApproval' => ['required', 'boolean'],
             'isActive' => ['required', 'boolean'],
 
             /* VALIDATION RULES TO CREATE THE LEAVE POLICY */
             'annualQuota' => ['required', 'integer', 'min:0'],
             'maxConsecutiveDays' => ['nullable', 'integer', 'min:1'],
-            'allowHalfDay' => ['required', 'boolean'],
+            'allowHalfDay' => ['nullable', 'boolean'],
             'probationPeriodDays' => ['required', 'integer', 'min:0'],
             'carryOverLimit' => ['required', 'numeric', 'min:0'],
             'restricedDays' => ['nullable', 'json'],
