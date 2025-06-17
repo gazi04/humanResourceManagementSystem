@@ -393,6 +393,7 @@ class LeaveService implements LeaveServiceInterface
     {
         try {
             $data['attachment'] = $this->uploadAttachment($data['attachment']);
+
             return DB::transaction(function () use ($data): LeaveRequest {
                 return LeaveRequest::create($data);
             });
@@ -495,7 +496,22 @@ class LeaveService implements LeaveServiceInterface
     public function getTodaysLeaveRequests(): Collection
     {
         try {
-            return LeaveRequest::where('created_at', Carbon::now()->year)->get();
+            return LeaveRequest::with([
+                'employee' => function ($query) {
+                    $query->select([
+                        'employeeID',
+                        'firstName',
+                        'lastName',
+                        'phone',
+                    ]);
+                },
+                'leaveType' => function ($query) {
+                    $query->select([
+                        'leaveTypeID',
+                        'name',
+                    ]);
+                }])
+                ->whereDate('created_at', Carbon::today())->get();
         } catch (QueryException $e) {
             Log::error('Database error fetching todays leave requests: '.$e->getMessage());
             throw new \RuntimeException('Dështoi marrja e kërkesave të pushimit të sotshëm për shkak të një gabimi në bazën e të dhënave.', 500);
